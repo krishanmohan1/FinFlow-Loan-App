@@ -1,0 +1,122 @@
+📄 1. Problems Faced + Root Cause + Fix (DOCUMENT)
+🔴 Problem 1 — Spring Boot & Cloud Version Conflict
+
+Issue:
+
+Boot → 3.5.12
+Cloud → 2023.x
+
+Reason:
+
+Incompatible versions
+
+Fix:
+
+Aligned all services:
+Spring Boot → 3.5.12
+Spring Cloud → 2025.0.1
+🔴 Problem 2 — Maven Command Wrong
+
+Issue:
+
+mvn spring:boot run ❌
+
+Reason:
+
+Wrong plugin syntax
+
+Fix:
+
+mvn spring-boot:run ✅
+🔴 Problem 3 — Service Not Registering in Eureka
+
+Reason:
+
+Service not starting due to build/runtime issues
+
+Fix:
+
+Fixed dependencies
+Fixed port conflict
+Corrected configs
+🔴 Problem 4 — Port Conflict
+
+Issue:
+
+Port 8081 already in use
+
+Fix:
+
+server:
+  port: 9091
+🔴 Problem 5 — Lombok + Constructor Conflict
+
+Issue:
+
+Duplicate constructor
+
+Reason:
+
+Used @AllArgsConstructor + manual constructor
+
+Fix:
+
+Removed manual constructor
+🔴 Problem 6 — @Autowired + final Conflict
+
+Issue:
+
+@Autowired + final ❌
+
+Fix:
+
+Used only:
+@RequiredArgsConstructor
+🔴 Problem 7 — Oracle Table Creation Error
+
+Issue:
+
+ORA-00903: invalid table name
+
+Reason:
+
+user is reserved keyword
+
+Fix:
+
+@Table(name = "users")
+🔴 Problem 8 — JWT Not Blocking Requests
+
+Issue:
+
+APIs accessible without token
+
+Reason:
+
+Filter allowed requests without header
+
+Fix:
+
+Enforced strict validation
+🔴 Problem 9 — 403 Forbidden After JWT
+
+Reason:
+
+Authentication not set in Spring context
+
+Fix:
+
+SecurityContextHolder.getContext().setAuthentication(...)
+🔴 Problem 10 — HTTP Method Confusion
+
+Issue:
+
+Login not working in browser
+
+Reason:
+
+Browser sends GET, API expects POST
+
+Fix:
+
+Used Postman / proper HTTP methods
