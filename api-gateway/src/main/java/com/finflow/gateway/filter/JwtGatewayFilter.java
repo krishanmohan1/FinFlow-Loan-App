@@ -22,7 +22,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
 
             String path = exchange.getRequest().getURI().getPath();
 
-            // 🔓 Public endpoints
+            // 🔓 PUBLIC ENDPOINTS
             if (path.contains("/auth/login") || path.contains("/auth/register")) {
                 return chain.filter(exchange);
             }
@@ -31,6 +31,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
                     .getHeaders()
                     .getFirst("Authorization");
 
+            // ❌ No token
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
@@ -47,14 +48,29 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
                     return exchange.getResponse().setComplete();
                 }
 
-                // 🔥 FIXED ROLE CHECK
+                // 🔥 AUTH SERVICE RULES
 
-                if (path.contains("/admin") && !"ADMIN".equals(role)) {
+                if (path.contains("/auth/admin") && !"ADMIN".equals(role)) {
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                     return exchange.getResponse().setComplete();
                 }
 
-                if (path.contains("/user") &&
+                if (path.contains("/auth/user") &&
+                        !("USER".equals(role) || "ADMIN".equals(role))) {
+                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                    return exchange.getResponse().setComplete();
+                }
+
+                // 🔥 APPLICATION SERVICE RULES
+
+                // ADMIN only
+                if (path.contains("/application/status") && !"ADMIN".equals(role)) {
+                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                    return exchange.getResponse().setComplete();
+                }
+
+                // USER + ADMIN allowed
+                if (path.contains("/application/apply") &&
                         !("USER".equals(role) || "ADMIN".equals(role))) {
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                     return exchange.getResponse().setComplete();

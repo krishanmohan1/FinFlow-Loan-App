@@ -8,10 +8,20 @@ spring:
   cloud:
     gateway:
       routes:
+
+        # 🔐 AUTH SERVICE
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth/**
+          filters:
+            - name: JwtGatewayFilter
+
+        # 📄 APPLICATION SERVICE
+        - id: application-service
+          uri: lb://APPLICATION-SERVICE
+          predicates:
+            - Path=/application/**
           filters:
             - name: JwtGatewayFilter
 
