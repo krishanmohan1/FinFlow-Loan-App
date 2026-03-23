@@ -1,11 +1,10 @@
 package com.finflow.gateway.filter;
 
+import com.finflow.gateway.security.JwtUtil;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
-import com.finflow.gateway.security.JwtUtil;
 
 @Component
 public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
@@ -27,11 +26,11 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
                 return chain.filter(exchange);
             }
 
+            // 🔒 GET AUTH HEADER
             String authHeader = exchange.getRequest()
                     .getHeaders()
                     .getFirst("Authorization");
 
-            // ❌ No token
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
@@ -40,37 +39,24 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
             String token = authHeader.substring(7);
 
             try {
+                // 🔍 EXTRACT DATA
                 String username = jwtUtil.extractUsername(token);
                 String role = jwtUtil.extractRole(token);
 
+                // 🔐 VALIDATE TOKEN
                 if (!jwtUtil.validateToken(token, username)) {
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                     return exchange.getResponse().setComplete();
                 }
 
-                // 🔥 AUTH SERVICE RULES
-
-                if (path.contains("/auth/admin") && !"ADMIN".equals(role)) {
+                // 🔥 ADMIN SERVICE SECURITY
+                if (path.contains("/admin") && !"ADMIN".equals(role)) {
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                     return exchange.getResponse().setComplete();
                 }
 
-                if (path.contains("/auth/user") &&
-                        !("USER".equals(role) || "ADMIN".equals(role))) {
-                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                    return exchange.getResponse().setComplete();
-                }
-
-                // 🔥 APPLICATION SERVICE RULES
-
-                // ADMIN only
-                if (path.contains("/application/status") && !"ADMIN".equals(role)) {
-                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                    return exchange.getResponse().setComplete();
-                }
-
-                // USER + ADMIN allowed
-                if (path.contains("/application/apply") &&
+                // 🔥 APPLICATION SERVICE SECURITY (USER + ADMIN)
+                if (path.contains("/application") &&
                         !("USER".equals(role) || "ADMIN".equals(role))) {
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                     return exchange.getResponse().setComplete();
@@ -81,6 +67,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
                 return exchange.getResponse().setComplete();
             }
 
+            // ✅ PASS REQUEST
             return chain.filter(exchange);
         };
     }

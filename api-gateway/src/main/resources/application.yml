@@ -25,6 +25,14 @@ spring:
           filters:
             - name: JwtGatewayFilter
 
+        # 👑 ADMIN SERVICE
+        - id: admin-service
+          uri: lb://ADMIN-SERVICE
+          predicates:
+            - Path=/admin/**
+          filters:
+            - name: JwtGatewayFilter
+
 eureka:
   client:
     service-url:
