@@ -1,16 +1,33 @@
 package com.finflow.application.config;
 
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.amqp.core.Queue;
 
 @Configuration
 public class RabbitMQConfig {
 
-    public static final String QUEUE = "loanQueue";
+    // Shared queue name — Document Service listens on this
+    public static final String LOAN_QUEUE = "loanQueue";
 
     @Bean
-    public Queue queue() {
-        return new Queue(QUEUE);
+    public Queue loanQueue() {
+        // durable=true → survives RabbitMQ restart
+        return new Queue(LOAN_QUEUE, true);
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter messageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate template = new RabbitTemplate(connectionFactory);
+        template.setMessageConverter(messageConverter());
+        return template;
     }
 }

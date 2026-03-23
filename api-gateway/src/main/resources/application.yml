@@ -25,6 +25,14 @@ spring:
           filters:
             - name: JwtGatewayFilter
 
+        # 📁 DOCUMENT SERVICE
+        - id: document-service
+          uri: lb://DOCUMENT-SERVICE
+          predicates:
+            - Path=/document/**
+          filters:
+            - name: JwtGatewayFilter
+
         # 👑 ADMIN SERVICE
         - id: admin-service
           uri: lb://ADMIN-SERVICE
@@ -37,3 +45,9 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    com.finflow: DEBUG
+    org.springframework.cloud.gateway: INFO
+    org.springframework: INFO

@@ -1,0 +1,64 @@
+---
+
+## 🧪 Auth Service — Postman Test Data
+
+### 1. Register User
+```
+POST http://localhost:9090/auth/register
+
+Body:
+{
+  "username": "user1",
+  "password": "password123"
+}
+
+
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "username": "user1",
+  "role": "USER",
+  "message": "Registration successful"
+}
+```
+
+### 2. Register Admin (then update DB)
+```
+POST http://localhost:9090/auth/register
+
+Body:
+{
+  "username": "admin1",
+  "password": "admin123"
+}
+
+
+
+UPDATE users SET role = 'ADMIN' WHERE username = 'admin1';
+COMMIT;
+```
+
+### 3. Login
+```
+POST http://localhost:9090/auth/login
+
+Body:
+{
+  "username": "user1",
+  "password": "password123"
+}
+
+
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "username": "user1",
+  "role": "USER",
+  "message": "Login successful"
+}
+```
+
+### 4. Test Endpoints
+```
+GET http://localhost:9090/auth/test
+GET http://localhost:9090/auth/user/test    → Authorization: Bearer USER_TOKEN
+GET http://localhost:9090/auth/admin/test   → Authorization: Bearer ADMIN_TOKEN
+

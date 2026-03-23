@@ -1,8 +1,12 @@
 package com.finflow.application.controller;
 
+import com.finflow.application.dto.LoanStatusUpdateRequest;
 import com.finflow.application.entity.LoanApplication;
 import com.finflow.application.service.LoanService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,37 +16,58 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LoanController {
 
+    private static final Logger log = LoggerFactory.getLogger(LoanController.class);
+
     private final LoanService loanService;
 
-    // USER
+    // ✅ USER → Apply for loan
     @PostMapping("/apply")
-    public LoanApplication apply(@RequestBody LoanApplication loan) {
-        return loanService.apply(loan);
+    public ResponseEntity<LoanApplication> apply(@RequestBody LoanApplication loan) {
+        log.info("POST /application/apply → user: {}", loan.getUsername());
+        return ResponseEntity.ok(loanService.apply(loan));
     }
 
-    // USER + ADMIN
+    // ✅ USER + ADMIN → Get all
     @GetMapping("/all")
-    public List<LoanApplication> getAll() {
-        return loanService.getAll();
+    public ResponseEntity<List<LoanApplication>> getAll() {
+        log.info("GET /application/all");
+        return ResponseEntity.ok(loanService.getAll());
     }
 
-    // USER + ADMIN
+    // ✅ USER + ADMIN → Get by ID
     @GetMapping("/{id}")
-    public LoanApplication getById(@PathVariable Long id) {
-        return loanService.getById(id);
+    public ResponseEntity<LoanApplication> getById(@PathVariable Long id) {
+        log.info("GET /application/{}", id);
+        return ResponseEntity.ok(loanService.getById(id));
     }
 
-    // ADMIN ONLY
+    // ✅ USER → Get my loans
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<LoanApplication>> getByUsername(@PathVariable String username) {
+        log.info("GET /application/user/{}", username);
+        return ResponseEntity.ok(loanService.getByUsername(username));
+    }
+
+    // ✅ ADMIN → Get by status
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<LoanApplication>> getByStatus(@PathVariable String status) {
+        log.info("GET /application/status/{}", status);
+        return ResponseEntity.ok(loanService.getByStatus(status));
+    }
+
+    // ✅ ADMIN → Update status via Feign from Admin Service
     @PutMapping("/status/{id}")
-    public LoanApplication updateStatus(@PathVariable Long id,
-                                        @RequestParam String status) {
-        return loanService.updateStatus(id, status);
+    public ResponseEntity<LoanApplication> updateStatus(
+            @PathVariable Long id,
+            @RequestBody LoanStatusUpdateRequest request) {
+        log.info("PUT /application/status/{} → {}", id, request.getStatus());
+        return ResponseEntity.ok(loanService.updateStatus(id, request));
     }
 
-    // ADMIN ONLY
+    // ✅ ADMIN → Delete via Feign from Admin Service
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
-        loanService.delete(id);
-        return "Deleted Successfully";
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        log.info("DELETE /application/{}", id);
+        return ResponseEntity.ok(loanService.delete(id));
     }
 }

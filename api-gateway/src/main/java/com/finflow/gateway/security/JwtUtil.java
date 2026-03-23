@@ -1,36 +1,56 @@
 package com.finflow.gateway.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.security.Key;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "mysecretkeymysecretkeymysecretkey";
+    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
 
-    // extract username
+    // ⚠️ Must be same secret as Auth Service
+    private static final String SECRET = "mysecretkeymysecretkeymysecretkey12";
+
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
+
+    // Extract all claims at once — avoids parsing token multiple times
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
     public String extractUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        String username = extractAllClaims(token).getSubject();
+        log.debug("🔍 Extracted username from token: {}", username);
+        return username;
     }
 
-    // 🔥 ADD THIS METHOD (MISSING)
     public String extractRole(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("role", String.class);
+        String role = extractAllClaims(token).get("role", String.class);
+        log.debug("🔍 Extracted role from token: {}", role);
+        return role;
     }
 
-    // validate token
-    public boolean validateToken(String token, String username) {
-        return extractUsername(token).equals(username);
+    public boolean validateToken(String token) {
+        try {
+            // Parsing itself validates signature + expiry
+            extractAllClaims(token);
+            log.debug("✅ Token is valid");
+            return true;
+        } catch (Exception e) {
+            log.warn("❌ Token validation failed: {}", e.getMessage());
+            return false;
+        }
     }
 }

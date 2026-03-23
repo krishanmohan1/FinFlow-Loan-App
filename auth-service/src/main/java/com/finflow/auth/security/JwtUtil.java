@@ -1,50 +1,68 @@
 package com.finflow.auth.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "mysecretkeymysecretkeymysecretkey";
+    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
 
-    // 🔥 Generate token with ROLE
+    // ⚠️ Must match API Gateway secret exactly
+    private static final String SECRET = "mysecretkeymysecretkeymysecretkey12";
+
+    // Token valid for 1 hour
+    private static final long EXPIRATION_MS = 1000L * 60 * 60;
+
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
+
+    // 🔥 Generate token with username + role
     public String generateToken(String username, String role) {
+        log.debug("🔑 Generating token for user: {}, role: {}", username, role);
         return Jwts.builder()
                 .setSubject(username)
-                .claim("role", role)   // ✅ ADD ROLE
+                .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()), SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // extract username
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
     public String extractUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        return extractAllClaims(token).getSubject();
     }
 
-    // 🔥 extract role
     public String extractRole(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("role", String.class);
+        return extractAllClaims(token).get("role", String.class);
     }
 
-    // validate token
     public boolean validateToken(String token, String username) {
-        return extractUsername(token).equals(username);
+        try {
+            String extracted = extractUsername(token);
+            boolean valid = extracted.equals(username);
+            log.debug("🔍 Token validation for user {}: {}", username, valid);
+            return valid;
+        } catch (Exception e) {
+            log.warn("❌ Token validation error: {}", e.getMessage());
+            return false;
+        }
     }
 }
