@@ -1,0 +1,360 @@
+2026-03-23 21:56:37 [main] INFO  c.f.d.DocumentServiceApplication - Starting DocumentServiceApplication using Java 17.0.11 with PID 7228 (D:\FinFlow\document-service\target\classes started by krish in D:\FinFlow\document-service)
+2026-03-23 21:56:37 [main] DEBUG c.f.d.DocumentServiceApplication - Running with Spring Boot v3.5.12, Spring v6.2.17
+2026-03-23 21:56:37 [main] INFO  c.f.d.DocumentServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-23 21:56:38 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 21:56:38 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 140 ms. Found 1 JPA repository interface.
+2026-03-23 21:56:38 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e226afe6-f4a0-3c7d-816c-c16f8983a920
+2026-03-23 21:56:39 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9093 (http)
+2026-03-23 21:56:39 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9093"]
+2026-03-23 21:56:39 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 21:56:39 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-03-23 21:56:39 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 21:56:39 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1616 ms
+2026-03-23 21:56:39 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-23 21:56:39 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-03-23 21:56:39 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-23 21:56:39 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 21:56:39 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 21:56:40 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@59014efe
+2026-03-23 21:56:40 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 21:56:40 [main] WARN  org.hibernate.dialect.Dialect - HHH000511: The 11.2.0 version for [org.hibernate.dialect.OracleDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 19.0.0. Check the community dialects project for available legacy versions.
+2026-03-23 21:56:40 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-23 21:56:41 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-23 21:56:42 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 21:56:42 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-23 21:56:43 [main] INFO  o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-03-23 21:56:43 [main] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-23 21:56:43 [main] INFO  o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-03-23 21:56:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-03-23 21:56:43 [main] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 21:56:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-03-23 21:56:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-03-23 21:56:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-03-23 21:56:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-03-23 21:56:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-03-23 21:56:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-03-23 21:56:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-03-23 21:56:44 [main] INFO  c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-03-23 21:56:44 [main] INFO  c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2026-03-23 21:56:44 [main] INFO  c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-03-23 21:56:44 [main] INFO  c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1774283204088 with initial instances count: 2
+2026-03-23 21:56:44 [main] INFO  o.s.c.n.e.s.EurekaServiceRegistry - Registering application DOCUMENT-SERVICE with eureka with status UP
+2026-03-23 21:56:44 [main] INFO  c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1774283204095, current=UP, previous=STARTING]
+2026-03-23 21:56:44 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_DOCUMENT-SERVICE/172.22.33.144:document-service:9093: registering service...
+2026-03-23 21:56:44 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9093"]
+2026-03-23 21:56:44 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9093 (http) with context path '/'
+2026-03-23 21:56:44 [main] INFO  o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 9093
+2026-03-23 21:56:44 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_DOCUMENT-SERVICE/172.22.33.144:document-service:9093 - registration status: 204
+2026-03-23 21:56:44 [main] INFO  o.s.a.r.c.CachingConnectionFactory - Attempting to connect to: [localhost:5672]
+2026-03-23 21:56:44 [main] INFO  o.s.a.r.c.CachingConnectionFactory - Created new connection: rabbitConnectionFactory#438a2337:0/SimpleConnection@150a201b [delegate=amqp://guest@127.0.0.1:5672/, localPort=54602]
+2026-03-23 21:56:44 [main] INFO  c.f.d.DocumentServiceApplication - Started DocumentServiceApplication in 7.625 seconds (process running for 8.159)
+2026-03-23 21:56:44 [main] INFO  c.f.d.DocumentServiceApplication - ? Document Service Started on port 9093
+2026-03-23 21:56:44 [main] INFO  c.f.d.DocumentServiceApplication - ? Listening on RabbitMQ queue: loanQueue
+2026-03-23 22:01:43 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:06:43 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:11:43 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:16:43 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:21:44 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:26:44 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:31:44 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:36:44 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:54:38 [main] INFO  c.f.d.DocumentServiceApplication - Starting DocumentServiceApplication using Java 17.0.11 with PID 16208 (D:\FinFlow\document-service\target\classes started by krish in D:\FinFlow\document-service)
+2026-03-23 22:54:38 [main] DEBUG c.f.d.DocumentServiceApplication - Running with Spring Boot v3.5.12, Spring v6.2.17
+2026-03-23 22:54:38 [main] INFO  c.f.d.DocumentServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-23 22:54:39 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 22:54:40 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 305 ms. Found 1 JPA repository interface.
+2026-03-23 22:54:40 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e226afe6-f4a0-3c7d-816c-c16f8983a920
+2026-03-23 22:54:41 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9093 (http)
+2026-03-23 22:54:41 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9093"]
+2026-03-23 22:54:41 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 22:54:41 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-03-23 22:54:41 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 22:54:41 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3404 ms
+2026-03-23 22:54:42 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-23 22:54:42 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-03-23 22:54:42 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-23 22:54:43 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 22:54:43 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 22:54:43 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@5f5923ef
+2026-03-23 22:54:43 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 22:54:44 [main] WARN  org.hibernate.dialect.Dialect - HHH000511: The 11.2.0 version for [org.hibernate.dialect.OracleDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 19.0.0. Check the community dialects project for available legacy versions.
+2026-03-23 22:54:44 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-23 22:54:46 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-23 22:54:48 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 22:54:48 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loanConsumer' defined in file [D:\FinFlow\document-service\target\classes\com\finflow\document\consumer\LoanConsumer.class]: Failed to instantiate [com.finflow.document.consumer.LoanConsumer]: Constructor threw exception
+2026-03-23 22:54:48 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 22:54:48 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-23 22:54:48 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-23 22:54:48 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-03-23 22:54:48 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-23 22:54:48 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loanConsumer' defined in file [D:\FinFlow\document-service\target\classes\com\finflow\document\consumer\LoanConsumer.class]: Failed to instantiate [com.finflow.document.consumer.LoanConsumer]: Constructor threw exception
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1357)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1242)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:991)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.finflow.document.DocumentServiceApplication.main(DocumentServiceApplication.java:14)
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.finflow.document.consumer.LoanConsumer]: Constructor threw exception
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:223)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:123)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1351)
+	... 19 common frames omitted
+Caused by: java.lang.Error: Unresolved compilation problems: 
+	The blank final field documentRepository may not have been initialized
+	The method builder() is undefined for the type Document
+
+	at com.finflow.document.consumer.LoanConsumer.<init>(LoanConsumer.java:20)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:197)
+	... 21 common frames omitted
+2026-03-23 22:55:40 [main] INFO  c.f.d.DocumentServiceApplication - Starting DocumentServiceApplication using Java 17.0.11 with PID 21980 (D:\FinFlow\document-service\target\classes started by krish in D:\FinFlow\document-service)
+2026-03-23 22:55:40 [main] DEBUG c.f.d.DocumentServiceApplication - Running with Spring Boot v3.5.12, Spring v6.2.17
+2026-03-23 22:55:40 [main] INFO  c.f.d.DocumentServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-23 22:55:41 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 22:55:42 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 284 ms. Found 1 JPA repository interface.
+2026-03-23 22:55:42 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e226afe6-f4a0-3c7d-816c-c16f8983a920
+2026-03-23 22:55:43 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9093 (http)
+2026-03-23 22:55:43 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9093"]
+2026-03-23 22:55:43 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 22:55:43 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-03-23 22:55:43 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 22:55:43 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3033 ms
+2026-03-23 22:55:43 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-23 22:55:44 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-03-23 22:55:44 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-23 22:55:44 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 22:55:44 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 22:55:45 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@7c840fe3
+2026-03-23 22:55:45 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 22:55:45 [main] WARN  org.hibernate.dialect.Dialect - HHH000511: The 11.2.0 version for [org.hibernate.dialect.OracleDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 19.0.0. Check the community dialects project for available legacy versions.
+2026-03-23 22:55:45 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-23 22:55:47 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-23 22:55:47 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 22:55:47 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loanConsumer' defined in file [D:\FinFlow\document-service\target\classes\com\finflow\document\consumer\LoanConsumer.class]: Failed to instantiate [com.finflow.document.consumer.LoanConsumer]: Constructor threw exception
+2026-03-23 22:55:47 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 22:55:47 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-23 22:55:47 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-23 22:55:47 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-03-23 22:55:47 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-23 22:55:47 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loanConsumer' defined in file [D:\FinFlow\document-service\target\classes\com\finflow\document\consumer\LoanConsumer.class]: Failed to instantiate [com.finflow.document.consumer.LoanConsumer]: Constructor threw exception
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1357)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1242)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:991)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.finflow.document.DocumentServiceApplication.main(DocumentServiceApplication.java:14)
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.finflow.document.consumer.LoanConsumer]: Constructor threw exception
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:223)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:123)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1351)
+	... 19 common frames omitted
+Caused by: java.lang.Error: Unresolved compilation problems: 
+	The blank final field documentRepository may not have been initialized
+	The method builder() is undefined for the type Document
+
+	at com.finflow.document.consumer.LoanConsumer.<init>(LoanConsumer.java:20)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:197)
+	... 21 common frames omitted
+2026-03-23 22:58:56 [main] INFO  c.f.d.DocumentServiceApplication - Starting DocumentServiceApplication using Java 17.0.11 with PID 25932 (D:\FinFlow\document-service\target\classes started by krish in D:\FinFlow\document-service)
+2026-03-23 22:58:56 [main] DEBUG c.f.d.DocumentServiceApplication - Running with Spring Boot v3.5.12, Spring v6.2.17
+2026-03-23 22:58:56 [main] INFO  c.f.d.DocumentServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-23 22:58:57 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 22:58:57 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 318 ms. Found 1 JPA repository interface.
+2026-03-23 22:58:58 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e226afe6-f4a0-3c7d-816c-c16f8983a920
+2026-03-23 22:58:59 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9093 (http)
+2026-03-23 22:58:59 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9093"]
+2026-03-23 22:58:59 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 22:58:59 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-03-23 22:58:59 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 22:58:59 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3153 ms
+2026-03-23 22:58:59 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-23 22:58:59 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-03-23 22:58:59 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-23 22:59:00 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 22:59:00 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 22:59:01 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@7c840fe3
+2026-03-23 22:59:01 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 22:59:01 [main] WARN  org.hibernate.dialect.Dialect - HHH000511: The 11.2.0 version for [org.hibernate.dialect.OracleDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 19.0.0. Check the community dialects project for available legacy versions.
+2026-03-23 22:59:01 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-23 22:59:03 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-23 22:59:03 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 22:59:03 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loanConsumer' defined in file [D:\FinFlow\document-service\target\classes\com\finflow\document\consumer\LoanConsumer.class]: Failed to instantiate [com.finflow.document.consumer.LoanConsumer]: Constructor threw exception
+2026-03-23 22:59:03 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 22:59:03 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-23 22:59:03 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-23 22:59:03 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-03-23 22:59:03 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-23 22:59:03 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loanConsumer' defined in file [D:\FinFlow\document-service\target\classes\com\finflow\document\consumer\LoanConsumer.class]: Failed to instantiate [com.finflow.document.consumer.LoanConsumer]: Constructor threw exception
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1357)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1242)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:991)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.finflow.document.DocumentServiceApplication.main(DocumentServiceApplication.java:14)
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.finflow.document.consumer.LoanConsumer]: Constructor threw exception
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:223)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:123)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1351)
+	... 19 common frames omitted
+Caused by: java.lang.Error: Unresolved compilation problems: 
+	The blank final field documentRepository may not have been initialized
+	The method builder() is undefined for the type Document
+
+	at com.finflow.document.consumer.LoanConsumer.<init>(LoanConsumer.java:20)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:197)
+	... 21 common frames omitted
+2026-03-23 23:01:09 [main] INFO  c.f.d.DocumentServiceApplication - Starting DocumentServiceApplication using Java 17.0.11 with PID 22436 (D:\FinFlow\document-service\target\classes started by krish in D:\FinFlow\document-service)
+2026-03-23 23:01:09 [main] DEBUG c.f.d.DocumentServiceApplication - Running with Spring Boot v3.5.12, Spring v6.2.17
+2026-03-23 23:01:09 [main] INFO  c.f.d.DocumentServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-23 23:01:11 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 23:01:11 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 275 ms. Found 1 JPA repository interface.
+2026-03-23 23:01:11 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e226afe6-f4a0-3c7d-816c-c16f8983a920
+2026-03-23 23:01:12 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9093 (http)
+2026-03-23 23:01:12 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9093"]
+2026-03-23 23:01:12 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 23:01:12 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-03-23 23:01:12 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 23:01:12 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3024 ms
+2026-03-23 23:01:13 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-23 23:01:13 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-03-23 23:01:13 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-23 23:01:13 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 23:01:14 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 23:01:14 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@5f5923ef
+2026-03-23 23:01:14 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 23:01:14 [main] WARN  org.hibernate.dialect.Dialect - HHH000511: The 11.2.0 version for [org.hibernate.dialect.OracleDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 19.0.0. Check the community dialects project for available legacy versions.
+2026-03-23 23:01:15 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-23 23:01:16 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-23 23:01:16 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 23:01:17 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-23 23:01:19 [main] INFO  o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-03-23 23:01:19 [main] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-23 23:01:19 [main] INFO  o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-03-23 23:01:19 [main] INFO  c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-03-23 23:01:19 [main] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 23:01:19 [main] INFO  c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-03-23 23:01:19 [main] INFO  c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-03-23 23:01:19 [main] INFO  c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-03-23 23:01:19 [main] INFO  c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-03-23 23:01:19 [main] INFO  c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-03-23 23:01:19 [main] INFO  c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-03-23 23:01:19 [main] INFO  c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-03-23 23:01:20 [main] INFO  c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-03-23 23:01:20 [main] INFO  c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2026-03-23 23:01:20 [main] INFO  c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-03-23 23:01:20 [main] INFO  c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1774287080077 with initial instances count: 3
+2026-03-23 23:01:20 [main] INFO  o.s.c.n.e.s.EurekaServiceRegistry - Registering application DOCUMENT-SERVICE with eureka with status UP
+2026-03-23 23:01:20 [main] INFO  c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1774287080086, current=UP, previous=STARTING]
+2026-03-23 23:01:20 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9093"]
+2026-03-23 23:01:20 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_DOCUMENT-SERVICE/172.22.33.144:document-service:9093: registering service...
+2026-03-23 23:01:20 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9093 (http) with context path '/'
+2026-03-23 23:01:20 [main] INFO  o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 9093
+2026-03-23 23:01:20 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_DOCUMENT-SERVICE/172.22.33.144:document-service:9093 - registration status: 204
+2026-03-23 23:01:20 [main] INFO  o.s.a.r.c.CachingConnectionFactory - Attempting to connect to: [localhost:5672]
+2026-03-23 23:01:20 [main] INFO  o.s.a.r.c.CachingConnectionFactory - Created new connection: rabbitConnectionFactory#e62d757:0/SimpleConnection@66e74d3 [delegate=amqp://guest@127.0.0.1:5672/, localPort=59241]
+2026-03-23 23:01:20 [main] INFO  c.f.d.DocumentServiceApplication - Started DocumentServiceApplication in 12.239 seconds (process running for 13.226)
+2026-03-23 23:01:20 [main] INFO  c.f.d.DocumentServiceApplication - ? Document Service Started on port 9093
+2026-03-23 23:01:20 [main] INFO  c.f.d.DocumentServiceApplication - ? Listening on RabbitMQ queue: loanQueue
+2026-03-23 23:06:19 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 23:11:19 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 23:16:19 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration

@@ -1,0 +1,299 @@
+2026-03-23 21:55:36 [main] INFO  c.f.a.ApplicationServiceApplication - Starting ApplicationServiceApplication using Java 17.0.11 with PID 10780 (D:\FinFlow\application-service\target\classes started by krish in D:\FinFlow\application-service)
+2026-03-23 21:55:36 [main] DEBUG c.f.a.ApplicationServiceApplication - Running with Spring Boot v3.5.12, Spring v6.2.17
+2026-03-23 21:55:36 [main] INFO  c.f.a.ApplicationServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-23 21:55:37 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 21:55:37 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 138 ms. Found 1 JPA repository interface.
+2026-03-23 21:55:37 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=4c7181e4-cf2c-3080-ba66-bda1a1895cc8
+2026-03-23 21:55:38 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9092 (http)
+2026-03-23 21:55:38 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9092"]
+2026-03-23 21:55:38 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 21:55:38 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-03-23 21:55:38 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 21:55:38 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1778 ms
+2026-03-23 21:55:38 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-23 21:55:38 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-03-23 21:55:38 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-23 21:55:39 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 21:55:39 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 21:55:40 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@656c5818
+2026-03-23 21:55:40 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 21:55:40 [main] WARN  org.hibernate.dialect.Dialect - HHH000511: The 11.2.0 version for [org.hibernate.dialect.OracleDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 19.0.0. Check the community dialects project for available legacy versions.
+2026-03-23 21:55:40 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-23 21:55:41 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-23 21:55:42 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 21:55:43 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-23 21:55:43 [main] INFO  o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-03-23 21:55:43 [main] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-23 21:55:43 [main] INFO  o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-03-23 21:55:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-03-23 21:55:43 [main] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 21:55:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-03-23 21:55:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-03-23 21:55:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-03-23 21:55:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-03-23 21:55:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-03-23 21:55:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-03-23 21:55:43 [main] INFO  c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-03-23 21:55:44 [main] INFO  c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-03-23 21:55:44 [main] INFO  c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2026-03-23 21:55:44 [main] INFO  c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-03-23 21:55:44 [main] INFO  c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1774283144208 with initial instances count: 1
+2026-03-23 21:55:44 [main] INFO  o.s.c.n.e.s.EurekaServiceRegistry - Registering application APPLICATION-SERVICE with eureka with status UP
+2026-03-23 21:55:44 [main] INFO  c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1774283144215, current=UP, previous=STARTING]
+2026-03-23 21:55:44 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_APPLICATION-SERVICE/localhost:application-service:9092: registering service...
+2026-03-23 21:55:44 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9092"]
+2026-03-23 21:55:44 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9092 (http) with context path '/'
+2026-03-23 21:55:44 [main] INFO  o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 9092
+2026-03-23 21:55:44 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_APPLICATION-SERVICE/localhost:application-service:9092 - registration status: 204
+2026-03-23 21:55:44 [main] INFO  o.s.a.r.c.CachingConnectionFactory - Attempting to connect to: [localhost:5672]
+2026-03-23 21:55:44 [main] INFO  o.s.a.r.c.CachingConnectionFactory - Created new connection: rabbitConnectionFactory#2aa85cc4:0/SimpleConnection@323a47fe [delegate=amqp://guest@127.0.0.1:5672/, localPort=54506]
+2026-03-23 21:55:44 [main] INFO  c.f.a.ApplicationServiceApplication - Started ApplicationServiceApplication in 9.777 seconds (process running for 10.323)
+2026-03-23 21:55:44 [main] INFO  c.f.a.ApplicationServiceApplication - ? Application Service Started on port 9092
+2026-03-23 22:00:43 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:05:43 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:10:45 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:15:46 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:20:46 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:25:46 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:30:46 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:35:46 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 22:55:16 [main] INFO  c.f.a.ApplicationServiceApplication - Starting ApplicationServiceApplication using Java 17.0.11 with PID 16388 (D:\FinFlow\application-service\target\classes started by krish in D:\FinFlow\application-service)
+2026-03-23 22:55:16 [main] DEBUG c.f.a.ApplicationServiceApplication - Running with Spring Boot v3.5.12, Spring v6.2.17
+2026-03-23 22:55:16 [main] INFO  c.f.a.ApplicationServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-23 22:55:17 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 22:55:18 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 453 ms. Found 1 JPA repository interface.
+2026-03-23 22:55:18 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=4c7181e4-cf2c-3080-ba66-bda1a1895cc8
+2026-03-23 22:55:19 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9092 (http)
+2026-03-23 22:55:20 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9092"]
+2026-03-23 22:55:20 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 22:55:20 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-03-23 22:55:20 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 22:55:20 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4060 ms
+2026-03-23 22:55:20 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-23 22:55:21 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-03-23 22:55:21 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-23 22:55:21 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 22:55:22 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 22:55:23 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@2006fdaa
+2026-03-23 22:55:23 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 22:55:23 [main] WARN  org.hibernate.dialect.Dialect - HHH000511: The 11.2.0 version for [org.hibernate.dialect.OracleDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 19.0.0. Check the community dialects project for available legacy versions.
+2026-03-23 22:55:23 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-23 22:55:25 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-23 22:55:26 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 22:55:26 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loanController' defined in file [D:\FinFlow\application-service\target\classes\com\finflow\application\controller\LoanController.class]: Failed to instantiate [com.finflow.application.controller.LoanController]: Constructor threw exception
+2026-03-23 22:55:26 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 22:55:26 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-23 22:55:26 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-23 22:55:26 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-03-23 22:55:26 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-23 22:55:26 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loanController' defined in file [D:\FinFlow\application-service\target\classes\com\finflow\application\controller\LoanController.class]: Failed to instantiate [com.finflow.application.controller.LoanController]: Constructor threw exception
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1357)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1242)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:991)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.finflow.application.ApplicationServiceApplication.main(ApplicationServiceApplication.java:14)
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.finflow.application.controller.LoanController]: Constructor threw exception
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:223)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:123)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1351)
+	... 19 common frames omitted
+Caused by: java.lang.Error: Unresolved compilation problems: 
+	The blank final field loanService may not have been initialized
+	The method getUsername() is undefined for the type LoanApplication
+	The method getStatus() is undefined for the type LoanStatusUpdateRequest
+
+	at com.finflow.application.controller.LoanController.<init>(LoanController.java:21)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:197)
+	... 21 common frames omitted
+2026-03-23 22:58:39 [main] INFO  c.f.a.ApplicationServiceApplication - Starting ApplicationServiceApplication using Java 17.0.11 with PID 21192 (D:\FinFlow\application-service\target\classes started by krish in D:\FinFlow\application-service)
+2026-03-23 22:58:39 [main] DEBUG c.f.a.ApplicationServiceApplication - Running with Spring Boot v3.5.12, Spring v6.2.17
+2026-03-23 22:58:39 [main] INFO  c.f.a.ApplicationServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-23 22:58:41 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 22:58:41 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 273 ms. Found 1 JPA repository interface.
+2026-03-23 22:58:42 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=4c7181e4-cf2c-3080-ba66-bda1a1895cc8
+2026-03-23 22:58:43 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9092 (http)
+2026-03-23 22:58:43 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9092"]
+2026-03-23 22:58:43 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 22:58:43 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-03-23 22:58:43 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 22:58:43 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3182 ms
+2026-03-23 22:58:43 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-23 22:58:43 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-03-23 22:58:43 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-23 22:58:44 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 22:58:44 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 22:58:45 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@2006fdaa
+2026-03-23 22:58:45 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 22:58:45 [main] WARN  org.hibernate.dialect.Dialect - HHH000511: The 11.2.0 version for [org.hibernate.dialect.OracleDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 19.0.0. Check the community dialects project for available legacy versions.
+2026-03-23 22:58:45 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-23 22:58:47 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-23 22:58:47 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 22:58:47 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loanController' defined in file [D:\FinFlow\application-service\target\classes\com\finflow\application\controller\LoanController.class]: Failed to instantiate [com.finflow.application.controller.LoanController]: Constructor threw exception
+2026-03-23 22:58:47 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 22:58:47 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-23 22:58:47 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-23 22:58:47 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-03-23 22:58:47 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-23 22:58:47 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loanController' defined in file [D:\FinFlow\application-service\target\classes\com\finflow\application\controller\LoanController.class]: Failed to instantiate [com.finflow.application.controller.LoanController]: Constructor threw exception
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1357)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1242)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:991)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.finflow.application.ApplicationServiceApplication.main(ApplicationServiceApplication.java:14)
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.finflow.application.controller.LoanController]: Constructor threw exception
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:223)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:123)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1351)
+	... 19 common frames omitted
+Caused by: java.lang.Error: Unresolved compilation problems: 
+	The blank final field loanService may not have been initialized
+	The method getUsername() is undefined for the type LoanApplication
+	The method getStatus() is undefined for the type LoanStatusUpdateRequest
+
+	at com.finflow.application.controller.LoanController.<init>(LoanController.java:21)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:197)
+	... 21 common frames omitted
+2026-03-23 23:00:27 [main] INFO  c.f.a.ApplicationServiceApplication - Starting ApplicationServiceApplication using Java 17.0.11 with PID 8752 (D:\FinFlow\application-service\target\classes started by krish in D:\FinFlow\application-service)
+2026-03-23 23:00:27 [main] DEBUG c.f.a.ApplicationServiceApplication - Running with Spring Boot v3.5.12, Spring v6.2.17
+2026-03-23 23:00:27 [main] INFO  c.f.a.ApplicationServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-23 23:00:29 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 23:00:29 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 295 ms. Found 1 JPA repository interface.
+2026-03-23 23:00:29 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=4c7181e4-cf2c-3080-ba66-bda1a1895cc8
+2026-03-23 23:00:30 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9092 (http)
+2026-03-23 23:00:30 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9092"]
+2026-03-23 23:00:30 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 23:00:30 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-03-23 23:00:31 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 23:00:31 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3191 ms
+2026-03-23 23:00:31 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-23 23:00:31 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-03-23 23:00:31 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-23 23:00:32 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 23:00:32 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 23:00:32 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@21688427
+2026-03-23 23:00:32 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 23:00:32 [main] WARN  org.hibernate.dialect.Dialect - HHH000511: The 11.2.0 version for [org.hibernate.dialect.OracleDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 19.0.0. Check the community dialects project for available legacy versions.
+2026-03-23 23:00:33 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-23 23:00:34 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-23 23:00:35 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 23:00:36 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-23 23:00:37 [main] INFO  o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-03-23 23:00:37 [main] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-23 23:00:37 [main] INFO  o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-03-23 23:00:37 [main] INFO  c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-03-23 23:00:37 [main] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 23:00:37 [main] INFO  c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-03-23 23:00:37 [main] INFO  c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-03-23 23:00:37 [main] INFO  c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-03-23 23:00:37 [main] INFO  c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-03-23 23:00:37 [main] INFO  c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-03-23 23:00:37 [main] INFO  c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-03-23 23:00:37 [main] INFO  c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-03-23 23:00:38 [main] INFO  c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-03-23 23:00:38 [main] INFO  c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2026-03-23 23:00:38 [main] INFO  c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-03-23 23:00:38 [main] INFO  c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1774287038428 with initial instances count: 2
+2026-03-23 23:00:38 [main] INFO  o.s.c.n.e.s.EurekaServiceRegistry - Registering application APPLICATION-SERVICE with eureka with status UP
+2026-03-23 23:00:38 [main] INFO  c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1774287038438, current=UP, previous=STARTING]
+2026-03-23 23:00:38 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9092"]
+2026-03-23 23:00:38 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_APPLICATION-SERVICE/172.22.33.144:application-service:9092: registering service...
+2026-03-23 23:00:38 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9092 (http) with context path '/'
+2026-03-23 23:00:38 [main] INFO  o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 9092
+2026-03-23 23:00:38 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_APPLICATION-SERVICE/172.22.33.144:application-service:9092 - registration status: 204
+2026-03-23 23:00:38 [main] INFO  o.s.a.r.c.CachingConnectionFactory - Attempting to connect to: [localhost:5672]
+2026-03-23 23:00:38 [main] INFO  o.s.a.r.c.CachingConnectionFactory - Created new connection: rabbitConnectionFactory#4973dacf:0/SimpleConnection@74a15f4 [delegate=amqp://guest@127.0.0.1:5672/, localPort=58214]
+2026-03-23 23:00:38 [main] INFO  c.f.a.ApplicationServiceApplication - Started ApplicationServiceApplication in 12.736 seconds (process running for 13.759)
+2026-03-23 23:00:38 [main] INFO  c.f.a.ApplicationServiceApplication - ? Application Service Started on port 9092
+2026-03-23 23:05:37 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 23:10:37 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 23:15:37 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-23 23:19:36 [SpringApplicationShutdownHook] INFO  o.s.c.n.e.s.EurekaServiceRegistry - Unregistering application APPLICATION-SERVICE with eureka with status DOWN
+2026-03-23 23:19:36 [SpringApplicationShutdownHook] INFO  c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1774288176682, current=DOWN, previous=UP]
+2026-03-23 23:19:36 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_APPLICATION-SERVICE/172.22.33.144:application-service:9092: registering service...
+2026-03-23 23:19:36 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_APPLICATION-SERVICE/172.22.33.144:application-service:9092 - registration status: 204
+2026-03-23 23:19:37 [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2] INFO  o.s.a.r.l.SimpleMessageListenerContainer - Waiting for workers to finish.
+2026-03-23 23:19:37 [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2] INFO  o.s.a.r.l.SimpleMessageListenerContainer - Successfully waited for workers to finish.
+2026-03-23 23:19:37 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-23 23:19:37 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-23 23:19:37 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 23:19:37 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-23 23:19:37 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-23 23:19:37 [SpringApplicationShutdownHook] INFO  c.netflix.discovery.DiscoveryClient - Shutting down DiscoveryClient ...
+2026-03-23 23:19:40 [SpringApplicationShutdownHook] INFO  c.netflix.discovery.DiscoveryClient - Unregistering ...
+2026-03-23 23:19:40 [DiscoveryClient-%d] WARN  c.n.discovery.TimedSupervisorTask - task supervisor shutting down, can't accept the task
+2026-03-23 23:19:40 [SpringApplicationShutdownHook] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_APPLICATION-SERVICE/172.22.33.144:application-service:9092 - deregister  status: 200
+2026-03-23 23:19:40 [SpringApplicationShutdownHook] INFO  c.netflix.discovery.DiscoveryClient - Completed shut down of DiscoveryClient

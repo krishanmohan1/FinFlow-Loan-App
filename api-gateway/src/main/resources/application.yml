@@ -7,44 +7,42 @@ spring:
 
   cloud:
     gateway:
-      routes:
+      server:
+        webflux:
+          routes:
 
-        # 🔐 AUTH SERVICE
-        - id: auth-service
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/auth/**
-          filters:
-            - name: JwtGatewayFilter
+            - id: auth-service
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/auth/**
+              filters:
+                - name: JwtGatewayFilter
 
-        # 📄 APPLICATION SERVICE
-        - id: application-service
-          uri: lb://APPLICATION-SERVICE
-          predicates:
-            - Path=/application/**
-          filters:
-            - name: JwtGatewayFilter
+            - id: application-service
+              uri: lb://APPLICATION-SERVICE
+              predicates:
+                - Path=/application/**
+              filters:
+                - name: JwtGatewayFilter
 
-        # 📁 DOCUMENT SERVICE
-        - id: document-service
-          uri: lb://DOCUMENT-SERVICE
-          predicates:
-            - Path=/document/**
-          filters:
-            - name: JwtGatewayFilter
+            - id: document-service
+              uri: lb://DOCUMENT-SERVICE
+              predicates:
+                - Path=/document/**
+              filters:
+                - name: JwtGatewayFilter
 
-        # 👑 ADMIN SERVICE
-        - id: admin-service
-          uri: lb://ADMIN-SERVICE
-          predicates:
-            - Path=/admin/**
-          filters:
-            - name: JwtGatewayFilter
+            - id: admin-service
+              uri: lb://ADMIN-SERVICE
+              predicates:
+                - Path=/admin/**
+              filters:
+                - name: JwtGatewayFilter
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eureka-server:8761/eureka/
 
 logging:
   level:

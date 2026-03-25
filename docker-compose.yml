@@ -1,0 +1,169 @@
+version: '3.8'
+
+services:
+
+  # -------------------------------------------------------
+  # RABBITMQ — starts first, application + document need it
+  # -------------------------------------------------------
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"       # AMQP port — Spring services connect here
+      - "15672:15672"     # Management UI — open http://localhost:15672 (guest/guest)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - finflow-network
+
+  # -------------------------------------------------------
+  # EUREKA SERVER — starts second, all services register here
+  # -------------------------------------------------------
+  eureka-server:
+    build:
+      context: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8761/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    networks:
+      - finflow-network
+
+  # -------------------------------------------------------
+  # AUTH SERVICE
+  # -------------------------------------------------------
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: auth-service
+    ports:
+      - "9091:9091"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@10.174.133.119:1521/XE
+      SPRING_DATASOURCE_USERNAME: capgdb
+      SPRING_DATASOURCE_PASSWORD: capgdb
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - finflow-network
+
+  # -------------------------------------------------------
+  # APPLICATION SERVICE
+  # -------------------------------------------------------
+  application-service:
+    build:
+      context: ./application-service
+    container_name: application-service
+    ports:
+      - "9092:9092"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@10.174.133.119:1521/XE
+      SPRING_DATASOURCE_USERNAME: capgdb
+      SPRING_DATASOURCE_PASSWORD: capgdb
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - finflow-network
+
+  # -------------------------------------------------------
+  # DOCUMENT SERVICE
+  # -------------------------------------------------------
+  document-service:
+    build:
+      context: ./document-service
+    container_name: document-service
+    ports:
+      - "9093:9093"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@10.174.133.119:1521/XE
+      SPRING_DATASOURCE_USERNAME: capgdb
+      SPRING_DATASOURCE_PASSWORD: capgdb
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    volumes:
+      - finflow-uploads:/root/finflow-uploads
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - finflow-network
+
+  # -------------------------------------------------------
+  # ADMIN SERVICE
+  # -------------------------------------------------------
+  admin-service:
+    build:
+      context: ./admin-service
+    container_name: admin-service
+    ports:
+      - "9094:9094"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - finflow-network
+
+  # -------------------------------------------------------
+  # API GATEWAY — starts last, needs all services in Eureka
+  # -------------------------------------------------------
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "9090:9090"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      application-service:
+        condition: service_started
+      document-service:
+        condition: service_started
+      admin-service:
+        condition: service_started
+    networks:
+      - finflow-network
+
+# -------------------------------------------------------
+# NETWORK — all containers talk to each other by name
+# -------------------------------------------------------
+networks:
+  finflow-network:
+    driver: bridge
+
+# -------------------------------------------------------
+# VOLUME — document uploads persist across container restarts
+# -------------------------------------------------------
+volumes:
+  finflow-uploads:

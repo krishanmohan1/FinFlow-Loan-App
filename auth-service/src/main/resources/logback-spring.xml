@@ -29,20 +29,3 @@
     </root>
 
 </configuration>
-```
-
-> **pom.xml is unchanged** — keep exactly as you have it.
-
----
-
-## 🧪 Auth Service — Postman Test Data
-
-### 1. Register User
-```
-POST http://localhost:9090/auth/register
-
-Body:
-{
-  "username": "user1",
-  "password": "password123"
-}
