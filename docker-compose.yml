@@ -4,16 +4,17 @@ services:
   oracle-db:
     image: gvenzl/oracle-xe:21-slim
     container_name: oracle-db
+    restart: always
     ports:
       - "1521:1521"
     environment:
       ORACLE_PASSWORD: oracle
     healthcheck:
-      test: ["CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s system/oracle@localhost:1521/XEPDB1 | grep -q 1 || exit 1"]
+      test: [ "CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s system/oracle@localhost:1521/XEPDB1 | grep -q 1 || exit 1" ]
       interval: 30s
       timeout: 15s
       retries: 20
-      start_period: 120s
+      start_period: 180s # 🔥 increased
     networks:
       - finflow-network
 
@@ -21,6 +22,7 @@ services:
   rabbitmq:
     image: rabbitmq:3.12-management
     container_name: rabbitmq
+    restart: always
     hostname: rabbitmq
     ports:
       - "5672:5672"
@@ -28,9 +30,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-      HOME: /tmp/rabbitmq
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -43,10 +44,11 @@ services:
     build:
       context: ./eureka-server
     container_name: eureka-server
+    restart: always
     ports:
       - "8761:8761"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8761/actuator/health 2>/dev/null | grep -q UP || exit 1"]
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:8761/actuator/health 2>/dev/null | grep -q UP || exit 1" ]
       interval: 15s
       timeout: 10s
       retries: 15
@@ -59,16 +61,17 @@ services:
     build:
       context: ./auth-service
     container_name: auth-service
+    restart: always
     ports:
       - "9091:9091"
+    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ] # 🔥 FIX
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
       SPRING_DATASOURCE_USERNAME: system
       SPRING_DATASOURCE_PASSWORD: oracle
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
       SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 60000
-      SPRING_JPA_PROPERTIES_HIBERNATE_TEMP_USE_JDBC_METADATA_DEFAULTS: false
     depends_on:
       oracle-db:
         condition: service_healthy
@@ -82,10 +85,12 @@ services:
     build:
       context: ./application-service
     container_name: application-service
+    restart: always
     ports:
       - "9092:9092"
+    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ] # 🔥 FIX
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
       SPRING_DATASOURCE_USERNAME: system
       SPRING_DATASOURCE_PASSWORD: oracle
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -95,7 +100,6 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
       SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 60000
-      SPRING_JPA_PROPERTIES_HIBERNATE_TEMP_USE_JDBC_METADATA_DEFAULTS: false
     depends_on:
       oracle-db:
         condition: service_healthy
@@ -111,10 +115,12 @@ services:
     build:
       context: ./document-service
     container_name: document-service
+    restart: always
     ports:
       - "9093:9093"
+    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ] # 🔥 FIX
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
       SPRING_DATASOURCE_USERNAME: system
       SPRING_DATASOURCE_PASSWORD: oracle
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -124,7 +130,6 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
       SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 60000
-      SPRING_JPA_PROPERTIES_HIBERNATE_TEMP_USE_JDBC_METADATA_DEFAULTS: false
     volumes:
       - finflow-uploads:/root/finflow-uploads
     depends_on:
@@ -142,6 +147,7 @@ services:
     build:
       context: ./admin-service
     container_name: admin-service
+    restart: always
     ports:
       - "9094:9094"
     environment:
@@ -157,6 +163,7 @@ services:
     build:
       context: ./api-gateway
     container_name: api-gateway
+    restart: always
     ports:
       - "9090:9090"
     environment:
@@ -164,14 +171,6 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
-      auth-service:
-        condition: service_started
-      application-service:
-        condition: service_started
-      document-service:
-        condition: service_started
-      admin-service:
-        condition: service_started
     networks:
       - finflow-network
 

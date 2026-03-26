@@ -6,17 +6,17 @@ spring:
     name: AUTH-SERVICE
 
   datasource:
-    url: jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+    url: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
     username: system
     password: oracle
     driver-class-name: oracle.jdbc.OracleDriver
     hikari:
-      initialization-fail-timeout: -1
-      connection-timeout: 60000
-      maximum-pool-size: 5
-      minimum-idle: 1
-      idle-timeout: 300000
-      keepalive-time: 60000
+      initializationFailTimeout: -1
+      connectionTimeout: 60000
+      maximumPoolSize: 5
+      minimumIdle: 1
+      idleTimeout: 300000
+      keepaliveTime: 60000
 
   jpa:
     hibernate:
