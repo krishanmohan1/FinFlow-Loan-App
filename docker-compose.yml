@@ -28,10 +28,7 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-      RABBITMQ_ERLANG_COOKIE: finflow-secret-cookie
-      RABBITMQ_NODENAME: rabbit@rabbitmq
-    volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
+      HOME: /tmp/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
@@ -184,4 +181,3 @@ networks:
 
 volumes:
   finflow-uploads:
-  rabbitmq-data:
