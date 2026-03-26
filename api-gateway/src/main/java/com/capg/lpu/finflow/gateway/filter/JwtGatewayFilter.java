@@ -27,30 +27,30 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
 
             String path = exchange.getRequest().getURI().getPath();
             String method = exchange.getRequest().getMethod().name();
-            log.info("📨 Incoming request → [{} {}]", method, path);
+            log.info(" Incoming request → [{} {}]", method, path);
 
-            // 🔓 PUBLIC ENDPOINTS — skip JWT check
+            //  PUBLIC ENDPOINTS — skip JWT check
             if (isPublicPath(path)) {
-                log.info("🔓 Public path, skipping JWT check → {}", path);
+                log.info(" Public path, skipping JWT check → {}", path);
                 return chain.filter(exchange);
             }
 
-            // 🔒 GET AUTH HEADER
+            //  GET AUTH HEADER
             String authHeader = exchange.getRequest()
                     .getHeaders()
                     .getFirst("Authorization");
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                log.warn("❌ Missing or invalid Authorization header for path: {}", path);
+                log.warn(" Missing or invalid Authorization header for path: {}", path);
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
 
             String token = authHeader.substring(7);
 
-            // 🔐 VALIDATE TOKEN
+            //  VALIDATE TOKEN
             if (!jwtUtil.validateToken(token)) {
-                log.warn("❌ Invalid or expired token for path: {}", path);
+                log.warn(" Invalid or expired token for path: {}", path);
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
@@ -58,48 +58,48 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
             String username = jwtUtil.extractUsername(token);
             String role = jwtUtil.extractRole(token);
 
-            log.info("✅ Token valid → user: {}, role: {}, path: {}", username, role, path);
+            log.info(" Token valid → user: {}, role: {}, path: {}", username, role, path);
 
-            // 🔥 ADMIN SERVICE — ADMIN only
+            //  ADMIN SERVICE — ADMIN only
             if (path.startsWith("/admin") && !"ADMIN".equals(role)) {
-                log.warn("🚫 Access denied → user: {} (role: {}) tried to access ADMIN path: {}",
+                log.warn(" Access denied → user: {} (role: {}) tried to access ADMIN path: {}",
                         username, role, path);
                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
 
-            // 🔥 APPLICATION SERVICE — USER + ADMIN
+            //  APPLICATION SERVICE — USER + ADMIN
             if (path.startsWith("/application") &&
                     !("USER".equals(role) || "ADMIN".equals(role))) {
-                log.warn("🚫 Access denied → user: {} (role: {}) tried to access APPLICATION path: {}",
+                log.warn(" Access denied → user: {} (role: {}) tried to access APPLICATION path: {}",
                         username, role, path);
                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
 
-            // 🔥 DOCUMENT SERVICE — USER + ADMIN
+            //  DOCUMENT SERVICE — USER + ADMIN
             if (path.startsWith("/document") &&
                     !("USER".equals(role) || "ADMIN".equals(role))) {
-                log.warn("🚫 Access denied → user: {} tried to access DOCUMENT path: {}", username, path);
+                log.warn(" Access denied → user: {} tried to access DOCUMENT path: {}", username, path);
                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
 
-            // ✅ PASS USER INFO TO DOWNSTREAM SERVICES via headers
+            //  PASS USER INFO TO DOWNSTREAM SERVICES via headers
             ServerHttpRequest mutatedRequest = exchange.getRequest()
                     .mutate()
                     .header("X-Auth-Username", username)
                     .header("X-Auth-Role", role)
                     .build();
 
-            log.info("➡️ Forwarding request to service with headers X-Auth-Username={}, X-Auth-Role={}",
+            log.info(" Forwarding request to service with headers X-Auth-Username={}, X-Auth-Role={}",
                     username, role);
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
         };
     }
 
-    // ✅ Public paths that skip JWT
+    //  Public paths that skip JWT
     private boolean isPublicPath(String path) {
         return path.contains("/auth/login")
                 || path.contains("/auth/register")

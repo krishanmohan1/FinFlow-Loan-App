@@ -12,7 +12,7 @@ public class ApiGatewayApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ApiGatewayApplication.class, args);
-        log.info("✅ API Gateway Started on port 9090");
-        log.info("🚪 All requests routed through → http://localhost:9090");
+        log.info(" API Gateway Started on port 9090");
+        log.info(" All requests routed through → http://localhost:9090");
     }
 }

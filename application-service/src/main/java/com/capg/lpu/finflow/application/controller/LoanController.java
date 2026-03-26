@@ -4,6 +4,9 @@ import com.capg.lpu.finflow.application.dto.LoanStatusUpdateRequest;
 import com.capg.lpu.finflow.application.entity.LoanApplication;
 import com.capg.lpu.finflow.application.service.LoanService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +18,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/application")
 @RequiredArgsConstructor
+@Tag(name = "Loan Application", description = "Apply for loans and manage applications")
 public class LoanController {
 
     private static final Logger log = LoggerFactory.getLogger(LoanController.class);
 
     private final LoanService loanService;
 
-    // ✅ USER → Apply for loan
+    @Operation(summary = "Apply for a loan", description = "USER submits a new loan application")
     @PostMapping("/apply")
     public ResponseEntity<LoanApplication> apply(
             @RequestBody LoanApplication loan,
@@ -32,23 +36,20 @@ public class LoanController {
         return ResponseEntity.ok(loanService.apply(loan));
     }
 
-    // ✅ USER → Get only MY loans
-    // ✅ ADMIN → Get all loans
+    @Operation(summary = "Get all loans", description = "ADMIN sees all loans, USER sees only their own")
     @GetMapping("/all")
     public ResponseEntity<List<LoanApplication>> getAll(
             @RequestHeader("X-Auth-Username") String authUsername,
             @RequestHeader("X-Auth-Role") String authRole) {
 
         log.info("GET /application/all → user: {}, role: {}", authUsername, authRole);
-
         if ("ADMIN".equals(authRole)) {
             return ResponseEntity.ok(loanService.getAll());
         }
         return ResponseEntity.ok(loanService.getByUsername(authUsername));
     }
 
-    // ✅ USER → Only own loan
-    // ✅ ADMIN → Any loan
+    @Operation(summary = "Get loan by ID", description = "USER can only see their own, ADMIN sees any")
     @GetMapping("/{id}")
     public ResponseEntity<LoanApplication> getById(
             @PathVariable Long id,
@@ -59,23 +60,20 @@ public class LoanController {
         return ResponseEntity.ok(loanService.getByIdSecure(id, authUsername, authRole));
     }
 
-    // ✅ ADMIN ONLY → Get loans by username
+    @Operation(summary = "Get loans by username", description = "ADMIN only")
     @GetMapping("/user/{username}")
     public ResponseEntity<List<LoanApplication>> getByUsername(
             @PathVariable String username,
             @RequestHeader("X-Auth-Role") String authRole) {
 
         log.info("GET /application/user/{} → role: {}", username, authRole);
-
         if (!"ADMIN".equals(authRole)) {
             throw new SecurityException("Only ADMIN can access this endpoint");
         }
-
         return ResponseEntity.ok(loanService.getByUsername(username));
     }
 
-    // ✅ USER → Own loans by status
-    // ✅ ADMIN → All loans by status
+    @Operation(summary = "Get loans by status", description = "ADMIN sees all by status, USER sees their own by status")
     @GetMapping("/status/{status}")
     public ResponseEntity<List<LoanApplication>> getByStatus(
             @PathVariable String status,
@@ -83,17 +81,13 @@ public class LoanController {
             @RequestHeader("X-Auth-Role") String authRole) {
 
         log.info("GET /application/status/{} → user: {}, role: {}", status, authUsername, authRole);
-
         if ("ADMIN".equals(authRole)) {
             return ResponseEntity.ok(loanService.getByStatus(status));
         }
-
-        return ResponseEntity.ok(
-                loanService.getByUsernameAndStatus(authUsername, status)
-        );
+        return ResponseEntity.ok(loanService.getByUsernameAndStatus(authUsername, status));
     }
 
-    // ✅ ADMIN ONLY → Update status
+    @Operation(summary = "Update loan status", description = "ADMIN only — approve or reject a loan")
     @PutMapping("/status/{id}")
     public ResponseEntity<LoanApplication> updateStatus(
             @PathVariable Long id,
@@ -101,26 +95,22 @@ public class LoanController {
             @RequestHeader("X-Auth-Role") String authRole) {
 
         log.info("PUT /application/status/{} → {}", id, request.getStatus());
-
         if (!"ADMIN".equals(authRole)) {
             throw new SecurityException("Only ADMIN can update loan status");
         }
-
         return ResponseEntity.ok(loanService.updateStatus(id, request));
     }
 
-    // ✅ ADMIN ONLY → Delete
+    @Operation(summary = "Delete a loan application", description = "ADMIN only")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(
             @PathVariable Long id,
             @RequestHeader("X-Auth-Role") String authRole) {
 
         log.info("DELETE /application/{}", id);
-
         if (!"ADMIN".equals(authRole)) {
             throw new SecurityException("Only ADMIN can delete loans");
         }
-
         return ResponseEntity.ok(loanService.delete(id));
     }
 }

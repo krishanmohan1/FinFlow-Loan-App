@@ -14,7 +14,7 @@ public class JwtUtil {
 
     private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
 
-    // ⚠️ Must be same secret as Auth Service
+    //  Must be same secret as Auth Service
     private static final String SECRET = "mysecretkeymysecretkeymysecretkey12";
 
     private Key getSigningKey() {
@@ -32,13 +32,13 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
         String username = extractAllClaims(token).getSubject();
-        log.debug("🔍 Extracted username from token: {}", username);
+        log.debug(" Extracted username from token: {}", username);
         return username;
     }
 
     public String extractRole(String token) {
         String role = extractAllClaims(token).get("role", String.class);
-        log.debug("🔍 Extracted role from token: {}", role);
+        log.debug(" Extracted role from token: {}", role);
         return role;
     }
 
@@ -46,10 +46,10 @@ public class JwtUtil {
         try {
             // Parsing itself validates signature + expiry
             extractAllClaims(token);
-            log.debug("✅ Token is valid");
+            log.debug(" Token is valid");
             return true;
         } catch (Exception e) {
-            log.warn("❌ Token validation failed: {}", e.getMessage());
+            log.warn(" Token validation failed: {}", e.getMessage());
             return false;
         }
     }

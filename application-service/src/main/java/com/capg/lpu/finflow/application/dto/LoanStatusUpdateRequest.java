@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class LoanStatusUpdateRequest {
-    private String status;   // APPROVED or REJECTED
-    private String remarks;  // Admin note
+    private String status;
+    private String remarks;
 }

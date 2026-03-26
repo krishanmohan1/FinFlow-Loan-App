@@ -5,6 +5,9 @@ import com.capg.lpu.finflow.admin.dto.DocumentVerifyRequest;
 import com.capg.lpu.finflow.admin.dto.UserUpdateRequest;
 import com.capg.lpu.finflow.admin.service.AdminService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,39 +27,40 @@ public class AdminController {
     // LOAN APPLICATION MANAGEMENT
     // ================================================================
 
-    // ✅ Get all loan applications
+    @Tag(name = "Loans")
+    @Operation(summary = "Get all loan applications")
     @GetMapping("/loans")
     public ResponseEntity<Object> getAllLoans() {
         log.info("GET /admin/loans");
         return ResponseEntity.ok(adminService.getAllLoans());
     }
 
-    // ✅ Get a specific loan by ID
+    @Tag(name = "Loans")
+    @Operation(summary = "Get loan by ID")
     @GetMapping("/loans/{id}")
     public ResponseEntity<Object> getLoanById(@PathVariable Long id) {
         log.info("GET /admin/loans/{}", id);
         return ResponseEntity.ok(adminService.getLoanById(id));
     }
 
-    // ✅ Get loans filtered by status (PENDING, APPROVED, REJECTED, UNDER_REVIEW)
+    @Tag(name = "Loans")
+    @Operation(summary = "Get loans by status", description = "Status: PENDING, APPROVED, REJECTED, UNDER_REVIEW")
     @GetMapping("/loans/status/{status}")
     public ResponseEntity<Object> getLoansByStatus(@PathVariable String status) {
         log.info("GET /admin/loans/status/{}", status);
         return ResponseEntity.ok(adminService.getLoansByStatus(status));
     }
 
-    // ✅ Get all loans belonging to a specific user
+    @Tag(name = "Loans")
+    @Operation(summary = "Get loans by username")
     @GetMapping("/loans/user/{username}")
     public ResponseEntity<Object> getLoansByUsername(@PathVariable String username) {
         log.info("GET /admin/loans/user/{}", username);
         return ResponseEntity.ok(adminService.getLoansByUsername(username));
     }
 
-    // ================================================================
-    // LOAN DECISION — APPROVE / REJECT / REVIEW
-    // ================================================================
-
-    // ✅ Full decision with loan terms (interest rate, tenure, sanctioned amount)
+    @Tag(name = "Loans")
+    @Operation(summary = "Make a loan decision", description = "Full decision with interest rate, tenure, sanctioned amount")
     @PostMapping("/loans/{id}/decision")
     public ResponseEntity<Object> makeDecision(
             @PathVariable Long id,
@@ -65,7 +69,8 @@ public class AdminController {
         return ResponseEntity.ok(adminService.makeDecision(id, request));
     }
 
-    // ✅ Quick approve — just pass optional remarks as query param
+    @Tag(name = "Loans")
+    @Operation(summary = "Quick approve a loan")
     @PutMapping("/loans/{id}/approve")
     public ResponseEntity<Object> approveLoan(
             @PathVariable Long id,
@@ -74,7 +79,8 @@ public class AdminController {
         return ResponseEntity.ok(adminService.approveLoan(id, remarks));
     }
 
-    // ✅ Quick reject — just pass optional remarks as query param
+    @Tag(name = "Loans")
+    @Operation(summary = "Quick reject a loan")
     @PutMapping("/loans/{id}/reject")
     public ResponseEntity<Object> rejectLoan(
             @PathVariable Long id,
@@ -83,14 +89,16 @@ public class AdminController {
         return ResponseEntity.ok(adminService.rejectLoan(id, remarks));
     }
 
-    // ✅ Mark loan as Under Review
+    @Tag(name = "Loans")
+    @Operation(summary = "Mark loan as under review")
     @PutMapping("/loans/{id}/review")
     public ResponseEntity<Object> markUnderReview(@PathVariable Long id) {
         log.info("PUT /admin/loans/{}/review", id);
         return ResponseEntity.ok(adminService.markUnderReview(id));
     }
 
-    // ✅ Delete a loan application permanently
+    @Tag(name = "Loans")
+    @Operation(summary = "Delete a loan application permanently")
     @DeleteMapping("/loans/{id}")
     public ResponseEntity<String> deleteLoan(@PathVariable Long id) {
         log.info("DELETE /admin/loans/{}", id);
@@ -101,35 +109,40 @@ public class AdminController {
     // DOCUMENT VERIFICATION
     // ================================================================
 
-    // ✅ Get all uploaded documents
+    @Tag(name = "Documents")
+    @Operation(summary = "Get all uploaded documents")
     @GetMapping("/documents")
     public ResponseEntity<Object> getAllDocuments() {
         log.info("GET /admin/documents");
         return ResponseEntity.ok(adminService.getAllDocuments());
     }
 
-    // ✅ Get a specific document by ID
+    @Tag(name = "Documents")
+    @Operation(summary = "Get document by ID")
     @GetMapping("/documents/{id}")
     public ResponseEntity<Object> getDocumentById(@PathVariable Long id) {
         log.info("GET /admin/documents/{}", id);
         return ResponseEntity.ok(adminService.getDocumentById(id));
     }
 
-    // ✅ Get all documents linked to a specific loan
+    @Tag(name = "Documents")
+    @Operation(summary = "Get documents by loan ID")
     @GetMapping("/documents/loan/{loanId}")
     public ResponseEntity<Object> getDocumentsByLoanId(@PathVariable String loanId) {
         log.info("GET /admin/documents/loan/{}", loanId);
         return ResponseEntity.ok(adminService.getDocumentsByLoanId(loanId));
     }
 
-    // ✅ Get all documents filtered by verification status
+    @Tag(name = "Documents")
+    @Operation(summary = "Get documents by verification status", description = "Status: PENDING, VERIFIED, REJECTED")
     @GetMapping("/documents/status/{status}")
     public ResponseEntity<Object> getDocumentsByStatus(@PathVariable String status) {
         log.info("GET /admin/documents/status/{}", status);
         return ResponseEntity.ok(adminService.getDocumentsByStatus(status));
     }
 
-    // ✅ Verify or reject a document
+    @Tag(name = "Documents")
+    @Operation(summary = "Verify or reject a document")
     @PutMapping("/documents/{id}/verify")
     public ResponseEntity<Object> verifyDocument(
             @PathVariable Long id,
@@ -138,7 +151,8 @@ public class AdminController {
         return ResponseEntity.ok(adminService.verifyDocument(id, request));
     }
 
-    // ✅ Delete a document permanently
+    @Tag(name = "Documents")
+    @Operation(summary = "Delete a document permanently")
     @DeleteMapping("/documents/{id}")
     public ResponseEntity<String> deleteDocument(@PathVariable Long id) {
         log.info("DELETE /admin/documents/{}", id);
@@ -149,21 +163,24 @@ public class AdminController {
     // USER MANAGEMENT
     // ================================================================
 
-    // ✅ Get all registered users
+    @Tag(name = "Users")
+    @Operation(summary = "Get all registered users")
     @GetMapping("/users")
     public ResponseEntity<Object> getAllUsers() {
         log.info("GET /admin/users");
         return ResponseEntity.ok(adminService.getAllUsers());
     }
 
-    // ✅ Get a specific user by ID
+    @Tag(name = "Users")
+    @Operation(summary = "Get user by ID")
     @GetMapping("/users/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable Long id) {
         log.info("GET /admin/users/{}", id);
         return ResponseEntity.ok(adminService.getUserById(id));
     }
 
-    // ✅ Update user role or active/inactive status
+    @Tag(name = "Users")
+    @Operation(summary = "Update user role or active status")
     @PutMapping("/users/{id}")
     public ResponseEntity<Object> updateUser(
             @PathVariable Long id,
@@ -172,7 +189,8 @@ public class AdminController {
         return ResponseEntity.ok(adminService.updateUser(id, request));
     }
 
-    // ✅ Deactivate a user account (soft disable)
+    @Tag(name = "Users")
+    @Operation(summary = "Deactivate a user account")
     @PutMapping("/users/{id}/deactivate")
     public ResponseEntity<Object> deactivateUser(@PathVariable Long id) {
         log.info("PUT /admin/users/{}/deactivate", id);
@@ -183,14 +201,16 @@ public class AdminController {
     // REPORTS
     // ================================================================
 
-    // ✅ Generate a full summary report (loans + docs + users)
+    @Tag(name = "Reports")
+    @Operation(summary = "Generate full summary report", description = "Returns loans + documents + users combined")
     @GetMapping("/reports")
     public ResponseEntity<Object> generateReport() {
         log.info("GET /admin/reports");
         return ResponseEntity.ok(adminService.generateReport());
     }
 
-    // ✅ Get count of loans grouped by status
+    @Tag(name = "Reports")
+    @Operation(summary = "Get loan count grouped by status")
     @GetMapping("/reports/counts")
     public ResponseEntity<Object> getLoanCountByStatus() {
         log.info("GET /admin/reports/counts");

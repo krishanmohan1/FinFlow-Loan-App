@@ -1,30 +1,47 @@
-version: '3.8'
-
 services:
 
-  # -------------------------------------------------------
-  # RABBITMQ — starts first, application + document need it
-  # -------------------------------------------------------
-  rabbitmq:
-    image: rabbitmq:3.12-management-alpine
-    container_name: rabbitmq
+  # ---------------- ORACLE DB ----------------
+  oracle-db:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: oracle-db
     ports:
-      - "5672:5672"       # AMQP port — Spring services connect here
-      - "15672:15672"     # Management UI — open http://localhost:15672 (guest/guest)
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: oracle
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s system/oracle@localhost:1521/XEPDB1 | grep -q 1 || exit 1"]
+      interval: 30s
+      timeout: 15s
+      retries: 20
+      start_period: 120s
+    networks:
+      - finflow-network
+
+  # ---------------- RABBITMQ ----------------
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_ERLANG_COOKIE: finflow-secret-cookie
+      RABBITMQ_NODENAME: rabbit@rabbitmq
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 30s
     networks:
       - finflow-network
 
-  # -------------------------------------------------------
-  # EUREKA SERVER — starts second, all services register here
-  # -------------------------------------------------------
+  # ---------------- EUREKA ----------------
   eureka-server:
     build:
       context: ./eureka-server
@@ -32,16 +49,15 @@ services:
     ports:
       - "8761:8761"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8761/actuator/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8761/actuator/health 2>/dev/null | grep -q UP || exit 1"]
       interval: 15s
-      timeout: 5s
-      retries: 10
+      timeout: 10s
+      retries: 15
+      start_period: 90s
     networks:
       - finflow-network
 
-  # -------------------------------------------------------
-  # AUTH SERVICE
-  # -------------------------------------------------------
+  # ---------------- AUTH ----------------
   auth-service:
     build:
       context: ./auth-service
@@ -49,19 +65,22 @@ services:
     ports:
       - "9091:9091"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@10.174.133.119:1521/XE
-      SPRING_DATASOURCE_USERNAME: capgdb
-      SPRING_DATASOURCE_PASSWORD: capgdb
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+      SPRING_DATASOURCE_USERNAME: system
+      SPRING_DATASOURCE_PASSWORD: oracle
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 60000
+      SPRING_JPA_PROPERTIES_HIBERNATE_TEMP_USE_JDBC_METADATA_DEFAULTS: false
     depends_on:
+      oracle-db:
+        condition: service_healthy
       eureka-server:
         condition: service_healthy
     networks:
       - finflow-network
 
-  # -------------------------------------------------------
-  # APPLICATION SERVICE
-  # -------------------------------------------------------
+  # ---------------- APPLICATION ----------------
   application-service:
     build:
       context: ./application-service
@@ -69,25 +88,28 @@ services:
     ports:
       - "9092:9092"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@10.174.133.119:1521/XE
-      SPRING_DATASOURCE_USERNAME: capgdb
-      SPRING_DATASOURCE_PASSWORD: capgdb
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+      SPRING_DATASOURCE_USERNAME: system
+      SPRING_DATASOURCE_PASSWORD: oracle
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 60000
+      SPRING_JPA_PROPERTIES_HIBERNATE_TEMP_USE_JDBC_METADATA_DEFAULTS: false
     depends_on:
-      eureka-server:
+      oracle-db:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      eureka-server:
         condition: service_healthy
     networks:
       - finflow-network
 
-  # -------------------------------------------------------
-  # DOCUMENT SERVICE
-  # -------------------------------------------------------
+  # ---------------- DOCUMENT ----------------
   document-service:
     build:
       context: ./document-service
@@ -95,27 +117,30 @@ services:
     ports:
       - "9093:9093"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@10.174.133.119:1521/XE
-      SPRING_DATASOURCE_USERNAME: capgdb
-      SPRING_DATASOURCE_PASSWORD: capgdb
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+      SPRING_DATASOURCE_USERNAME: system
+      SPRING_DATASOURCE_PASSWORD: oracle
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 60000
+      SPRING_JPA_PROPERTIES_HIBERNATE_TEMP_USE_JDBC_METADATA_DEFAULTS: false
     volumes:
       - finflow-uploads:/root/finflow-uploads
     depends_on:
-      eureka-server:
+      oracle-db:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      eureka-server:
         condition: service_healthy
     networks:
       - finflow-network
 
-  # -------------------------------------------------------
-  # ADMIN SERVICE
-  # -------------------------------------------------------
+  # ---------------- ADMIN ----------------
   admin-service:
     build:
       context: ./admin-service
@@ -130,9 +155,7 @@ services:
     networks:
       - finflow-network
 
-  # -------------------------------------------------------
-  # API GATEWAY — starts last, needs all services in Eureka
-  # -------------------------------------------------------
+  # ---------------- API GATEWAY ----------------
   api-gateway:
     build:
       context: ./api-gateway
@@ -155,15 +178,10 @@ services:
     networks:
       - finflow-network
 
-# -------------------------------------------------------
-# NETWORK — all containers talk to each other by name
-# -------------------------------------------------------
 networks:
   finflow-network:
     driver: bridge
 
-# -------------------------------------------------------
-# VOLUME — document uploads persist across container restarts
-# -------------------------------------------------------
 volumes:
   finflow-uploads:
+  rabbitmq-data:

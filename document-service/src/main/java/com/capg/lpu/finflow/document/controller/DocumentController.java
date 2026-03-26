@@ -3,6 +3,9 @@ package com.capg.lpu.finflow.document.controller;
 import com.capg.lpu.finflow.document.entity.Document;
 import com.capg.lpu.finflow.document.service.DocumentService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -16,13 +19,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/document")
 @RequiredArgsConstructor
+@Tag(name = "Document", description = "Upload, verify and manage loan documents")
 public class DocumentController {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentController.class);
 
     private final DocumentService documentService;
 
-    // ✅ USER → Upload a document for their loan
+    @Operation(summary = "Upload a document", description = "USER uploads a document for their loan")
     @PostMapping("/upload")
     public ResponseEntity<Document> upload(
             @RequestParam("file") MultipartFile file,
@@ -30,16 +34,11 @@ public class DocumentController {
             @RequestParam("documentType") String documentType,
             @RequestHeader("X-Auth-Username") String username) {
 
-        log.info("POST /document/upload → user: {}, loanId: {}, type: {}",
-                username, loanId, documentType);
-
-        return ResponseEntity.ok(
-                documentService.upload(file, loanId, documentType, username)
-        );
+        log.info("POST /document/upload → user: {}, loanId: {}, type: {}", username, loanId, documentType);
+        return ResponseEntity.ok(documentService.upload(file, loanId, documentType, username));
     }
 
-    // ✅ USER → Update their own document file
-    // ✅ ADMIN → Can update any document
+    @Operation(summary = "Update a document file", description = "USER updates their own, ADMIN can update any")
     @PutMapping("/update/{id}")
     public ResponseEntity<Document> update(
             @PathVariable Long id,
@@ -48,37 +47,28 @@ public class DocumentController {
             @RequestHeader("X-Auth-Role") String role) {
 
         log.info("PUT /document/update/{} → user: {}, role: {}", id, username, role);
-
-        // ✅ FIX: If USER, verify the document belongs to them
         if (!"ADMIN".equals(role)) {
             Document existing = documentService.getById(id);
             if (!existing.getUsername().equals(username)) {
-                throw new SecurityException(
-                        "Access denied. This document does not belong to you."
-                );
+                throw new SecurityException("Access denied. This document does not belong to you.");
             }
         }
-
         return ResponseEntity.ok(documentService.updateFile(id, file));
     }
 
-    // ✅ ADMIN ONLY → Get all documents
+    @Operation(summary = "Get all documents", description = "ADMIN only")
     @GetMapping("/all")
     public ResponseEntity<List<Document>> getAll(
             @RequestHeader("X-Auth-Role") String role) {
 
         log.info("GET /document/all → role: {}", role);
-
-        // ✅ FIX: Was missing role check — anyone could call this before
         if (!"ADMIN".equals(role)) {
             throw new SecurityException("Only ADMIN can view all documents");
         }
-
         return ResponseEntity.ok(documentService.getAll());
     }
 
-    // ✅ USER → Only own document
-    // ✅ ADMIN → Any document
+    @Operation(summary = "Get document by ID", description = "USER sees their own, ADMIN sees any")
     @GetMapping("/{id}")
     public ResponseEntity<Document> getById(
             @PathVariable Long id,
@@ -86,21 +76,14 @@ public class DocumentController {
             @RequestHeader("X-Auth-Role") String role) {
 
         log.info("GET /document/{} → user: {}, role: {}", id, username, role);
-
         Document doc = documentService.getById(id);
-
-        // ✅ FIX: Block user from viewing another user's document
         if (!"ADMIN".equals(role) && !doc.getUsername().equals(username)) {
-            throw new SecurityException(
-                    "Access denied. This document does not belong to you."
-            );
+            throw new SecurityException("Access denied. This document does not belong to you.");
         }
-
         return ResponseEntity.ok(doc);
     }
 
-    // ✅ USER → Only own documents for a loan
-    // ✅ ADMIN → All documents for a loan
+    @Operation(summary = "Get documents by loan ID", description = "USER sees their own for that loan, ADMIN sees all")
     @GetMapping("/loan/{loanId}")
     public ResponseEntity<List<Document>> getByLoan(
             @PathVariable String loanId,
@@ -108,18 +91,13 @@ public class DocumentController {
             @RequestHeader("X-Auth-Role") String role) {
 
         log.info("GET /document/loan/{} → user: {}, role: {}", loanId, username, role);
-
         if ("ADMIN".equals(role)) {
             return ResponseEntity.ok(documentService.getByLoanId(loanId));
         }
-
-        // ✅ FIX: USER only gets their own docs for that loan
-        return ResponseEntity.ok(
-                documentService.getByUsernameAndLoanId(username, loanId)
-        );
+        return ResponseEntity.ok(documentService.getByUsernameAndLoanId(username, loanId));
     }
 
-    // ✅ USER → Get all their own documents
+    @Operation(summary = "Get my documents", description = "USER gets all their own uploaded documents")
     @GetMapping("/my")
     public ResponseEntity<List<Document>> getMyDocuments(
             @RequestHeader("X-Auth-Username") String username) {
@@ -128,24 +106,20 @@ public class DocumentController {
         return ResponseEntity.ok(documentService.getByUsername(username));
     }
 
-    // ✅ ADMIN ONLY → Get documents by verification status
+    @Operation(summary = "Get documents by verification status", description = "ADMIN only — PENDING, VERIFIED, REJECTED")
     @GetMapping("/status/{status}")
     public ResponseEntity<List<Document>> getByStatus(
             @PathVariable String status,
             @RequestHeader("X-Auth-Role") String role) {
 
         log.info("GET /document/status/{} → role: {}", status, role);
-
         if (!"ADMIN".equals(role)) {
-            throw new SecurityException(
-                    "Only ADMIN can filter documents by verification status"
-            );
+            throw new SecurityException("Only ADMIN can filter documents by verification status");
         }
-
         return ResponseEntity.ok(documentService.getByVerificationStatus(status));
     }
 
-    // ✅ ADMIN ONLY → Verify or Reject a document
+    @Operation(summary = "Verify or reject a document", description = "ADMIN only — set status to VERIFIED or REJECTED")
     @PutMapping("/verify/{id}")
     public ResponseEntity<Document> verify(
             @PathVariable Long id,
@@ -153,36 +127,28 @@ public class DocumentController {
             @RequestHeader("X-Auth-Role") String role) {
 
         log.info("PUT /document/verify/{} → status: {}, role: {}", id, request.getStatus(), role);
-
-        // ✅ FIX: Was missing role check — anyone could verify before
         if (!"ADMIN".equals(role)) {
             throw new SecurityException("Only ADMIN can verify documents");
         }
-
-        return ResponseEntity.ok(
-                documentService.verifyDocument(id, request.getStatus(), request.getRemarks())
-        );
+        return ResponseEntity.ok(documentService.verifyDocument(id, request.getStatus(), request.getRemarks()));
     }
 
-    // ✅ ADMIN ONLY → Delete a document
+    @Operation(summary = "Delete a document", description = "ADMIN only")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(
             @PathVariable Long id,
             @RequestHeader("X-Auth-Role") String role) {
 
         log.info("DELETE /document/{} → role: {}", id, role);
-
         if (!"ADMIN".equals(role)) {
             throw new SecurityException("Only ADMIN can delete documents");
         }
-
         return ResponseEntity.ok(documentService.deleteDocument(id));
     }
 
-    // ✅ Inner DTO class for verify request body
     @Data
     static class VerifyRequest {
-        private String status;   // VERIFIED or REJECTED
-        private String remarks;  // Admin note
+        private String status;
+        private String remarks;
     }
 }
