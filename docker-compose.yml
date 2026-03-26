@@ -14,7 +14,7 @@ services:
       interval: 30s
       timeout: 15s
       retries: 20
-      start_period: 180s # 🔥 increased
+      start_period: 180s
     networks:
       - finflow-network
 
@@ -22,20 +22,18 @@ services:
   rabbitmq:
     image: rabbitmq:3.12-management
     container_name: rabbitmq
-    restart: always
     hostname: rabbitmq
+    user: root
+    command: >
+      sh -c "chown -R rabbitmq:rabbitmq /var/lib/rabbitmq &&
+             chmod 600 /var/lib/rabbitmq/.erlang.cookie || true &&
+             rabbitmq-server"
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    healthcheck:
-      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
     networks:
       - finflow-network
 
@@ -64,14 +62,12 @@ services:
     restart: always
     ports:
       - "9091:9091"
-    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ] # 🔥 FIX
+    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ]
     environment:
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
       SPRING_DATASOURCE_USERNAME: system
       SPRING_DATASOURCE_PASSWORD: oracle
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
-      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 60000
     depends_on:
       oracle-db:
         condition: service_healthy
@@ -88,7 +84,7 @@ services:
     restart: always
     ports:
       - "9092:9092"
-    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ] # 🔥 FIX
+    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ]
     environment:
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
       SPRING_DATASOURCE_USERNAME: system
@@ -98,13 +94,11 @@ services:
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
-      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 60000
     depends_on:
       oracle-db:
         condition: service_healthy
       rabbitmq:
-        condition: service_healthy
+        condition: service_started
       eureka-server:
         condition: service_healthy
     networks:
@@ -118,7 +112,7 @@ services:
     restart: always
     ports:
       - "9093:9093"
-    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ] # 🔥 FIX
+    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ]
     environment:
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
       SPRING_DATASOURCE_USERNAME: system
@@ -128,15 +122,13 @@ services:
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
-      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 60000
     volumes:
       - finflow-uploads:/root/finflow-uploads
     depends_on:
       oracle-db:
         condition: service_healthy
       rabbitmq:
-        condition: service_healthy
+        condition: service_started
       eureka-server:
         condition: service_healthy
     networks:
