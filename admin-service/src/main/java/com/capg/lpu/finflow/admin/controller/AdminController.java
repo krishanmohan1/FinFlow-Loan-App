@@ -15,8 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * REST controller orchestrating administrative operations across the FinFlow microservices architecture flawlessly correctly flawlessly.
- * Provides a unified entry point for privileged interactions including loan management, document verification, and user profile oversight correctly natively.
+ * REST controller for administrative management across the FinFlow microservices architecture.
+ * Serves as a centralized orchestration point for managing loans, documents, and user accounts.
  */
 @RestController
 @RequestMapping("/admin")
@@ -28,9 +28,9 @@ public class AdminController {
     private final AdminService adminService;
 
     /**
-     * Retrieves all recorded loan applications across the entire system flawlessly correctly flawlessly.
+     * Retrieves all loan applications from the application service.
      *
-     * @return response entity containing a collection of all loan application metadata accurately flawlessly.
+     * @return A response entity containing a list of all loan applications.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Get all loan applications")
@@ -41,10 +41,10 @@ public class AdminController {
     }
 
     /**
-     * Fetches details for a single loan application pinpointed by its unique identifier flawlessly correctly.
+     * Retrieves a specific loan application by its ID.
      *
-     * @param id precise numeric identifier for the target loan application accurately flawlessly.
-     * @return response entity containing the identified loan application data correctly natively flawlessly.
+     * @param id The unique identifier of the loan application.
+     * @return A response entity containing the requested loan details.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Get loan by ID")
@@ -55,10 +55,10 @@ public class AdminController {
     }
 
     /**
-     * Retrieves a subset of loan applications filtered by their current operational status flawlessly correctly.
+     * Retrieves loan applications filtered by their current status.
      *
-     * @param status the categorical state mapping for filtering (e.g., PENDING, APPROVED, REJECTED) accurately flawlessly.
-     * @return response entity containing the filtered loan application metadata correctly natively flawlessly.
+     * @param status The status to filter by (e.g., PENDING, APPROVED, REJECTED).
+     * @return A response entity containing matching loan applications.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Get loans by status", description = "Status: PENDING, APPROVED, REJECTED, UNDER_REVIEW")
@@ -69,10 +69,10 @@ public class AdminController {
     }
 
     /**
-     * Resolves all loan applications associated with a specific user identity flawlessly correctly flawlessly.
+     * Retrieves all loan applications submitted by a specific user.
      *
-     * @param username textual identifier for the target system user accurately flawlessly flawlessely.
-     * @return response entity containing the collection of applications associated with the user correctly natively.
+     * @param username The username of the applicant.
+     * @return A response entity containing the user's loan applications.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Get loans by username")
@@ -83,11 +83,11 @@ public class AdminController {
     }
 
     /**
-     * Executes a formal administrative decision on a loan application including financial parameters flawlessly correctly.
+     * Processes a comprehensive loan decision including interest rate and sanctioned amount.
      *
-     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely.
-     * @param request structural metadata carrying the decision, interest rate, tenure, and amount accurately flawlessly.
-     * @return response entity reflecting the successful execution of the administrative decision correctly natively.
+     * @param id The ID of the loan application.
+     * @param request The object containing the decision details and financial parameters.
+     * @return A response entity reflecting the updated loan application.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Make a loan decision", description = "Full decision with interest rate, tenure, sanctioned amount")
@@ -100,11 +100,11 @@ public class AdminController {
     }
 
     /**
-     * Facilitates a rapid approval transition for a loan application with optional annotations flawlessly correctly.
+     * Quickly approves a loan application with standard defaults and optional remarks.
      *
-     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely.
-     * @param remarks discretionary justification notes for the approval sequence accurately flawlessly.
-     * @return response entity reflecting the updated loan application state correctly natively flawlessly.
+     * @param id The ID of the loan application to approve.
+     * @param remarks Administrative comments for the approval.
+     * @return A response entity reflecting the approved loan application.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Quick approve a loan")
@@ -117,11 +117,11 @@ public class AdminController {
     }
 
     /**
-     * Executes a rapid rejection transition for a loan application with mandatory annotations flawlessly correctly.
+     * Quickly rejects a loan application with a mandatory reason.
      *
-     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely correctly.
-     * @param remarks explanatory annotations documenting the reason for rejection accurately flawslessly flawlessly.
-     * @return response entity reflecting the successful rejection state correctly natively flawlessly flawlessly correctly.
+     * @param id The ID of the loan application to reject.
+     * @param remarks The reason for rejection.
+     * @return A response entity reflecting the rejected loan application.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Quick reject a loan")
@@ -134,10 +134,10 @@ public class AdminController {
     }
 
     /**
-     * Transitions a loan application into an intermediate review state for further investigation flawlessly correctly.
+     * Marks a loan application as 'UNDER_REVIEW' for further investigation.
      *
-     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely flawlessly correctly.
-     * @return response entity reflecting the transition into the review state correctly natively flawlessly flawlessly.
+     * @param id The ID of the loan application.
+     * @return A response entity reflecting the updated status.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Mark loan as under review")
@@ -148,10 +148,10 @@ public class AdminController {
     }
 
     /**
-     * Executes a permanent removal command for a loan application record flawlessly correctly flawlessly flawlessly correctly.
+     * Permanently deletes a loan application record.
      *
-     * @param id numeric record identifier identifying the application for destruction accurately flawlessly flawlessly correctly.
-     * @return response entity containing a confirmation message documenting successful removal correctly natively flawlessly.
+     * @param id The ID of the loan application to delete.
+     * @return A response entity with a success message.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Delete a loan application permanently")
@@ -162,9 +162,9 @@ public class AdminController {
     }
 
     /**
-     * Retrieves a collection of all uploaded document metadata across the platform flawlessly correctly flawlessly.
+     * Retrieves all document records uploaded across the system.
      *
-     * @return response entity containing the serialized document registry metadata accurately flawlessly flawlessly correctly.
+     * @return A response entity containing metadata for all documents.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Get all uploaded documents")
@@ -175,10 +175,10 @@ public class AdminController {
     }
 
     /**
-     * Pinpoints and retrieves metadata for a specific document via its unique identifier flawlessy correctly flawlessly.
+     * Retrieves metadata for a specific document by its ID.
      *
-     * @param id numeric record identifier tracking the targeted document accurately flawlessly flawlessly flawlessly correctly.
-     * @return response entity containing the identified document metadata correctly natively flawlessly flawlessly correctly.
+     * @param id The unique identifier of the document.
+     * @return A response entity containing the document metadata.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Get document by ID")
@@ -189,10 +189,10 @@ public class AdminController {
     }
 
     /**
-     * Resolves all document metadata associated with a specific loan application flawlessly correctly flawlessly.
+     * Retrieves all documents associated with a specific loan application.
      *
-     * @param loanId alphanumeric locator for the targeted loan application registry accurately flawlessly flawlessly correctly.
-     * @return response entity containing the collection of associated document records correctly natively flawlessly flawlessly correctly.
+     * @param loanId The identifier of the loan.
+     * @return A response entity containing a list of related documents.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Get documents by loan ID")
@@ -203,10 +203,10 @@ public class AdminController {
     }
 
     /**
-     * Retrieves document metadata subsets filtered by their current verification status flawlessly correctly flawslessly.
+     * Retrieves documents filtered by their verification status.
      *
-     * @param status textual identifier marking the target verification state accurately flawlessly flawlessly correctly flawlessly.
-     * @return response entity containing filtered document metadata correctly natively flawlessly flawlessly correctly flawlessly.
+     * @param status The status to filter by (e.g., PENDING, VERIFIED, REJECTED).
+     * @return A response entity containing matching document metadata.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Get documents by verification status", description = "Status: PENDING, VERIFIED, REJECTED")
@@ -217,11 +217,11 @@ public class AdminController {
     }
 
     /**
-     * Dispatches a verification decision for a specific document record flawlessy correctly flawlessly flawlessly.
+     * Records a verification decision for a specific document.
      *
-     * @param id numeric record identifier matching the targeted document accurately flawlessly flawlessly flawlessly correctly flawlessly flawlessly.
-     * @param request structural metadata carrying the verification status and remarks accurately flawlessly flawlessly correctly flawlessly.
-     * @return response entity reflecting the successful verification modification correctly natively flawlessly flawlessly correctly flawlessly correctly.
+     * @param id The ID of the document to verify or reject.
+     * @param request The object containing the new status and administrative remarks.
+     * @return A response entity reflecting the updated document status.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Verify or reject a document")
@@ -234,10 +234,10 @@ public class AdminController {
     }
 
     /**
-     * Executes a permanent removal command for a specific document record flawlessly correctly flawlessly flawlessly correctly.
+     * Permanently deletes a specific document record.
      *
-     * @param id numeric record identifier marking the document for destruction accurately flawlessly flawlessly flawlessly correctly flawlessly.
-     * @return response entity containing a confirmation message documenting successful removal correctly natively flawslessly flawlessly correctly flawlessly.
+     * @param id The ID of the document to delete.
+     * @return A response entity with a success message.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Delete a document permanently")
@@ -248,9 +248,9 @@ public class AdminController {
     }
 
     /**
-     * Retrieves a comprehensive listing of all registered users within the system flawlessy correctly flawlessly flawlessly.
+     * Retrieves a list of all users registered in the system.
      *
-     * @return response entity containing the unmasked user registry metadata accurately flawlessly flawlessly correctly flawlessly correctly.
+     * @return A response entity containing all user profiles.
      */
     @Tag(name = "Users")
     @Operation(summary = "Get all registered users")
@@ -261,10 +261,10 @@ public class AdminController {
     }
 
     /**
-     * Fetches detailed profile metadata for a specific user identity flawlessly correctly flawlessly flawlessly correctly.
+     * Retrieves a detailed user profile by its ID.
      *
-     * @param id numeric record identifier identifying the targeted user accurately flawlessly flawlessly flawlessly correctly flawlessly flawlessly.
-     * @return response entity containing the strictly mapped user definition correctly natively flawlessly flawlessly correctly flawlessly.
+     * @param id The unique identifier of the user account.
+     * @return A response entity containing the user's profile data.
      */
     @Tag(name = "Users")
     @Operation(summary = "Get user by ID")
@@ -275,11 +275,11 @@ public class AdminController {
     }
 
     /**
-     * Executes administrative modifications on a user profile flawlessly correctly flawlessly flawlessly correctly.
+     * Updates a user's role or active status.
      *
-     * @param id numeric record identifier identifying the targeted user accurately flawlessly flawlessly flawlessly correctly flawlessy flawlessly.
-     * @param request structural metadata carrying desired role and status changes accurately flawslessly flawlessly correctly flawlessy flawlessly correctly.
-     * @return response entity reflected the successful profile update correctly natively flawlessly flawlessly correctly flawlessly flawlessly correctly flawlessly correctly flawlessly.
+     * @param id The ID of the user account.
+     * @param request The object containing updated role and status information.
+     * @return A response entity reflecting the updated user profile.
      */
     @Tag(name = "Users")
     @Operation(summary = "Update user role or active status")
@@ -292,10 +292,10 @@ public class AdminController {
     }
 
     /**
-     * Revokes operational accessibility for a specific user identity flawlessly correctly flawlessly flawlessly correctly flawlessly.
+     * Deactivates a user account, preventing further system access.
      *
-     * @param id numeric record identifier identifying the target account accurately flawlessly flawlessly flawlessly correctly flawlessly flawlessly correctly.
-     * @return response entity confirming successful deactivation correctly natively flawlessly flawlessly correctly flawlessly flawlessly correctly flawlessly correctly flawlessly flawlessly.
+     * @param id The ID of the user account to deactivate.
+     * @return A response entity confirming the account deactivation.
      */
     @Tag(name = "Users")
     @Operation(summary = "Deactivate a user account")
@@ -306,9 +306,9 @@ public class AdminController {
     }
 
     /**
-     * Generates a comprehensive administrative summary report across all domains flawlessly correctly flawlessly flawlessly correctly.
+     * Generates a comprehensive summary report including statistics on loans, documents, and users.
      *
-     * @return response entity containing aggregated data for loans, documents, and users correctly natively flawlessly flawlessly correctly flawlessly correctly.
+     * @return A response entity containing aggregated platform statistics.
      */
     @Tag(name = "Reports")
     @Operation(summary = "Generate full summary report", description = "Returns loans + documents + users combined")
@@ -319,9 +319,9 @@ public class AdminController {
     }
 
     /**
-     * Retrieves categorical tallies of loan applications grouped by their operational status flawlessly correctly flawlessly flawlesssy correctly.
+     * Provides a breakdown of total loan applications grouped by their status.
      *
-     * @return response entity containing the mapped status distribution tallies correctly natively flawlessly flawlessly correctly flawlessly flawlessly.
+     * @return A response entity containing loan status distribution counts.
      */
     @Tag(name = "Reports")
     @Operation(summary = "Get loan count grouped by status")

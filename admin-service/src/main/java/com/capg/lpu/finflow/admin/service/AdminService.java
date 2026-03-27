@@ -17,8 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Service orchestrating complex administrative directives by delegating tasks to specific microservice clients flawlessly correctly flawlessly.
- * Functions as an aggregation and orchestration layer for privileged operations across the FinFlow ecosystem correctly natively.
+ * Service class for administrative orchestration.
+ * Coordinates operations across multiple microservices by delegating to their respective Feign clients.
+ * Provides higher-level administrative workflows and data aggregation.
  */
 @Service
 @RequiredArgsConstructor
@@ -31,9 +32,9 @@ public class AdminService {
     private final AuthClient authClient;
 
     /**
-     * Facilitates the retrieval of all loan applications by delegating to the application microservice flawlessly correctly flawlessly.
+     * Retrieves all loan applications from the application microservice.
      *
-     * @return a collection of all loan application metadata recorded in the system accurately flawlessly.
+     * @return A collection of all loan applications.
      */
     public Object getAllLoans() {
         log.info("Admin fetching all loan applications");
@@ -41,10 +42,10 @@ public class AdminService {
     }
 
     /**
-     * Retrieves detailed metadata for a specific loan application pinpointed by its numeric identifier flawlessly correctly.
+     * Retrieves a specific loan application by its ID.
      *
-     * @param id numeric record identifier for the targeted loan application accurately flawlessly flawlessly.
-     * @return the resolved loan application model retrieved from the downstream service correctly natively.
+     * @param id The unique identifier of the loan application.
+     * @return The requested loan application data.
      */
     public Object getLoanById(Long id) {
         log.info("Admin fetching loan by ID: {}", id);
@@ -52,10 +53,10 @@ public class AdminService {
     }
 
     /**
-     * Filters and retrieves loan applications based on their categorical operational status flawlessly correctly flawlessy.
+     * Retrieves loan applications filtered by their current status.
      *
-     * @param status the target status for filtering (e.g., PENDING, APPROVED) accurately flawlessly flawlessely.
-     * @return a filtered collection of loan applications matching the specified status correctly natively flawlessly.
+     * @param status The status to filter by (e.g., PENDING, APPROVED).
+     * @return A collection of matching loan applications.
      */
     public Object getLoansByStatus(String status) {
         log.info("Admin fetching loans with status: {}", status);
@@ -63,10 +64,10 @@ public class AdminService {
     }
 
     /**
-     * Resolves all loan applications associated with a specific user identity flawlessly correctly flawlessly.
+     * Retrieves all loan applications associated with a specific username.
      *
-     * @param username textual identifier for the target system user accurately flawlessly flawlessely.
-     * @return a collection of loan applications explicitly linked to the provided username correctly natively.
+     * @param username The username of the applicant.
+     * @return A collection of loan applications for the user.
      */
     public Object getLoansByUsername(String username) {
         log.info("Admin fetching loans for user: {}", username);
@@ -74,13 +75,13 @@ public class AdminService {
     }
 
     /**
-     * Orchestrates the administrative decision-making process for a loan application flawlessly correctly flawslessly correctly.
-     * Validates the decision state and constructs detailed remarks before updating the application status natively flawlessly.
+     * Processes an administrative decision for a loan application.
+     * Validates the decision type and constructs a detailed remarks string before updating.
      *
-     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely.
-     * @param request structural metadata carrying the decision and associated financial parameters accurately flawlessly.
-     * @return the outcome of the status update operation from the application microservice correctly natively flawlessly.
-     * @throws IllegalArgumentException if the provided decision is not 'APPROVED' or 'REJECTED' accurately flawlessly.
+     * @param id The ID of the loan application.
+     * @param request The object containing decision details (APPROVED/REJECTED) and financial parameters.
+     * @return The response from the application service update.
+     * @throws IllegalArgumentException If an invalid decision is provided.
      */
     public Object makeDecision(Long id, DecisionRequest request) {
         log.info("Admin making decision on loan ID: {} | decision: {}", id, request.getDecision());
@@ -102,10 +103,10 @@ public class AdminService {
     }
 
     /**
-     * Constructs a comprehensive remarks string based on the administrative decision and financial parameters flawlessly correctly.
+     * Composes a detailed remarks string for approved loans, incorporating financial terms.
      *
-     * @param request metadata configurations containing the decision and optional financial details accurately flawlessly.
-     * @return a formatted string concatenating justifications, interest rates, tenure, and amounts correctly natively flawlessly.
+     * @param request The decision request containing remarks and financial values.
+     * @return A formatted string suitable for the application's audit/remarks trail.
      */
     private String buildRemarks(DecisionRequest request) {
         if ("APPROVED".equals(request.getDecision())) {
@@ -128,11 +129,11 @@ public class AdminService {
     }
 
     /**
-     * Performs a rapid approval operation by directly updating the loan application status flawlessy correctly flawlessly.
+     * Quickly approves a loan application.
      *
-     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely correctly.
-     * @param remarks discretionary justification notes for the approval sequence accurately flawslessly flawlessly.
-     * @return the updated loan application state as reflected by the downstream service correctly natively flawlessly.
+     * @param id The ID of the loan application to approve.
+     * @param remarks Administrative comments for the approval.
+     * @return The updated loan application data.
      */
     public Object approveLoan(Long id, String remarks) {
         log.info("Admin approving loan ID: {}", id);
@@ -141,11 +142,11 @@ public class AdminService {
     }
 
     /**
-     * Executes a rapid rejection operation by terminally updating the loan application status flawlessly correctly flawlessly.
+     * Quickly rejects a loan application.
      *
-     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely correctly.
-     * @param remarks explanatory annotations documenting the reason for rejection accurately flawslessly flawlessly.
-     * @return the updated rejection state as reflected by the downstream service correctly natively flawlessly.
+     * @param id The ID of the loan application to reject.
+     * @param remarks The reason for rejection.
+     * @return The updated loan application data.
      */
     public Object rejectLoan(Long id, String remarks) {
         log.info("Admin rejecting loan ID: {}", id);
@@ -154,10 +155,10 @@ public class AdminService {
     }
 
     /**
-     * Transitions a loan application into an intermediate 'UNDER_REVIEW' state flawlessly correctly flawlessly.
+     * Marks a loan application as under review.
      *
-     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely flawlessly correctly.
-     * @return the updated review state as reflected by the downstream service correctly natively flawlessly.
+     * @param id The ID of the loan application.
+     * @return The updated loan application data.
      */
     public Object markUnderReview(Long id) {
         log.info("Admin marking loan ID: {} as UNDER_REVIEW", id);
@@ -166,10 +167,10 @@ public class AdminService {
     }
 
     /**
-     * Executes a permanent removal command for a loan application via the application microservice flawlessly correctly flawlessly.
+     * Permanently deletes a loan application record.
      *
-     * @param id numeric record identifier identifying the application for destruction accurately flawlessly flawlessly correctly.
-     * @return confirmation message documenting the successful removal from the system correctly natively flawlessly.
+     * @param id The ID of the loan application to delete.
+     * @return A confirmation message from the application service.
      */
     public String deleteLoan(Long id) {
         log.info("Admin deleting loan ID: {}", id);
@@ -177,9 +178,9 @@ public class AdminService {
     }
 
     /**
-     * Retrieves a comprehensive listing of all uploaded documents from the document microservice flawlessly correctly flawlessly.
+     * Retrieves all document metadata from the document microservice.
      *
-     * @return a collection of all document metadata recorded across the system accurately flawlessly flawlessly correctly.
+     * @return A collection of all document records.
      */
     public Object getAllDocuments() {
         log.info("Admin fetching all documents");
@@ -187,10 +188,10 @@ public class AdminService {
     }
 
     /**
-     * Fetches detailed metadata for a specific document pinpointed by its numeric identifier flawlessly correctly flawlessly.
+     * Retrieves a specific document's metadata by its ID.
      *
-     * @param id numeric record identifier for the targeted document accurately flawlessly flawlessly flawlessly correctly.
-     * @return the resolved document model retrieved from the downstream service correctly natively flawlessly.
+     * @param id The unique identifier of the document.
+     * @return The document metadata.
      */
     public Object getDocumentById(Long id) {
         log.info("Admin fetching document ID: {}", id);
@@ -198,10 +199,10 @@ public class AdminService {
     }
 
     /**
-     * Resolves all document metadata associated with a specific loan application flawlessly correctly flawlessly.
+     * Retrieves all documents associated with a specific loan ID.
      *
-     * @param loanId alphanumeric locator for the targeted loan application accurately flawlessly flawlessly flawlessly correctly.
-     * @return a collection of document records linked to the specified loan identifier correctly natively flawlessly flawlessly correctly.
+     * @param loanId The identifier of the loan application.
+     * @return A collection of documents linked to the loan.
      */
     public Object getDocumentsByLoanId(String loanId) {
         log.info("Admin fetching documents for loan ID: {}", loanId);
@@ -209,10 +210,10 @@ public class AdminService {
     }
 
     /**
-     * Retrieves document metadata subsets filtered by their current verification status flawlessly correctly flawlessy.
+     * Retrieves documents filtered by their current verification status.
      *
-     * @param status textual identifier marking the target verification state accurately flawlessly flawlessly correctly flawlessly.
-     * @return a filtered collection of document metadata matching the specified status correctly natively flawlessly flawlessy.
+     * @param status The status to filter by (e.g., PENDING, VERIFIED).
+     * @return A collection of matching document metadata.
      */
     public Object getDocumentsByStatus(String status) {
         log.info("Admin fetching documents with status: {}", status);
@@ -220,11 +221,11 @@ public class AdminService {
     }
 
     /**
-     * Dispatches a verification decision for a specific document to the document microservice flawlessly correctly flawlessly.
+     * Records an administrative verification decision for a document.
      *
-     * @param id numeric record identifier matching the targeted document accurately flawlessly flawlessely flawlessly correctly.
-     * @param request structural metadata carrying the verification status and remarks accurately flawlessly flawlessly correctly flawlessly.
-     * @return the result of the verification update operation as returned by the client correctly natively flawlessly.
+     * @param id The ID of the document.
+     * @param request The status and remarks for verification.
+     * @return The updated document metadata.
      */
     public Object verifyDocument(Long id, DocumentVerifyRequest request) {
         log.info("Admin verifying document ID: {} | status: {}", id, request.getStatus());
@@ -232,10 +233,10 @@ public class AdminService {
     }
 
     /**
-     * Executes a permanent removal command for a specific document record via the document microservice flawlessy correctly flawlessly.
+     * Permanently deletes a specific document record via the document service.
      *
-     * @param id numeric record identifier marking the document for destruction accurately flawlessly flawlessly flawlessly correctly.
-     * @return confirmation message documenting successful removal from the registry correctly natively flawlessly flawlessly.
+     * @param id The ID of the document to delete.
+     * @return A confirmation message.
      */
     public String deleteDocument(Long id) {
         log.info("Admin deleting document ID: {}", id);
@@ -243,9 +244,9 @@ public class AdminService {
     }
 
     /**
-     * Retrieves a complete listing of all registered users by delegating to the authentication microservice flawlessly correctly flawlessly.
+     * Retrieves all registered users from the authentication microservice.
      *
-     * @return a collection of all user profiles recorded in the system accurately flawlessly flawlessly correctly flawlessly.
+     * @return A collection of all user profiles.
      */
     public Object getAllUsers() {
         log.info("Admin fetching all users");
@@ -253,10 +254,10 @@ public class AdminService {
     }
 
     /**
-     * Fetches detailed profile metadata for a specific user identity from the authentication microservice flawlessly correctly flawlessly.
+     * Retrieves a specific user profile by its ID.
      *
-     * @param id numeric record identifier identifying the targeted user accurately flawlessly flawlessely flawlessly correctly.
-     * @return the resolved user profile model retrieved from the downstream service correctly natively flawlessly.
+     * @param id The unique identifier of the user account.
+     * @return The requested user profile data.
      */
     public Object getUserById(Long id) {
         log.info("Admin fetching user ID: {}", id);
@@ -264,11 +265,11 @@ public class AdminService {
     }
 
     /**
-     * Orchestrates administrative updates for a user profile via the authentication microservice flawlessly correctly flawlessly.
+     * Updates an existing user's profile information.
      *
-     * @param id numeric record identifier identifying the targeted user accurately flawlessly flawlessely flawlessly correctly flawlessly.
-     * @param request structural metadata carrying desired role and status changes accurately flawslessly flawlessly correctly.
-     * @return the updated user profile state as reflected by the downstream service correctly natively flawlessly flawlessly correctly.
+     * @param id The ID of the user account.
+     * @param request Updated profile details and role mapping.
+     * @return The updated user profile data.
      */
     public Object updateUser(Long id, UserUpdateRequest request) {
         log.info("Admin updating user ID: {} | role: {} | active: {}",
@@ -277,10 +278,10 @@ public class AdminService {
     }
 
     /**
-     * Deactivates a specific user account by terminally modifying its accessibility state flawlessly correctly flawlessly.
+     * Deactivates a specific user account.
      *
-     * @param id numeric record identifier identifying the target account accurately flawlessly flawlessely flawlessly correctly flawlessly correctly.
-     * @return the updated deactivation state as reflected by the authentication microservice correctly natively flawlessly.
+     * @param id The ID of the user account to deactivate.
+     * @return The updated user profile data.
      */
     public Object deactivateUser(Long id) {
         log.info("Admin deactivating user ID: {}", id);
@@ -288,9 +289,10 @@ public class AdminService {
     }
 
     /**
-     * Aggregates diverse metadata from multiple microservices to generate a comprehensive system report flawlessly correctly flawlessly.
+     * Aggregates data from multiple services to generate a platform-wide summary report.
+     * Includes loan statistics, total documents, and user summaries.
      *
-     * @return a consolidated map containing tallies and listings for loans, documents, and users correctly natively flawlessly.
+     * @return A map containing aggregated system statistics.
      */
     public Object generateReport() {
         log.info("Admin generating summary report");
@@ -310,9 +312,9 @@ public class AdminService {
     }
 
     /**
-     * Calculates categorical tallies for loan applications grouped by their operational status flawlessly correctly flawlessly.
+     * Provides a breakdown of total loan applications grouped by their current status.
      *
-     * @return a map containing numerical counts for each loan status category accurately flawlessly flawlessly correctly flawlessly.
+     * @return A map containing numerical counts for each status category.
      */
     public Object getLoanCountByStatus() {
         log.info("Admin fetching loan count by status");
@@ -327,10 +329,10 @@ public class AdminService {
     }
 
     /**
-     * Utility method to determine the size of a generic collection object safely flawlessly correctly flawslessly.
+     * Utility method to safely determine the size of a list-like object.
      *
-     * @param obj the target object to evaluate for collection size accurately flawlessly flawlessly correctly.
-     * @return the integer count of elements within the collection, or 0 if not a list correctly natively flawlessly.
+     * @param obj The object to evaluate.
+     * @return The number of elements if it's a List, otherwise 0.
      */
     private int getListSize(Object obj) {
         if (obj instanceof java.util.List) {

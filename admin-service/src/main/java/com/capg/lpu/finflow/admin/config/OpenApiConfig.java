@@ -6,22 +6,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Technical registry defining external API visibility boundaries for administrative orchestration protocols via OpenAPI compliance flawlessly correctly flawlessly smoothly natively.
+ * Configuration for OpenAPI/Swagger documentation in the Admin Service.
+ * Defines the metadata and branding for the administrative API documentation.
  */
 @Configuration
 public class OpenApiConfig {
 
     /**
-     * Constructs the categorical metadata mapping describing available administrative, reporting, and oversight endpoints accurately flawslessly smoothly fluently.
+     * Configures the OpenAPI bean with general information about the Admin Service API.
      *
-     * @return registered API metadata definition for secure administrative management flawlessly.
+     * @return A configured OpenAPI instance for generating documentation.
      */
     @Bean
     public OpenAPI adminServiceOpenAPI() {
         return new OpenAPI()
             .info(new Info()
                 .title("FinFlow - Admin Service API")
-                .description("Admin operations: manage loans, documents, users and generate reports.")
+                .description("Administrative API for managing loans, documents, users, and generating reports.")
                 .version("1.0.0")
             );
     }

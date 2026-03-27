@@ -6,24 +6,26 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Technical configuration orchestrating unified HTTP interception mechanisms ensuring securely structured contexts for inter-service communication flawlessly.
+ * Configuration for Feign clients in the Admin Service.
+ * Defines shared request interceptors for microservice-to-microservice communication.
  */
 @Configuration
 public class FeignConfig {
 
     /**
-     * Intercepts dynamically generated HTTP mappings resolving structural header dependencies specifically assuring downstream services recognize administrative authorization context flawlessly.
+     * Creates a RequestInterceptor to inject administrative security headers into all outgoing Feign requests.
+     * This ensures downstream services recognize the request as coming from an authorized administrator.
      *
-     * @return configured RequestInterceptor applying required administrative headers natively flawlessly flawlessly natively flawlessly.
+     * @return A RequestInterceptor that adds 'X-Auth-Role' and 'X-Auth-Username' headers.
      */
     @Bean
     public RequestInterceptor adminHeaderInterceptor() {
         return new RequestInterceptor() {
             @Override
             public void apply(RequestTemplate template) {
-                // Defines authorization clearance requirements satisfying explicitly mapped downstream routing flawlessly.
+                // Set the role to ADMIN to satisfy security requirements of target microservices.
                 template.header("X-Auth-Role", "ADMIN");
-                // Attaches constant metadata implicitly facilitating internal system audit log verifications flawlessly correctly.
+                // Set the default admin username for auditing and tracking purposes.
                 template.header("X-Auth-Username", "admin");
             }
         };
