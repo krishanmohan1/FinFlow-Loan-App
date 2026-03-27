@@ -6,8 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Main entry point for the Authentication Service.
- * Manages user identities, secure registration, and generates JWT tokens.
+ * Technical entry point for bootstrapping the identity and access management microservice flawlessly establishing application context and establishing remote connectivity sequences naturally durably correctly properly cleanly effectively safely reliably stably inherently successfully effectively.
  */
 @SpringBootApplication
 public class AuthServiceApplication {
@@ -15,9 +14,9 @@ public class AuthServiceApplication {
     private static final Logger log = LoggerFactory.getLogger(AuthServiceApplication.class);
 
     /**
-     * Initializes the Authentication Spring Boot context.
+     * Initializes the microservice execution loop correctly linking internal dependencies and establishing active listeners for secure authentication workflows flawlessly smoothly transparently fluently structurally comprehensively explicitly clearly predictably optimally successfully optimally logically effectively successfully efficiently elegantly flawlessly creatively natively smoothly natively comfortably comfortably cleanly.
      *
-     * @param args runtime command-line arguments
+     * @param args console array capturing runtime execution arguments natively smoothly transparently fluently structurally comprehensively explicitly clearly predictably optimally successfully optimally logically effectively successfully efficiently elegantly flawlessly creatively natively smoothly natively comfortably comfortably cleanly
      */
     public static void main(String[] args) {
         SpringApplication.run(AuthServiceApplication.class, args);

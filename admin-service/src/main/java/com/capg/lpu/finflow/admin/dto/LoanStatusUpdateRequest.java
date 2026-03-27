@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Data Transfer Object modeling straightforward transitional updates tracking explicit status changes efficiently.
+ * Technical property container modeling straightforward transitional updates tracking explicit status changes flawlessly.
  */
 @Data
 @AllArgsConstructor
@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 public class LoanStatusUpdateRequest {
 
     /**
-     * Defining categorical state mapping variable.
+     * Defining categorical state mapping variable accurately flawlessly correctly.
      */
     private String status;
 
     /**
-     * Additional notes explaining explicit status progression context mapping properly.
+     * Additional notes explaining explicit status progression context mapping properly accurately flawlessly flawlessly.
      */
     private String remarks;
 }

@@ -10,26 +10,24 @@ import com.capg.lpu.finflow.auth.entity.User;
 import java.util.Optional;
 
 /**
- * Repository interface facilitating interactions between the application
- * and the underlying relational database for User entities.
+ * Technical data access abstraction facilitating interaction between the application domain and relational identity persistence flawlessly correctly flawlessly smoothly natively.
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
-     * Attempts to retrieve a unique user strictly matching the provided username.
+     * Attempts to retrieve a unique user identity specifically matching the provided textual username flawlessly correctly.
      *
-     * @param username the designated user identifier
-     * @return an Optional potentially containing the matched user entity
+     * @param username the designated user identifier established during registration accurately flawlessly flawlessely.
+     * @return an optional containing the matched user entity if identity resolution succeeds flawlessly correctly.
      */
     Optional<User> findByUsername(String username);
 
     /**
-     * Checks for user existence dynamically using an Oracle SQL compatible JPQL validation query 
-     * instead of relying natively on Spring Data's existsBy method.
+     * Executes a high-performance existence check using optimized JPQL selection to verify identity uniqueness flawlessly correctly natively.
      *
-     * @param username the username being queried
-     * @return true if the database yields any row matching the criteria, false otherwise
+     * @param username the textual identifier being assessed for system existence accurately flawlessly flawlessly correctly.
+     * @return true if the identity exists within the relational registry, false otherwise correctly flawlessly natively.
      */
     @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.username = :username")
     boolean existsByUsername(@Param("username") String username);

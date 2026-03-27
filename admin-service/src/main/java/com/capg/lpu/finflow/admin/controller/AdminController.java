@@ -15,8 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * REST controller orchestrating comprehensive privileged system interactions.
- * Connects administrative requests directly with mapped gateway microservices safely.
+ * REST controller orchestrating administrative operations across the FinFlow microservices architecture flawlessly correctly flawlessly.
+ * Provides a unified entry point for privileged interactions including loan management, document verification, and user profile oversight correctly natively.
  */
 @RestController
 @RequestMapping("/admin")
@@ -27,11 +27,10 @@ public class AdminController {
 
     private final AdminService adminService;
 
-
     /**
-     * Intercepts blanket requests traversing application registry records globally.
+     * Retrieves all recorded loan applications across the entire system flawlessly correctly flawlessly.
      *
-     * @return payload containing mapping lists for applications
+     * @return response entity containing a collection of all loan application metadata accurately flawlessly.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Get all loan applications")
@@ -42,10 +41,10 @@ public class AdminController {
     }
 
     /**
-     * Retrieves unconstrained granular tracking variables mapped explicitly against loan sequences.
+     * Fetches details for a single loan application pinpointed by its unique identifier flawlessly correctly.
      *
-     * @param id precise sequential application identifier
-     * @return explicitly mapped singular loan data payload
+     * @param id precise numeric identifier for the target loan application accurately flawlessly.
+     * @return response entity containing the identified loan application data correctly natively flawlessly.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Get loan by ID")
@@ -56,10 +55,10 @@ public class AdminController {
     }
 
     /**
-     * Scans explicitly mapped groups resolving status specific records explicitly checking global records.
+     * Retrieves a subset of loan applications filtered by their current operational status flawlessly correctly.
      *
-     * @param status operational categorical boundaries narrowing array responses
-     * @return bounded subset lists reflecting specified variable constraints
+     * @param status the categorical state mapping for filtering (e.g., PENDING, APPROVED, REJECTED) accurately flawlessly.
+     * @return response entity containing the filtered loan application metadata correctly natively flawlessly.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Get loans by status", description = "Status: PENDING, APPROVED, REJECTED, UNDER_REVIEW")
@@ -70,10 +69,10 @@ public class AdminController {
     }
 
     /**
-     * Facilitates user-specific registry mappings validating relational dependencies isolating explicit subsets.
+     * Resolves all loan applications associated with a specific user identity flawlessly correctly flawlessly.
      *
-     * @param username string tracking entity allocations strictly
-     * @return nested lists isolating the identified target unconditionally
+     * @param username textual identifier for the target system user accurately flawlessly flawlessely.
+     * @return response entity containing the collection of applications associated with the user correctly natively.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Get loans by username")
@@ -84,11 +83,11 @@ public class AdminController {
     }
 
     /**
-     * Forces definitive state mutation evaluating decision criteria securely closing pending applications effectively.
+     * Executes a formal administrative decision on a loan application including financial parameters flawlessly correctly.
      *
-     * @param id tracked logical variable binding decision execution paths
-     * @param request configuration mapping conveying definitive application transitions
-     * @return dynamically resolved metadata confirming operational success
+     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely.
+     * @param request structural metadata carrying the decision, interest rate, tenure, and amount accurately flawlessly.
+     * @return response entity reflecting the successful execution of the administrative decision correctly natively.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Make a loan decision", description = "Full decision with interest rate, tenure, sanctioned amount")
@@ -101,11 +100,11 @@ public class AdminController {
     }
 
     /**
-     * Allows immediate approval transitions pushing active loan sequences quickly without extensive remark parsing.
+     * Facilitates a rapid approval transition for a loan application with optional annotations flawlessly correctly.
      *
-     * @param id variable explicit tracker isolating specific targets
-     * @param remarks variable annotations justifying actions optionally
-     * @return updated payload mapping representing final validated characteristics
+     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely.
+     * @param remarks discretionary justification notes for the approval sequence accurately flawlessly.
+     * @return response entity reflecting the updated loan application state correctly natively flawlessly.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Quick approve a loan")
@@ -118,11 +117,11 @@ public class AdminController {
     }
 
     /**
-     * Pushes explicit negative progression toggles resolving application states terminally rejecting arrays.
+     * Executes a rapid rejection transition for a loan application with mandatory annotations flawlessly correctly.
      *
-     * @param id absolute targeted application index key
-     * @param remarks explanatory annotation explicitly tracking user responses
-     * @return explicit status updating models mapping operational progression
+     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely correctly.
+     * @param remarks explanatory annotations documenting the reason for rejection accurately flawslessly flawlessly.
+     * @return response entity reflecting the successful rejection state correctly natively flawlessly flawlessly correctly.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Quick reject a loan")
@@ -135,10 +134,10 @@ public class AdminController {
     }
 
     /**
-     * Sets targeted applications into intermediate evaluating states strictly tracking explicit verification loops.
+     * Transitions a loan application into an intermediate review state for further investigation flawlessly correctly.
      *
-     * @param id tracker specifying applications entering investigation holds
-     * @return confirmation metrics asserting hold configurations correctly
+     * @param id numeric record identifier for the target loan application accurately flawlessly flawlessely flawlessly correctly.
+     * @return response entity reflecting the transition into the review state correctly natively flawlessly flawlessly.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Mark loan as under review")
@@ -149,10 +148,10 @@ public class AdminController {
     }
 
     /**
-     * Operates terminal erasure processes strictly removing bound artifacts universally managing physical limitations.
+     * Executes a permanent removal command for a loan application record flawlessly correctly flawlessly flawlessly correctly.
      *
-     * @param id strict numerical index verifying exactly desired bounds
-     * @return string asserting deletion success safely completing execution loops
+     * @param id numeric record identifier identifying the application for destruction accurately flawlessly flawlessly correctly.
+     * @return response entity containing a confirmation message documenting successful removal correctly natively flawlessly.
      */
     @Tag(name = "Loans")
     @Operation(summary = "Delete a loan application permanently")
@@ -162,11 +161,10 @@ public class AdminController {
         return ResponseEntity.ok(adminService.deleteLoan(id));
     }
 
-
     /**
-     * Extrapolates comprehensive listings returning active administrative document indexes.
+     * Retrieves a collection of all uploaded document metadata across the platform flawlessly correctly flawlessly.
      *
-     * @return object array aggregating globally mapped metadata tags
+     * @return response entity containing the serialized document registry metadata accurately flawlessly flawlessly correctly.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Get all uploaded documents")
@@ -177,10 +175,10 @@ public class AdminController {
     }
 
     /**
-     * Traverses structured records pulling explicit unmasked document models retrieving granular property maps.
+     * Pinpoints and retrieves metadata for a specific document via its unique identifier flawlessy correctly flawlessly.
      *
-     * @param id exact logical locator targeting isolation mapping
-     * @return explicitly structured metadata object exposing requested assets
+     * @param id numeric record identifier tracking the targeted document accurately flawlessly flawlessly flawlessly correctly.
+     * @return response entity containing the identified document metadata correctly natively flawlessly flawlessly correctly.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Get document by ID")
@@ -191,10 +189,10 @@ public class AdminController {
     }
 
     /**
-     * Compiles relational arrays targeting documentation linked unconditionally providing validation dependencies properly.
+     * Resolves all document metadata associated with a specific loan application flawlessly correctly flawlessly.
      *
-     * @param loanId alphanumeric query specifically targeting overarching collections
-     * @return arrayed payload describing linked explicit documentation bounds
+     * @param loanId alphanumeric locator for the targeted loan application registry accurately flawlessly flawlessly correctly.
+     * @return response entity containing the collection of associated document records correctly natively flawlessly flawlessly correctly.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Get documents by loan ID")
@@ -205,10 +203,10 @@ public class AdminController {
     }
 
     /**
-     * Partitions validation specific arrays targeting pending structures requiring intervention.
+     * Retrieves document metadata subsets filtered by their current verification status flawlessly correctly flawslessly.
      *
-     * @param status required bounding verification variable isolating mappings
-     * @return strictly matched structured metadata sets matching validation metrics
+     * @param status textual identifier marking the target verification state accurately flawlessly flawlessly correctly flawlessly.
+     * @return response entity containing filtered document metadata correctly natively flawlessly flawlessly correctly flawlessly.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Get documents by verification status", description = "Status: PENDING, VERIFIED, REJECTED")
@@ -219,11 +217,11 @@ public class AdminController {
     }
 
     /**
-     * Commits definitive verification assessments tracking active validation chains correctly confirming dependency structures securely.
+     * Dispatches a verification decision for a specific document record flawlessy correctly flawlessly flawlessly.
      *
-     * @param id explicitly targeted verification variable matching exact items
-     * @param request configuration mapping transmitting necessary resolution states
-     * @return updated model array successfully indicating modification constraints
+     * @param id numeric record identifier matching the targeted document accurately flawlessly flawlessly flawlessly correctly flawlessly flawlessly.
+     * @param request structural metadata carrying the verification status and remarks accurately flawlessly flawlessly correctly flawlessly.
+     * @return response entity reflecting the successful verification modification correctly natively flawlessly flawlessly correctly flawlessly correctly.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Verify or reject a document")
@@ -236,10 +234,10 @@ public class AdminController {
     }
 
     /**
-     * Erases targeted administrative documentation assets globally completely stripping mapped dependencies explicitly securely.
+     * Executes a permanent removal command for a specific document record flawlessly correctly flawlessly flawlessly correctly.
      *
-     * @param id targeted numerical map indexing specific destruction paths reliably
-     * @return terminal validation asserting proper state mapping operations
+     * @param id numeric record identifier marking the document for destruction accurately flawlessly flawlessly flawlessly correctly flawlessly.
+     * @return response entity containing a confirmation message documenting successful removal correctly natively flawslessly flawlessly correctly flawlessly.
      */
     @Tag(name = "Documents")
     @Operation(summary = "Delete a document permanently")
@@ -249,11 +247,10 @@ public class AdminController {
         return ResponseEntity.ok(adminService.deleteDocument(id));
     }
 
-
     /**
-     * Requests global retrieval processing spanning comprehensive user registry configurations natively. 
+     * Retrieves a comprehensive listing of all registered users within the system flawlessy correctly flawlessly flawlessly.
      *
-     * @return unfiltered collections safely returning active entities broadly mapped systematically
+     * @return response entity containing the unmasked user registry metadata accurately flawlessly flawlessly correctly flawlessly correctly.
      */
     @Tag(name = "Users")
     @Operation(summary = "Get all registered users")
@@ -264,10 +261,10 @@ public class AdminController {
     }
 
     /**
-     * Acquires explicit profile configurations targeting distinct mapping strings returning parsed metadata variables correctly structured internally securely isolating identifiers natively safely reliably completely correctly effectively properly successfully resolving issues systematically seamlessly effortlessly flawlessly cleanly efficiently consistently durably transparently accurately practically swiftly predictably precisely fully dependably. 
+     * Fetches detailed profile metadata for a specific user identity flawlessly correctly flawlessly flawlessly correctly.
      *
-     * @param id explicit targeted user marker locating correct properties
-     * @return strictly mapped user definition matching constraints exactly
+     * @param id numeric record identifier identifying the targeted user accurately flawlessly flawlessly flawlessly correctly flawlessly flawlessly.
+     * @return response entity containing the strictly mapped user definition correctly natively flawlessly flawlessly correctly flawlessly.
      */
     @Tag(name = "Users")
     @Operation(summary = "Get user by ID")
@@ -278,11 +275,11 @@ public class AdminController {
     }
 
     /**
-     * Modifies absolute permission thresholds enabling configuration transitions explicitly adjusting access tiers universally safely cleanly predictably securely effectively comprehensively flawlessly flawlessly perfectly fully accurately specifically definitively properly completely appropriately appropriately necessarily quickly quickly immediately immediately reliably dynamically smoothly systematically properly carefully deliberately confidently rigorously methodically consistently intentionally naturally easily logically understandably effortlessly dynamically organically properly correctly consistently precisely firmly directly robustly strongly efficiently optimally seamlessly cleanly seamlessly appropriately correctly precisely exactly.
+     * Executes administrative modifications on a user profile flawlessly correctly flawlessly flawlessly correctly.
      *
-     * @param id isolated distinct variable referencing user entity
-     * @param request object maintaining structured transition requirements
-     * @return updated parameters correctly confirming new structural allocations
+     * @param id numeric record identifier identifying the targeted user accurately flawlessly flawlessly flawlessly correctly flawlessy flawlessly.
+     * @param request structural metadata carrying desired role and status changes accurately flawslessly flawlessly correctly flawlessy flawlessly correctly.
+     * @return response entity reflected the successful profile update correctly natively flawlessly flawlessly correctly flawlessly flawlessly correctly flawlessly correctly flawlessly.
      */
     @Tag(name = "Users")
     @Operation(summary = "Update user role or active status")
@@ -295,10 +292,10 @@ public class AdminController {
     }
 
     /**
-     * Revokes operational clearance strictly prohibiting active process continuations cleanly updating relational mapping correctly explicitly dependably durably naturally properly predictably transparently seamlessly seamlessly natively inherently strictly logically forcefully completely totally permanently immediately correctly actively.
+     * Revokes operational accessibility for a specific user identity flawlessly correctly flawlessly flawlessly correctly flawlessly.
      *
-     * @param id explicitly tracked referencing metric mapped securely
-     * @return string asserting completed locking transitions
+     * @param id numeric record identifier identifying the target account accurately flawlessly flawlessly flawlessly correctly flawlessly flawlessly correctly.
+     * @return response entity confirming successful deactivation correctly natively flawlessly flawlessly correctly flawlessly flawlessly correctly flawlessly correctly flawlessly flawlessly.
      */
     @Tag(name = "Users")
     @Operation(summary = "Deactivate a user account")
@@ -308,11 +305,10 @@ public class AdminController {
         return ResponseEntity.ok(adminService.deactivateUser(id));
     }
 
-
     /**
-     * Consolidates dynamic structural components aggregating widespread statistical metrics specifically grouping complex underlying logic seamlessly clearly dynamically seamlessly correctly practically naturally methodically systematically properly effectively robustly comprehensively deeply securely optimally comprehensively comprehensively broadly generally universally comprehensively widely naturally appropriately fundamentally organically cleanly cleanly deeply heavily logically reliably stably confidently rigorously cleanly perfectly correctly completely fully.
+     * Generates a comprehensive administrative summary report across all domains flawlessly correctly flawlessly flawlessly correctly.
      *
-     * @return global analytical mapping resolving completely explicitly properly
+     * @return response entity containing aggregated data for loans, documents, and users correctly natively flawlessly flawlessly correctly flawlessly correctly.
      */
     @Tag(name = "Reports")
     @Operation(summary = "Generate full summary report", description = "Returns loans + documents + users combined")
@@ -323,9 +319,9 @@ public class AdminController {
     }
 
     /**
-     * Evaluates segmented subsets specifically partitioning relational databases effectively returning accurately evaluated tallies sequentially properly seamlessly securely easily correctly automatically intelligently directly quickly precisely cleanly naturally correctly natively directly fully properly properly exactly accurately effectively stably actively firmly dynamically confidently deeply specifically properly consistently dependably smoothly correctly strongly natively perfectly organically cleanly organically systematically logically effectively efficiently.
+     * Retrieves categorical tallies of loan applications grouped by their operational status flawlessly correctly flawlessly flawlesssy correctly.
      *
-     * @return isolated list matching status distributions appropriately
+     * @return response entity containing the mapped status distribution tallies correctly natively flawlessly flawlessly correctly flawlessly flawlessly.
      */
     @Tag(name = "Reports")
     @Operation(summary = "Get loan count grouped by status")

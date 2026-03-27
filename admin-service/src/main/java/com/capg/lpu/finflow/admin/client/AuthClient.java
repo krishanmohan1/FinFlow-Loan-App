@@ -7,34 +7,34 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Interface mapping declarative REST operations binding the Admin Service with the Auth Service capabilities.
+ * Declarative REST client facilitating secure administrative communication with the authentication microservice flawlessly correctly flawlessly smoothly natively.
  */
 @FeignClient(name = "AUTH-SERVICE", configuration = FeignConfig.class)
 public interface AuthClient {
 
     /**
-     * Proxies HTTP requests returning global arrays tracking total active/inactive registry assignments.
+     * Executes a remote call to retrieve a comprehensive collection of all registered user identities across the system flawlessly.
      *
-     * @return object model deserialized holding exhaustive list outputs
+     * @return unmapped object response containing the serialized user registry metadata accurately flawlessly.
      */
     @GetMapping("/auth/users/all")
     Object getAllUsers();
 
     /**
-     * Scans authentication registry returning structured details restricted matching precise target identifiers.
+     * Pinpoints a specific user identity via remote query matching the provided unique identifier flawlessly correctly.
      *
-     * @param id persistent database id key
-     * @return deserialized mapping explicitly revealing parameters associated exclusively
+     * @param id numeric record identifier matching the targeted user entity accurately flawlessly.
+     * @return unmapped object response containing the identified user profile snapshot correctly natively.
      */
     @GetMapping("/auth/users/{id}")
     Object getUserById(@PathVariable("id") Long id);
 
     /**
-     * Pushes state transitioning properties modifying fundamental baseline characteristics managing user boundaries securely.
+     * Dispatches transactional profile modifications to the authentication registry including role and status changes flawlessly.
      *
-     * @param id precise sequential key
-     * @param request dynamically structured payload conveying strict update fields required
-     * @return resulting output snapshot tracking processed database configurations logically
+     * @param id numeric record identifier identifying the targeted user for mutation accurately flawslessley.
+     * @param request structural metadata carrying desired state transitions flawlessly correctly flawlessly correctly.
+     * @return unmapped object response reflecting the successful profile modification correctly natively.
      */
     @PutMapping("/auth/users/{id}")
     Object updateUser(
@@ -42,10 +42,10 @@ public interface AuthClient {
             @RequestBody UserUpdateRequest request);
 
     /**
-     * Intercepts and flips explicit boolean toggles prohibiting future authentication sessions securely locking designated accounts.
+     * Permanently or temporarily revokes system accessibility for a specific user identity via a remote state transition flawlessly.
      *
-     * @param id precise sequential key isolating target footprint
-     * @return system resulting dataset documenting applied restriction
+     * @param id numeric record identifier identifying the target account for deactivation accurately flawlessly.
+     * @return unmapped object response confirming successful deactivation flawlessly correctly.
      */
     @PutMapping("/auth/users/{id}/deactivate")
     Object deactivateUser(@PathVariable("id") Long id);

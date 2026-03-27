@@ -9,12 +9,21 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Global exception handler for the Document microservice.
+ * Intercepts common exceptions and maps them to standardized RESTful error responses.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    // Handles: document not found by ID
+    /**
+     * Handles ResourceNotFoundException and returns a 404 Not Found response.
+     *
+     * @param ex The exception indicating that a requested document or resource was not found.
+     * @return A map containing error details including timestamp, status, and message.
+     */
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, Object> handleNotFound(ResourceNotFoundException ex) {
@@ -26,7 +35,12 @@ public class GlobalExceptionHandler {
         return error;
     }
 
-    // Handles: USER trying to access another user's document
+    /**
+     * Handles SecurityException and returns a 403 Forbidden response.
+     *
+     * @param ex The exception indicating an unauthorized access attempt to a document.
+     * @return A map containing security violation details.
+     */
     @ExceptionHandler(SecurityException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public Map<String, Object> handleSecurity(SecurityException ex) {
@@ -38,8 +52,13 @@ public class GlobalExceptionHandler {
         return error;
     }
 
-    // Handles: duplicate document type, invalid verify status (VERIFIED/REJECTED check),
-    // file upload failures — these are all thrown as RuntimeException in DocumentService
+    /**
+     * Handles generic RuntimeException and returns a 400 Bad Request response.
+     * Used for general business logic or validation failures.
+     *
+     * @param ex The runtime exception encountered during execution.
+     * @return A map containing the error message and bad request status.
+     */
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, Object> handleRuntime(RuntimeException ex) {
@@ -51,7 +70,12 @@ public class GlobalExceptionHandler {
         return error;
     }
 
-    // Fallback for anything unexpected
+    /**
+     * Handles all other unhandled exceptions and returns a 500 Internal Server Error response.
+     *
+     * @param ex The unexpected exception.
+     * @return A map containing a generic internal server error message.
+     */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, Object> handleGeneral(Exception ex) {

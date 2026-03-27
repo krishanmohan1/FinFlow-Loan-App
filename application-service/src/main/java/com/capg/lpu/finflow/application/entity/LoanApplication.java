@@ -5,7 +5,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * Core domain representation tracking individual loan application lifecycles durably preserving persistence flawlessly cleanly smoothly predictably securely seamlessly practically securely successfully fluently comfortably rationally efficiently dependably natively nicely dependably neatly cleanly.
+ * Entity class representing a loan application in the system.
+ * Contains core application details including amount, type, and current status.
  */
 @Entity
 @Table(name = "loan_applications")
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 public class LoanApplication {
 
     /**
-     * Unique systematic identifier explicitly tracking records safely safely natively natively properly correctly dependably efficiently natively cleanly confidently naturally optimally softly gracefully efficiently transparently securely dynamically smoothly naturally expertly.
+     * Unique identifier for the loan application record.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "loan_seq_gen")
@@ -24,49 +25,50 @@ public class LoanApplication {
     private Long id;
 
     /**
-     * Correlates specific originating user smoothly fluently cleanly cleanly securely fluently securely dynamically comfortably predictably fluidly practically confidently smartly effortlessly safely stably naturally rationally dependably carefully correctly rationally smoothly predictably solidly.
+     * The username of the applicant who submitted the loan request.
      */
     @Column(nullable = false)
     private String username;
 
     /**
-     * Total request cleanly defined explicitly smoothly stably properly cleanly seamlessly securely smartly precisely neatly seamlessly correctly explicitly natively properly organically dependably efficiently gracefully elegantly smartly properly transparently organically accurately appropriately seamlessly securely effortlessly brilliantly smoothly smoothly naturally organically safely naturally securely correctly nicely efficiently.
+     * The total amount of the loan requested by the applicant.
      */
     @Column(nullable = false)
     private Double amount;
 
     /**
-     * Current categorical determination fluently stably efficiently neatly smartly gracefully elegantly fluently directly precisely safely natively optimally durably safely solidly properly intelligently cleanly durably cleanly optimally.
+     * The current status of the loan application (e.g., PENDING, APPROVED, REJECTED).
      */
     @Column(nullable = false)
     private String status;
 
     /**
-     * Targeted borrowing classification transparently efficiently successfully directly fluently rationally expertly naturally smoothly efficiently organically correctly reliably properly flawlessly efficiently logically smoothly dependably natively elegantly smoothly cleanly accurately comfortably dependably stably confidently organically accurately successfully neatly intuitively accurately explicitly smartly cleanly automatically dependably flawlessly stably stably carefully carefully smoothly stably correctly functionally seamlessly flawlessly clearly fluidly optimally expertly cleanly.
+     * The category or purpose classification of the loan (e.g., PERSONAL, MORTGAGE).
      */
     @Column(name = "loan_type")
     private String loanType;
 
     /**
-     * Explicit context naturally explicitly smoothly intuitively predictably stably properly beautifully stably elegantly gracefully successfully securely dependably logically securely seamlessly confidently creatively efficiently safely smartly organically effectively rationally flexibly softly efficiently cleanly natively successfully smoothly confidently reliably smoothly clearly intelligently securely.
+     * A description or detailed purpose for why the loan is being requested.
      */
     @Column(name = "purpose")
     private String purpose;
 
     /**
-     * Persistence temporal boundary accurately safely intelligently automatically reliably safely fluently natively safely efficiently reliably neatly dependably cleanly flawlessly cleanly neatly elegantly stably cleanly smoothly transparently transparently creatively smartly safely organically directly efficiently intelligently creatively carefully neatly natively efficiently stably safely dependably durably smartly dynamically cleanly explicitly appropriately efficiently dependably seamlessly rationally neatly securely dependably smartly neatly gracefully smartly stably smartly fluently gracefully rationally completely seamlessly accurately beautifully appropriately fluently dependably dynamically natively cleanly fluently securely predictably rationally elegantly easily properly smoothly seamlessly reliably securely dependably.
+     * The timestamp when the loan application was submitted.
      */
     @Column(name = "applied_at")
     private LocalDateTime appliedAt;
 
     /**
-     * Embedded administrative context securely naturally natively naturally accurately securely natively rationally safely securely optimally predictably smoothly effectively intelligently beautifully natively gracefully intuitively smoothly securely efficiently securely cleanly cleanly smartly.
+     * Administrative remarks or justification for decisions made regarding the application.
      */
     @Column(name = "remarks")
     private String remarks;
 
     /**
-     * Automatic lifecycle listener seamlessly injecting operational defaults properly organically logically accurately completely robustly dependably reliably cleanly efficiently cleanly correctly smartly dependably dynamically creatively intelligently securely practically correctly logically reliably completely smoothly dependably safely comfortably softly clearly reliably fluently smoothly natively elegantly safely securely directly smoothly elegantly neatly successfully cleanly smoothly fluently safely dependably intuitively safely.
+     * Lifecycle callback to initialize default values before persistence.
+     * Sets the application timestamp and defaults the status to PENDING if not specified.
      */
     @PrePersist
     public void prePersist() {

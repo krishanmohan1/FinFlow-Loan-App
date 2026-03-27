@@ -8,27 +8,61 @@ import com.capg.lpu.finflow.document.entity.Document;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for Document entities.
+ * Provides abstraction for database operations related to document metadata storage and retrieval.
+ */
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long> {
 
-    // ✅ Get all documents uploaded by a specific user
+    /**
+     * Retrieves all documents uploaded by a specific user.
+     *
+     * @param username The username of the uploader.
+     * @return A list of documents belonging to the user.
+     */
     List<Document> findByUsername(String username);
 
-    // ✅ Get all documents linked to a specific loan
+    /**
+     * Retrieves all documents associated with a specific loan ID.
+     *
+     * @param loanId The identifier of the loan application.
+     * @return A list of documents linked to the loan.
+     */
     List<Document> findByLoanId(String loanId);
 
-    // ✅ Get all documents of a specific type
-    //    e.g. all AADHAAR docs, all PAN docs
+    /**
+     * Retrieves documents filtered by their specific type (e.g., PAN, AADHAAR).
+     *
+     * @param documentType The category of document to search for.
+     * @return A list of documents matching the specified type.
+     */
     List<Document> findByDocumentType(String documentType);
 
-    // ✅ FIX: NEW — Get all documents by verification status
-    //    e.g. ADMIN can fetch all PENDING documents
+    /**
+     * Retrieves documents based on their current verification status.
+     *
+     * @param verificationStatus The status to filter by (e.g., PENDING, VERIFIED).
+     * @return A list of documents matching the status.
+     */
     List<Document> findByVerificationStatus(String verificationStatus);
 
-    // ✅ FIX: NEW — Check if a document type already exists for a loan
-    //    Prevents user from uploading duplicate AADHAAR for same loan
+    /**
+     * Finds a specific document for a loan application based on its type.
+     * Used for checking if a document of a certain type has already been uploaded for a loan.
+     *
+     * @param loanId The identifier of the loan application.
+     * @param documentType The category of document.
+     * @return An Optional containing the document if found.
+     */
     Optional<Document> findByLoanIdAndDocumentType(String loanId, String documentType);
 
-    // ✅ Get all documents by username and loan ID combined
+    /**
+     * Retrieves documents belonging to a specific user and loan application.
+     *
+     * @param username The username of the uploader.
+     * @param loanId The identifier of the loan application.
+     * @return A list of documents matching both criteria.
+     */
     List<Document> findByUsernameAndLoanId(String username, String loanId);
 }

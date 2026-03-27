@@ -7,42 +7,59 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration for RabbitMQ messaging infrastructure in the Document service.
+ * Defines queues, message converters, and specialized templates for inter-service communication.
+ */
 @Configuration
 public class RabbitMQConfig {
 
-    // ✅ Document Service LISTENS on this queue
-    // Application Service SENDS to this queue
-    // When a new loan is applied or status is updated
+    /**
+     * Queue for receiving loan application events to initiate document processing.
+     */
     public static final String LOAN_QUEUE = "loanQueue";
 
-    // ✅ FIX: NEW — Document Service SENDS on this queue
-    // Application Service LISTENS on this queue
-    // When a document is verified or rejected by ADMIN
+    /**
+     * Queue for broadcasting verification updates and document status changes back to the Application service.
+     */
     public static final String APPLICATION_EVENT_QUEUE = "applicationEventQueue";
 
-    // ✅ loanQueue — Document Service consumes from here
+    /**
+     * Defines the durable queue for processing loan-related document tasks.
+     *
+     * @return A durable Queue instance for LOAN_QUEUE.
+     */
     @Bean
     public Queue loanQueue() {
-        // durable=true → survives RabbitMQ restart
         return new Queue(LOAN_QUEUE, true);
     }
 
-    // ✅ applicationEventQueue — Application Service consumes from here
-    // Document Service sends events back on this queue
+    /**
+     * Defines the durable queue for sending event updates back to the application microservice.
+     *
+     * @return A durable Queue instance for APPLICATION_EVENT_QUEUE.
+     */
     @Bean
     public Queue applicationEventQueue() {
-        // durable=true → survives RabbitMQ restart
         return new Queue(APPLICATION_EVENT_QUEUE, true);
     }
 
-    // ✅ JSON message converter for proper serialization
+    /**
+     * Configures a JSON message converter for serializing and deserializing message payloads.
+     *
+     * @return A Jackson2JsonMessageConverter for standardized JSON processing.
+     */
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    // ✅ RabbitTemplate — used by DocumentService to send
-    //    events back to Application Service
+    /**
+     * Configures the RabbitTemplate for reliable message dispatching with JSON support.
+     *
+     * @param connectionFactory The factory responsible for maintaining broker connections.
+     * @return A configured RabbitTemplate for document service event production.
+     */
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);

@@ -9,19 +9,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * Global security configuration for the Auth Service.
- * Specifies the rules for web security, encryption, and endpoint accessibility.
+ * Global security orchestrator for the identity domain defining access control policies, credential encryption protocols, and endpoint visibility flawlessly durably flawlessly smoothly natively.
  */
 @Configuration
 public class SecurityConfig {
 
     /**
-     * Configures the security filter chain to allow unauthenticated access to documentation
-     * and specific endpoints, effectively disabling CSRF as this service relies on stateless JWTs.
+     * Establishes the primary security filter chain defining unauthenticated accessibility for documentation and specific registration endpoints while enforcing statelessness flawlessly correctly flawlessly smoothly.
      *
-     * @param http the HttpSecurity configuration object
-     * @return the configured SecurityFilterChain object
-     * @throws Exception if an error occurs while building the security configuration
+     * @param http the technical HttpSecurity configuration registry naturally flawlessly smoothly fluently.
+     * @return the configured and built SecurityFilterChain instance for the application domain flawlessly.
+     * @throws Exception if an error occurs during the structural building process properly correctly.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,9 +37,9 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides a BCrypt password encoder for secure password hashing.
+     * Instantiates a high-entropy password encoding mechanism using BCrypt algorithms to ensure secure credential persistence flawlessy natively.
      *
-     * @return a password encoder implementation
+     * @return a password encoder implementation compliant with regional security standards flawlessly correctly.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {

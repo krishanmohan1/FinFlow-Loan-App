@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.capg.lpu.finflow.application.config.RabbitMQConfig;
 
+/**
+ * Message producer service for the Application microservice.
+ * Handles the dispatching of loan-related events and notifications to the message broker.
+ */
 @Service
 @RequiredArgsConstructor
 public class LoanProducer {
@@ -16,19 +20,20 @@ public class LoanProducer {
 
     private final RabbitTemplate rabbitTemplate;
 
-    // ✅ Send message to RabbitMQ queue
-    // ✅ FIX: Wrapped in try-catch so RabbitMQ failure does NOT
-    //         crash the loan save operation
+    /**
+     * Sends a message to the designated loan processing queue.
+     * Includes error handling to ensure application stability if the broker is unavailable.
+     *
+     * @param message The serialized message payload to be sent.
+     */
     public void sendMessage(String message) {
         try {
-            log.info("📤 Sending to queue [{}]: {}", RabbitMQConfig.LOAN_QUEUE, message);
+            log.info("Sending to queue [{}]: {}", RabbitMQConfig.LOAN_QUEUE, message);
             rabbitTemplate.convertAndSend(RabbitMQConfig.LOAN_QUEUE, message);
-            log.info("✅ Message sent to RabbitMQ successfully");
+            log.info("Message sent to RabbitMQ successfully");
         } catch (Exception e) {
-            // ✅ Log the error but do NOT rethrow
-            // Loan is already saved in DB — RabbitMQ failure is non-critical
-            log.error("🔴 Failed to send message to RabbitMQ: {}", e.getMessage(), e);
-            log.warn("⚠️ Loan was saved but Document Service was NOT notified via queue");
+            log.error("Failed to send message to RabbitMQ: {}", e.getMessage(), e);
+            log.warn("Loan was saved but Document Service was NOT notified via queue");
         }
     }
 }

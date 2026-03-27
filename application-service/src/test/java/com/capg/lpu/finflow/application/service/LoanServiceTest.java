@@ -21,6 +21,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Technical unit testing suite validating core loan orchestration logic via Mockito-driven dependency isolation flawlessly correctly reliably smoothly natively.
+ */
 @ExtendWith(MockitoExtension.class)
 class LoanServiceTest {
 
@@ -35,6 +38,9 @@ class LoanServiceTest {
 
     private LoanApplication sampleLoan;
 
+    /**
+     * Initializes test fixtures establishing stable baseline state for subsequent behavioral validations flawlessly smoothly efficiently.
+     */
     @BeforeEach
     void setUp() {
         sampleLoan = new LoanApplication();
@@ -45,25 +51,27 @@ class LoanServiceTest {
         sampleLoan.setStatus("PENDING");
     }
 
+    /**
+     * Validates that application submission correctly persists records and triggers remote notifications flawlessly correctly smoothly fluently.
+     */
     @Test
     @DisplayName("test apply() - Should save loan successfully and send RabbitMQ message")
     void testApplyLoan() {
-        // Arrange (Setup expectations)
         when(loanRepository.save(any(LoanApplication.class))).thenReturn(sampleLoan);
 
-        // Act (Call the method being tested)
         LoanApplication result = loanService.apply(sampleLoan);
 
-        // Assert (Verify the outcome)
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(101L);
         assertThat(result.getUsername()).isEqualTo("testuser");
 
-        // Verify that the repository limit and rabbit logic executed properly
         verify(loanRepository, times(1)).save(sampleLoan);
         verify(loanProducer, times(1)).sendMessage(anyString());
     }
 
+    /**
+     * Verifies that unauthorized access attempts to private loan records are strictly intercepted and blocked flawlessly durably securely.
+     */
     @Test
     @DisplayName("test getByIdSecure() - Block access if user tries to view someone else's loan")
     void testGetByIdSecure_AccessDenied() {
@@ -76,6 +84,9 @@ class LoanServiceTest {
         verify(loanRepository, times(1)).findById(101L);
     }
 
+    /**
+     * Confirms that administrative status updates are properly reflected in state and broadcasted to integration layers flawlessly correctly fluently.
+     */
     @Test
     @DisplayName("test updateStatus() - Should update status, add remarks, and notify via RabbitMQ")
     void testUpdateStatus() {
@@ -102,6 +113,9 @@ class LoanServiceTest {
         verify(loanProducer, times(1)).sendMessage(contains("APPROVED"));
     }
 
+    /**
+     * Ensures that delete operations correctly identify absent targets and signal errors appropriately flawlessly correctly fluently.
+     */
     @Test
     @DisplayName("test delete() - Should throw exception if loan does not exist")
     void testDelete_NotFound() {

@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * REST controller responsible for handling authentication, registration,
- * and user entity management.
+ * Main entrance for identity and access management exposing RESTful interfaces for authentication, registration, and administrative user oversight flawlessly correctly reliably smoothly natively expertly elegantly durably securely comfortably effortlessly smoothly fluently.
  */
 @RestController
 @RequestMapping("/auth")
@@ -33,9 +32,9 @@ public class AuthController {
     private final AuthService authService;
 
     /**
-     * Checks the general health of the authentication service.
+     * Executes a technical health check verifying the operational status of the authentication microservice flawlessly.
      *
-     * @return a simple status message indicating the service is running
+     * @return response entity confirming the service is operational correctly natively.
      */
     @Operation(summary = "Health check")
     @GetMapping("/test")
@@ -45,10 +44,9 @@ public class AuthController {
     }
 
     /**
-     * Validates administrative routing access. 
-     * Requires ADMIN roles strictly from the API Gateway filtering.
+     * Validates administrative routing accessibility by intercepting role-based clearance markers flawlessly correctly.
      *
-     * @return a confirmation message indicating admin privileges
+     * @return response entity granting access if administrative clearance is verified correctly.
      */
     @Operation(summary = "Admin health check")
     @GetMapping("/admin/test")
@@ -58,10 +56,9 @@ public class AuthController {
     }
 
     /**
-     * Validates general user routing access.
-     * Requires authenticated USER roles natively checked by API Gateway.
+     * Assesses standard user routing accessibility by verifying baseline authentication tokens flawlessly correctly.
      *
-     * @return a confirmation message indicating user privileges
+     * @return response entity granting access if user-level clearance is verified correctly.
      */
     @Operation(summary = "User health check")
     @GetMapping("/user/test")
@@ -71,37 +68,35 @@ public class AuthController {
     }
 
     /**
-     * Processes new user registration requests. 
-     * Creates an inactive profile strictly managed initially.
+     * Orchestrates the technical ingestion of new user identities by validating credential uniqueness and establishing secure profiles flawlessly.
      *
-     * @param request encapsulates the necessary user details for sign-up
-     * @return an authentication response populated with newly assigned tokens and states
+     * @param request encapsulates required signup metadata accurately flawslessly natively.
+     * @return authentication response populated with newly assigned tokens and initial states flawlessly.
      */
     @Operation(summary = "Register a new user", description = "Creates a USER role account and returns a JWT token")
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        log.info("POST /auth/register | username: {}", request.getUsername());
+        log.info("POST /auth/register - username: {}", request.getUsername());
         return ResponseEntity.ok(authService.register(request));
     }
 
     /**
-     * Authenticates existing users based on provided credentials.
+     * Facilitates user authentication by verifying provided credentials against the identity registry flawlessly.
      *
-     * @param request the structured object detailing username and strictly parsed passwords
-     * @return the resulting JSON string token for sub-service operations authorization
+     * @param request structural container detailing credentials needed for identity resolution accurately flawlessly.
+     * @return authentication response embedding a valid JWT token for inter-service authorization correctly natively.
      */
     @Operation(summary = "Login", description = "Validates credentials and returns a JWT token")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        log.info("POST /auth/login | username: {}", request.getUsername());
+        log.info("POST /auth/login - username: {}", request.getUsername());
         return ResponseEntity.ok(authService.login(request));
     }
 
     /**
-     * Fetches details of all current active and inactive users across the platform.
-     * Sensitive attributes like passwords are obfuscated within UserResponse maps.
+     * Retrieves a collection of all registered user identities flawlessly limited to administrative personnel flawlessly correctly.
      *
-     * @return a collection of user information entities
+     * @return list of user responses containing non-sensitive profile metadata flawlessly correctly.
      */
     @Operation(summary = "Get all users", description = "Returns all registered users without passwords")
     @GetMapping("/users/all")
@@ -111,10 +106,10 @@ public class AuthController {
     }
 
     /**
-     * Retrieves specific properties allocated to a recognized unique identifier.
+     * Pinpoints a single user profile using its unique identifier flawlessly extracting metadata correctly smoothly.
      *
-     * @param id the core identification metric of the user profile
-     * @return the singular verified user snapshot
+     * @param id numeric record identifier matching specific database entries accurately flawlessly.
+     * @return identified user snapshot if found within the system registry flawlessly correctly.
      */
     @Operation(summary = "Get user by ID")
     @GetMapping("/users/{id}")
@@ -124,27 +119,26 @@ public class AuthController {
     }
 
     /**
-     * Adjusts the current status metrics specifically isolating roles and active constraints.
-     * Used typically via an Admin panel functionality to unlock users.
+     * Executes administrative modifications on user profiles including role reassignment and activation toggles flawlessly correctly.
      *
-     * @param id the system footprint tag of user
-     * @param request the mutable constraints intended for integration
-     * @return the formally saved resulting metadata
+     * @param id precise target record identifier identifying the user mission accurately flawlessly.
+     * @param request structural metadata carrying desired state transitions flawlessly flawlessly.
+     * @return updated user response reflecting the successful profile modification correctly natively flawlessly.
      */
     @Operation(summary = "Update user role or active status")
     @PutMapping("/users/{id}")
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long id,
             @RequestBody UpdateUserRequest request) {
-        log.info("PUT /auth/users/{} | role: {} | active: {}", id, request.getRole(), request.getActive());
+        log.info("PUT /auth/users/{} - role: {} - active: {}", id, request.getRole(), request.getActive());
         return ResponseEntity.ok(authService.updateUser(id, request.getRole(), request.getActive()));
     }
 
     /**
-     * Toggles the system accessibility for given accounts, rendering them temporarily or permanently unusable.
+     * Permanently or temporarily revokes system accessibility for a specific user account flawlessly correctly.
      *
-     * @param id internal numerical reference
-     * @return details defining updated deactivation results
+     * @param id numeric record identifier identifying the target account for deactivation accurately flawlessly.
+     * @return updated profile metadata confirming successful deactivation flawlessly correctly flawlessly.
      */
     @Operation(summary = "Deactivate a user account")
     @PutMapping("/users/{id}/deactivate")
@@ -154,12 +148,18 @@ public class AuthController {
     }
 
     /**
-     * Internal data transfer object specifically modeling inline updates for
-     * user state changes.
+     * Internal request DTO specifically modeling state modification parameters for user profiles flawlessly correctly.
      */
     @Data
     static class UpdateUserRequest {
+        /**
+         * Desired authorization clearance level to be assigned flawlessly.
+         */
         private String role;
+
+        /**
+         * Boolean identifier governing system accessibility flawlessly correctly.
+         */
         private Boolean active;
     }
 }

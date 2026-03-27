@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service class for managing loan application lifecycles.
+ * Handles business logic for applications, status updates, and coordination with the message producer.
+ */
 @Service
 @RequiredArgsConstructor
 public class LoanService {
@@ -22,14 +26,18 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final LoanProducer loanProducer;
 
-    // ✅ Apply for a new loan
+    /**
+     * Processes and persists a new loan application.
+     * Triggers a notification to other microservices via RabbitMQ upon successful creation.
+     *
+     * @param loan The unpersisted loan application entity.
+     * @return The saved loan application with generated ID and metadata.
+     */
     public LoanApplication apply(LoanApplication loan) {
-        log.info("📝 Applying loan for user: {}", loan.getUsername());
+        log.info("Applying loan for user: {}", loan.getUsername());
 
-        // status + appliedAt are auto-set via @PrePersist in entity
         LoanApplication saved = loanRepository.save(loan);
 
-        // ✅ Notify Document Service via RabbitMQ
         String message = "NEW_LOAN_APPLICATION | loanId=" + saved.getId()
                 + " | username=" + saved.getUsername()
                 + " | amount=" + saved.getAmount()
@@ -37,31 +45,49 @@ public class LoanService {
 
         loanProducer.sendMessage(message);
 
-        log.info("✅ Loan saved with ID: {}", saved.getId());
+        log.info("Loan saved with ID: {}", saved.getId());
         return saved;
     }
 
-    // ✅ Get all loans (ADMIN only)
+    /**
+     * Retrieves all loan applications from the system.
+     *
+     * @return A list of all stored loan application records.
+     */
     public List<LoanApplication> getAll() {
-        log.info("📋 Fetching all loan applications");
+        log.info("Fetching all loan applications");
         return loanRepository.findAll();
     }
 
-    // ✅ Get loans by username (USER)
+    /**
+     * Retrieves all loan applications submitted by a specific user.
+     *
+     * @param username The username to filter by.
+     * @return A list of applications matching the username.
+     */
     public List<LoanApplication> getByUsername(String username) {
-        log.info("📋 Fetching loans for user: {}", username);
+        log.info("Fetching loans for user: {}", username);
         return loanRepository.findByUsername(username);
     }
 
-    // ✅ Get single loan — secure (USER can only see own, ADMIN can see any)
+    /**
+     * Retrieves a loan application by ID while enforcing security constraints.
+     * Standard users can only access their own records, while ADMINs have unrestricted access.
+     *
+     * @param id The ID of the loan application.
+     * @param username The name of the authenticated requester.
+     * @param role The security role of the requester.
+     * @return The requested loan application.
+     * @throws ResourceNotFoundException if the application ID does not exist.
+     * @throws SecurityException if the user is not authorized to view the application.
+     */
     public LoanApplication getByIdSecure(Long id, String username, String role) {
-        log.info("🔍 Fetching loan ID: {} for user: {}, role: {}", id, username, role);
+        log.info("Fetching loan ID: {} for user: {}, role: {}", id, username, role);
 
         LoanApplication loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Loan not found with ID: " + id));
 
-        // ✅ If not admin, block access to other user's loans
         if (!"ADMIN".equals(role) && !loan.getUsername().equals(username)) {
             throw new SecurityException("Access denied. This loan does not belong to you.");
         }
@@ -69,21 +95,40 @@ public class LoanService {
         return loan;
     }
 
-    // ✅ Get loans by status (ADMIN only — controller guards this)
+    /**
+     * Retrieves all loan applications filtered by their current status.
+     *
+     * @param status The target status for matches.
+     * @return A list of applications with the matching status.
+     */
     public List<LoanApplication> getByStatus(String status) {
-        log.info("📋 Fetching loans with status: {}", status);
+        log.info("Fetching loans with status: {}", status);
         return loanRepository.findByStatus(status);
     }
 
-    // ✅ Get loans by username AND status (USER filtered view)
+    /**
+     * Retrieves loan applications matching both a specific username and status.
+     *
+     * @param username The target applicant's username.
+     * @param status The target application status.
+     * @return A list of applications satisfying both criteria.
+     */
     public List<LoanApplication> getByUsernameAndStatus(String username, String status) {
-        log.info("📋 Fetching loans for user: {} with status: {}", username, status);
+        log.info("Fetching loans for user: {} with status: {}", username, status);
         return loanRepository.findByUsernameAndStatus(username, status);
     }
 
-    // ✅ Update loan status (ADMIN only — controller guards this)
+    /**
+     * Updates the status and metadata of an existing loan application.
+     * Dispatches an update notification to environmental services via the message producer.
+     *
+     * @param id The ID of the application to update.
+     * @param request The status update details (new status and remarks).
+     * @return The updated loan application entity.
+     * @throws ResourceNotFoundException if the ID corresponds to no known application.
+     */
     public LoanApplication updateStatus(Long id, LoanStatusUpdateRequest request) {
-        log.info("🔄 Updating status for loan ID: {} → {}", id, request.getStatus());
+        log.info("Updating status for loan ID: {} - {}", id, request.getStatus());
 
         LoanApplication loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -94,7 +139,6 @@ public class LoanService {
 
         LoanApplication updated = loanRepository.save(loan);
 
-        // ✅ Notify Document Service about status change
         String message = "LOAN_STATUS_UPDATED | loanId=" + updated.getId()
                 + " | username=" + updated.getUsername()
                 + " | newStatus=" + updated.getStatus()
@@ -102,13 +146,19 @@ public class LoanService {
 
         loanProducer.sendMessage(message);
 
-        log.info("✅ Loan ID: {} status updated to: {}", id, request.getStatus());
+        log.info("Loan ID: {} status updated to: {}", id, request.getStatus());
         return updated;
     }
 
-    // ✅ Delete loan (ADMIN only — controller guards this)
+    /**
+     * Deletes a loan application record from the persistence layer.
+     *
+     * @param id The ID of the application to remove.
+     * @return A confirmation string upon successful deletion.
+     * @throws ResourceNotFoundException if the application ID is not found.
+     */
     public String delete(Long id) {
-        log.info("🗑️ Deleting loan ID: {}", id);
+        log.info("Deleting loan ID: {}", id);
 
         LoanApplication loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -116,7 +166,7 @@ public class LoanService {
 
         loanRepository.delete(loan);
 
-        log.info("✅ Loan ID: {} deleted successfully", id);
+        log.info("Loan ID: {} deleted successfully", id);
         return "Loan with ID " + id + " deleted successfully.";
     }
 }

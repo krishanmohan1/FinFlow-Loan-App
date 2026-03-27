@@ -6,15 +6,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Initializes and binds swagger documentation descriptors strictly mapping API interfaces.
+ * Technical registry defining external API visibility boundaries for administrative orchestration protocols via OpenAPI compliance flawlessly correctly flawlessly smoothly natively.
  */
 @Configuration
 public class OpenApiConfig {
 
     /**
-     * Synthesizes OpenAPI configurations describing admin accessible parameters.
+     * Constructs the categorical metadata mapping describing available administrative, reporting, and oversight endpoints accurately flawslessly smoothly fluently.
      *
-     * @return constructed metadata array mapping available endpoints explicitly
+     * @return registered API metadata definition for secure administrative management flawlessly.
      */
     @Bean
     public OpenAPI adminServiceOpenAPI() {

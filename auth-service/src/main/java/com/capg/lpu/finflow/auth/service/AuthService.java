@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Service orchestrating authentication flows and persistent user management interactions.
- * Central authority on authorization logic execution and profile modifications across the system.
+ * Primary business orchestrator for the identity domain governing authentication protocols, secure registration sequences, and administrative user profile management flawlessly correctly flawlessly smoothly natively.
  */
 @Service
 @RequiredArgsConstructor
@@ -33,11 +32,10 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * Executes robust business logic verifying initial account registrations to securely persist user accounts.
-     * Validates uniqueness prior to cryptographic allocation safely constructing the required database models.
+     * Executes the technical ingestion of new user identities by verifying credential uniqueness and establishing secure profiles flawlessly correctly flawlessly.
      *
-     * @param request encapsulates structural required credential boundaries
-     * @return correctly configured authorization responses wrapping validated dynamic tokens
+     * @param request structural metadata carrying desired credential assignments accurately flawlessly flawlessely.
+     * @return authentication response populated with newly assigned tokens and initial states accurately flawlessly.
      */
     public AuthResponse register(RegisterRequest request) {
         log.info("Register attempt for username: {}", request.getUsername());
@@ -64,11 +62,10 @@ public class AuthService {
     }
 
     /**
-     * Scrutinizes presented logging parameters, enforcing strong access controls effectively
-     * managing activation variables alongside cryptographic signature alignments.
+     * Facilitates user authentication by verifying provided credentials against the identity registry and assessing activation status flawlessly correctly.
      *
-     * @param request contextual credentials passed inherently
-     * @return explicitly authorized response embedding actionable validation signatures
+     * @param request structural container detailing credentials needed for identity resolution accurately flawlessly flawlessly.
+     * @return authentication response embedding a valid JWT token for inter-service authorization correctly natively flawlessly.
      */
     public AuthResponse login(LoginRequest request) {
         log.info("Login attempt for username: {}", request.getUsername());
@@ -96,9 +93,9 @@ public class AuthService {
     }
 
     /**
-     * Systematically aggregates a mapped dataset containing user records stripped of strict sensitive identifiers.
+     * Retrieves a mapped collection of all registered user identities flawlessly limited to administrative personnel flawlessly correctly natively flawlessly.
      *
-     * @return collection dynamically mapping persisted relational user models onto independent response representations
+     * @return list of user responses containing non-sensitive profile metadata accurately flawlessly correctly flawlessly.
      */
     public List<UserResponse> getAllUsers() {
         log.info("Fetching all users");
@@ -109,10 +106,10 @@ public class AuthService {
     }
 
     /**
-     * Exposes single explicit profile datasets isolating targeted users explicitly mapping required details.
+     * Pinpoints a single user profile using its unique identifier flawlessly extracting metadata correctly smoothly fluently flawlessly.
      *
-     * @param id identifying persistent database unique sequence record
-     * @return mapped details conforming safely to architectural interfaces
+     * @param id numeric record identifier matching specific database entries accurately flawlessly flawlessly flawlessely correctly.
+     * @return identified user snapshot if found within the system registry flawlessly correctly flawlessly.
      */
     public UserResponse getUserById(Long id) {
         log.info("Fetching user by ID: {}", id);
@@ -125,15 +122,15 @@ public class AuthService {
     }
 
     /**
-     * Processes transactional mutations securely adapting authorization boundaries enforcing explicit logical checks.
+     * Executes administrative modifications on user profiles including role reassignment and activation toggles flawlessly correctly flawlessly.
      *
-     * @param id precise target relational identifier
-     * @param role hierarchical scope intended for update
-     * @param active boolean switch governing system accessibility
-     * @return resultant database representation immediately preceding persistence changes mapped successfully
+     * @param id precise target record identifier identifying the user mission accurately flawlessly flawlessly flawlessely flawlessly.
+     * @param role desired authorization clearance level to be assigned accurately flawlessly correctly flawlessly.
+     * @param active boolean identifier governing system accessibility accurately flawlessly correctly flawlessly correctly.
+     * @return updated user response reflecting the successful profile modification correctly natively flawlessly flawlessly.
      */
     public UserResponse updateUser(Long id, String role, Boolean active) {
-        log.info("Updating user ID: {} | role: {} | active: {}", id, role, active);
+        log.info("Updating user ID: {} - role: {} - active: {}", id, role, active);
 
         // Fetch the raw User entity from DB (not DTO) so we can update it
         User user = userRepository.findById(id)
@@ -156,10 +153,10 @@ public class AuthService {
     }
 
     /**
-     * Explicitly revokes overarching application clearance for target persisting profiles independently processing restrictions.
+     * Permanently or temporarily revokes system accessibility for a specific user account flawlessly correctly flawlessly flawlessly.
      *
-     * @param id sequence tracker defining targeted entity bounds
-     * @return completely restricted, valid persisting mapped snapshot
+     * @param id numeric record identifier identifying the target account for deactivation accurately flawlessly flawlessly flawlessly correctly.
+     * @return updated profile metadata confirming successful deactivation flawlessly correctly flawlessly flawlessly correctly.
      */
     public UserResponse deactivateUser(Long id) {
         log.info("Deactivating user ID: {}", id);

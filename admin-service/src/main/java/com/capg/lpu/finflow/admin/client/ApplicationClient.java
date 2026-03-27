@@ -7,53 +7,53 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Feign client orchestrating HTTP requests directly to the Application Service.
- * FeignConfig injects authorization context natively allowing privileged access routes.
+ * Feign client for communicating with the Application Microservice.
+ * Provides administrative access to loan application management endpoints.
  */
 @FeignClient(name = "APPLICATION-SERVICE", configuration = FeignConfig.class)
 public interface ApplicationClient {
 
     /**
-     * Retrieves all recorded loan applications across the platform.
+     * Retrieves all loan applications from the application service.
      *
-     * @return payload containing mapping lists for applications
+     * @return A list-like object containing all loan application data.
      */
     @GetMapping("/application/all")
     Object getAllLoans();
 
     /**
-     * Isolates a single loan application regardless of ownership mapping.
+     * Retrieves a specific loan application by its ID.
      *
-     * @param id precise sequential application identifier
-     * @return explicitly mapped singular loan data payload
+     * @param id The unique identifier of the loan application.
+     * @return The requested loan application data.
      */
     @GetMapping("/application/{id}")
     Object getLoanById(@PathVariable("id") Long id);
 
     /**
-     * Groups application aggregates filtering dynamically applying designated status variables.
+     * Retrieves loan applications filtered by their current status.
      *
-     * @param status exact mapped status criteria filtering string
-     * @return grouped array response comprising verified subset entries
+     * @param status The status to filter by (e.g., PENDING, APPROVED, REJECTED).
+     * @return A list-like object containing matching loan applications.
      */
     @GetMapping("/application/status/{status}")
     Object getLoansByStatus(@PathVariable("status") String status);
 
     /**
-     * Resolves applications targeting explicitly queried username relationships safely isolated by administrative endpoints.
+     * Retrieves all loan applications associated with a specific username.
      *
-     * @param username query parameter limiting search domain footprint
-     * @return relevant application metrics intersecting defined relationships
+     * @param username The username of the applicant.
+     * @return A list-like object containing the user's loan applications.
      */
     @GetMapping("/application/user/{username}")
     Object getLoansByUsername(@PathVariable("username") String username);
 
     /**
-     * Applies transactional update modifications overriding existing recorded progression properties strictly executing ADMIN validation paths.
+     * Updates the status of a specific loan application.
      *
-     * @param id logical targeting identifier assigning changes accordingly
-     * @param request configuration mapping providing context to transition requirements
-     * @return finalized persisted loan details immediately processed
+     * @param id The ID of the loan application to update.
+     * @param request The object containing the new status and administrative remarks.
+     * @return The updated loan application data.
      */
     @PutMapping("/application/status/{id}")
     Object updateStatus(
@@ -61,10 +61,10 @@ public interface ApplicationClient {
             @RequestBody LoanStatusUpdateRequest request);
 
     /**
-     * Executing hard explicit delete calls purging targeted applications totally outside active storage arrays.
+     * Deletes a specific loan application from the application service.
      *
-     * @param id index bound constraint reference targeting destruction
-     * @return generic message reporting executed procedure completion status
+     * @param id The ID of the loan application to delete.
+     * @return A confirmation string upon successful deletion.
      */
     @DeleteMapping("/application/{id}")
     String delete(@PathVariable("id") Long id);

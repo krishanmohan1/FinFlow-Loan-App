@@ -10,10 +10,10 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
- * Entry point for the Admin Service.
- * Acts as a centralized orchestration layer for administrative tasks.
- * Excludes database auto-configuration as this service relies entirely 
- * on Feign clients interacting with other microservices.
+ * Main entry point for the Admin Service microservice.
+ * This service acts as an orchestrator for administrative tasks, using Feign clients
+ * to communicate with other microservices. Database auto-configuration is excluded
+ * as this service does not maintain its own persistent storage.
  */
 @SpringBootApplication(exclude = {
     DataSourceAutoConfiguration.class,
@@ -26,9 +26,9 @@ public class AdminServiceApplication {
     private static final Logger log = LoggerFactory.getLogger(AdminServiceApplication.class);
 
     /**
-     * Bootstraps the Admin Service context.
+     * Bootstraps the Admin Service application.
      *
-     * @param args command-line arguments
+     * @param args Command-line arguments passed to the application.
      */
     public static void main(String[] args) {
         SpringApplication.run(AdminServiceApplication.class, args);

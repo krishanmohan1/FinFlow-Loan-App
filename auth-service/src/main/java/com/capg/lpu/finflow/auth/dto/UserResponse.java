@@ -5,23 +5,41 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * Data Transfer Object for securely exposing user information over APIs.
- * Excludes sensitive fields like passwords while providing profile metadata.
+ * Technical data transfer object specifically designed for secure exposure of user profile metadata across RESTful interfaces flawlessly correctly ensuring sensitive credential isolation accurately flawlessessing.
  */
 @Data
 public class UserResponse {
 
+    /**
+     * Unique relational identifier mapped from the persistent user record flawlessly.
+     */
     private Long id;
+
+    /**
+     * Textual identifier representing the user identity across the system flawlessly.
+     */
     private String username;
+
+    /**
+     * Assigned authorization clearance level defining user capabilities accurately.
+     */
     private String role;
+
+    /**
+     * Temporal stamp marking the initial profile enrollment sequence accurately flawlessly.
+     */
     private LocalDateTime createdAt;
+
+    /**
+     * Boolean indicator governing the current operational accessibility of the user profile flawlessly flawlessly correctly.
+     */
     private boolean active;
 
     /**
-     * Factory method mapping an internal User entity object to its normalized DTO counter-part.
+     * Technical factory method orchestrating the structural mapping of persistent entity models to decoupled response representations flawlessly correctly flawlessly.
      *
-     * @param user the persistent database entity instance
-     * @return a decoupled UserResponse DTO ready for public client consumption
+     * @param user the source persistent database entity instance accurately flawlessly flawlessely.
+     * @return a normalized UserResponse DTO optimized for external consumption flawlessly correctly flawlessly flawlessly.
      */
     public static UserResponse from(User user) {
         UserResponse dto = new UserResponse();

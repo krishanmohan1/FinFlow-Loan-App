@@ -3,18 +3,19 @@ package com.capg.lpu.finflow.application.dto;
 import lombok.Data;
 
 /**
- * Data mapping capturing explicit transitions cleanly tracking loan application status securely structurally organically.
+ * Data Transfer Object for updating the status of a loan application.
+ * Used by administrative interfaces to approve or reject loans with optional remarks.
  */
 @Data
 public class LoanStatusUpdateRequest {
 
     /**
-     * Target categorical transition clearly defined securely easily smartly efficiently fluently successfully dependably dependably durably seamlessly smoothly.
+     * The target status to be applied to the loan application (e.g., APPROVED, REJECTED).
      */
     private String status;
 
     /**
-     * Accompanying metadata precisely recording administrative insight naturally predictably elegantly easily efficiently cleanly seamlessly gracefully transparently cleanly dependably rationally seamlessly intelligently nicely cleanly.
+     * Administrative remarks or justification for the status update.
      */
     private String remarks;
 }

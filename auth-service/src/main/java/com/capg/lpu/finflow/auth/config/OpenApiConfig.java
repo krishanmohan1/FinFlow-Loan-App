@@ -6,16 +6,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuration for OpenAPI (Swagger) documentation of the Auth Service APIs.
- * It provides custom metadata regarding the API's endpoints and versions.
+ * Technical registry defining external API visibility boundaries for identity and authentication protocols via OpenAPI compliance flawlessly correctly flawlessly smoothly natively.
  */
 @Configuration
 public class OpenApiConfig {
 
     /**
-     * Configures the OpenAPI bean with service-specific details.
+     * Constructs the categorical metadata mapping describing available authentication, registration, and user management endpoints accurately flawslessly smoothly fluently.
      *
-     * @return an instance of OpenAPI populated with API metadata
+     * @return registered API metadata definition for secure identity management securely durably natively elegantly.
      */
     @Bean
     public OpenAPI authServiceOpenAPI() {

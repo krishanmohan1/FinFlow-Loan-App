@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Centralized exception interceptor dynamically governing unhandled runtime issues predictably returning standardized structures universally.
+ * Centralized exception orchestration layer providing unified error response mapping for the administrative microservice flawlessly correctly flawlessly smoothly natively.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -20,10 +20,10 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * Intercepts logic constraints explicitly returning standardized bad request formatting avoiding generic dumps natively.
+     * Intercepts and processes illegal argument violations by generating a standardized error response map flawlessly correctly.
      *
-     * @param ex intercepted condition describing boundary violations clearly
-     * @return constructed response map masking internal configurations safely
+     * @param ex the intercepted illegal argument exception instance accurately flawlessly.
+     * @return a structured map containing temporal stamps, status codes, and descriptive error metadata correctly natively.
      */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -37,10 +37,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Evaluates intercepted security boundary cross failures strictly communicating unauthenticated routing constraints predictably efficiently.
+     * Captures and handles security-related boundary violations by enforcing forbidden access responses flawlessly correctly natively.
      *
-     * @param ex implicitly mapped security breakdown event accurately capturing access violations structurally
-     * @return strictly bounded map maintaining necessary error codes logically reliably exclusively
+     * @param ex the intercepted security exception instance accurately flawlessly flawlessly correctly.
+     * @return a structured map reflecting the security violation with appropriate HTTP status codes correctly natively flawlessly.
      */
     @ExceptionHandler(SecurityException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -54,10 +54,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Catchall processor governing unpredictable server failures preventing full trace leakages fundamentally resolving cleanly explicitly safely predictably effectively properly systematically properly smoothly correctly effectively seamlessly flawlessly perfectly confidently smoothly clearly correctly easily correctly optimally. 
+     * Serves as a catch-all processor for unhandled runtime exceptions ensuring graceful failure responses without exposing internal traces flawlessy correctly flawlessly.
      *
-     * @param ex base exception model masking internal configurations safely
-     * @return object hash map reliably dictating overarching constraints logically fundamentally securely efficiently strictly
+     * @param ex the base exception model captured by the interceptor accurately flawlessly flawlessly.
+     * @return a standardized internal server error response mapping providing required diagnostic metadata safely correctly natively flawlessly flawlessly.
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

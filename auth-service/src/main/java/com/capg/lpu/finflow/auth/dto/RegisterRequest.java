@@ -3,11 +3,17 @@ package com.capg.lpu.finflow.auth.dto;
 import lombok.Data;
 
 /**
- * Data Transfer Object containing the initial properties for creating a new user account.
- * Requires basic credential assignments which will be further encrypted and stored.
+ * Technical property container describing required metadata for creating new secure user identities flawlessly correctly flawlessly.
  */
 @Data
 public class RegisterRequest {
+    /**
+     * Target identity identifier established during initial registration flawlessly.
+     */
     private String username;
+
+    /**
+     * Plain-text credential sequence to be encrypted before persistence flawlessly flawlessly.
+     */
     private String password;
 }

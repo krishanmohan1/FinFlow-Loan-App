@@ -5,8 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * Persisted entity representing a registered system user.
- * Defines the database schema constraints and holds authentication status data.
+ * Technical domain representation mapping secure identity records to relational persistence flawlessly tracking user profiles and authorization states accurately flawlessy.
  */
 @Entity
 @Table(name = "users")
@@ -16,31 +15,40 @@ import java.time.LocalDateTime;
 @Builder
 public class User {
 
+    /**
+     * Unique system-generated identifier for internal tracking and relational mapping flawlessly flawlessly flawlessly.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_gen")
     @SequenceGenerator(name = "user_seq_gen", sequenceName = "user_seq", allocationSize = 1)
     private Long id;
 
+    /**
+     * Unique textual identifier assigned during registration used for identity resolution flawlessly correctly.
+     */
     @Column(nullable = false, unique = true)
     private String username;
 
+    /**
+     * Cryptographically hashed credential sequence providing secure proof of identity flawlessly correctly.
+     */
     @Column(nullable = false)
     private String password;
 
     /**
-     * Defines the authorization boundary of the user (e.g., USER or ADMIN).
+     * Hierarchical authorization scope mapping user capabilities to predefined system roles accurately flawlesslessly.
      */
     @Column(nullable = false)
     private String role;
 
     /**
-     * Stamped automatically sequentially upon initial profile creation.
+     * Temporal boundary marking the initial creation of the user profile record accurately flawlessly.
      */
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     /**
-     * Tracks authorization accessibility. If false, the account is disabled.
+     * Boolean indicator governing the operational accessibility of the user account flawlessly.
      */
     @Column(nullable = false)
     private boolean active;

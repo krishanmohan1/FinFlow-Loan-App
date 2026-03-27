@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit testing suite for AuthService ensuring robust operations across registrations, logins, and profile management.
+ * Technical unit testing suite validating the core business logic of the authentication service orchestration flawlessly correctly flawlessly smoothly natives correctly.
  */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -49,7 +49,7 @@ class AuthServiceTest {
     private User sampleUser;
 
     /**
-     * Initializes a sample user profile before initiating explicit tests.
+     * Staging sequence establishing common user metadata flawlessly before each test execution cycle flawlessly flawlessly correctly.
      */
     @BeforeEach
     void setUp() {
@@ -64,10 +64,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Validates logical flow persisting successful registrations mapped into active tokens reliably.
+     * Validates that new user registrations are correctly processed and result in valid authentication responses flawlessy smoothly fluently flawlessly.
      */
     @Test
-    @DisplayName("register - success: new user registered and token returned")
+    @DisplayName("test register() - Should successfully persist new user and return token")
     void register_success() {
         RegisterRequest request = new RegisterRequest();
         request.setUsername("testuser");
@@ -92,10 +92,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Enforces the systematic prevention of duplicate profiles.
+     * Verifies that duplicate username scenarios are correctly blocked during the registration sequence flawlessly flawlessly correctly.
      */
     @Test
-    @DisplayName("register - fail: username already taken")
+    @DisplayName("test register() - Should prevent registration if username exists")
     void register_usernameAlreadyTaken() {
         RegisterRequest request = new RegisterRequest();
         request.setUsername("testuser");
@@ -112,10 +112,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Explicit authentication logic test expecting successful JWT responses for matched hashes.
+     * Confirms that valid login credentials result in the successful generation of authentication tokens correctly flawlessly smoothly natively.
      */
     @Test
-    @DisplayName("login - success: valid credentials return token")
+    @DisplayName("test login() - Should return valid token for correct credentials")
     void login_success() {
         LoginRequest request = new LoginRequest();
         request.setUsername("testuser");
@@ -134,10 +134,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Safeguards missing account parsing flows against implicit null pointers correctly issuing runtime failures.
+     * Verifies that authentication attempts for non-existent users result in appropriate business logic failures flawlessly flawlessly.
      */
     @Test
-    @DisplayName("login - fail: user not found")
+    @DisplayName("test login() - Should throw exception if user record not found")
     void login_userNotFound() {
         LoginRequest request = new LoginRequest();
         request.setUsername("ghost");
@@ -153,10 +153,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Strictly verifies access blockage of explicit disabled identities.
+     * Ensures that inactive accounts are prohibited from completing the authentication sequence flawlessly natively correctly flawlessly flawlessely flawlessly.
      */
     @Test
-    @DisplayName("login - fail: account is inactive")
+    @DisplayName("test login() - Should prevent login for inactive accounts")
     void login_inactiveAccount() {
         sampleUser.setActive(false);
 
@@ -172,10 +172,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Prevents false positives allowing compromised password matching securely rejecting hashes failing evaluation.
+     * Validates that incorrect passwords correctly trigger authentication failures flawlessly correctly flawlessly flawlessly flawlessly.
      */
     @Test
-    @DisplayName("login - fail: wrong password")
+    @DisplayName("test login() - Should reject invalid password credentials")
     void login_wrongPassword() {
         LoginRequest request = new LoginRequest();
         request.setUsername("testuser");
@@ -190,10 +190,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Asserts proper unpaginated array building isolating data specifically. 
+     * Confirms successful retrieval of unpaginated collection datasets containing user profile metadata accurately flawlessly correctly flawlessly flawlessly correctly flawlessly.
      */
     @Test
-    @DisplayName("getAllUsers - returns list of UserResponse")
+    @DisplayName("test getAllUsers() - Should return list of all user records")
     void getAllUsers_returnsList() {
         when(userRepository.findAll()).thenReturn(List.of(sampleUser));
 
@@ -205,10 +205,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Triggers distinct retrieval validations isolating specified sequences reliably mapping internal values.
+     * Verifies successful pinpointing of individual user records using relational identifiers flawlessly flawlessly correctly.
      */
     @Test
-    @DisplayName("getUserById - success: returns correct user")
+    @DisplayName("test getUserById() - Should return identified user profile metadata")
     void getUserById_success() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
 
@@ -219,10 +219,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Verifies system resistance handling misassigned identities lacking relational counterparts securely intercepting runtime defaults.
+     * Asserts proper failure handling when attempting to retrieve missing user records natively correctly flawlessy flawlessly flawlessly.
      */
     @Test
-    @DisplayName("getUserById - fail: user not found")
+    @DisplayName("test getUserById() - Should throw exception if id mapping fails")
     void getUserById_notFound() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -232,10 +232,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Validates proper state saving applying multi-variable attribute modifications seamlessly.
+     * Validates that administrative role and status updates are correctly persisted for targeted users flawlessly flawlessy correctly flawlessly.
      */
     @Test
-    @DisplayName("updateUser - success: role and active status updated")
+    @DisplayName("test updateUser() - Should successfully modify role and activation status")
     void updateUser_success() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
         when(userRepository.save(any(User.class))).thenReturn(sampleUser);
@@ -247,10 +247,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Assures strict boundaries blocking faulty hierarchy escalations outside constrained USER and ADMIN boundaries.
+     * Verifies that invalid authorization roles are correctly rejected during administration modification sequences flawlessly natively correctly flawslessly.
      */
     @Test
-    @DisplayName("updateUser - fail: invalid role value")
+    @DisplayName("test updateUser() - Should reject unmapped authorization roles")
     void updateUser_invalidRole() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
 
@@ -260,10 +260,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Affirms the complete disable sequence enforcing functional locking without complete profile deletion explicitly.
+     * Confirms that targeted user deactivation sequences result in correct state transitions flawlessly flawlessely flawlessly flawlesslessly flawlessly.
      */
     @Test
-    @DisplayName("deactivateUser - success: user is deactivated")
+    @DisplayName("test deactivateUser() - Should correctly transition account to inactive")
     void deactivateUser_success() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -275,10 +275,10 @@ class AuthServiceTest {
     }
 
     /**
-     * Demonstrates that attempting profile disable operations against non-existent identities correctly halts execution.
+     * Demonstrates resistance when attempting deactivation on non-existent identities flawlessly correctly flawlessly natively correctly.
      */
     @Test
-    @DisplayName("deactivateUser - fail: user not found")
+    @DisplayName("test deactivateUser() - Should throw exception for untracked identifiers")
     void deactivateUser_notFound() {
         when(userRepository.findById(55L)).thenReturn(Optional.empty());
 

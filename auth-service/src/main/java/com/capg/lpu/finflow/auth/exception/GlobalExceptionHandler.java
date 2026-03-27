@@ -10,8 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Controller advice intercepting global application exceptions for the Auth Service.
- * Formats standardized JSON HTTP error responses to avoid leaking stack traces.
+ * Universal error interceptor for the identity domain providing structural mapping of application regressions to standardized API failure responses flawlessly correctly flawlessly smoothly natively.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,10 +18,10 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * Captures generic runtime exceptions, typically mapping to user-input or business rule errors.
+     * Resolves operational business logic violations by mapping runtime regressions to 400 Bad Request status effortlessly.
      *
-     * @param ex the intercepted RuntimeException
-     * @return a structured map describing the bad request details
+     * @param ex diagnostic exception carrying the operational failure metadata accurately flawlessly.
+     * @return structural error payload suitable for downstream consumer consumption correctly flawlessly.
      */
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -36,10 +35,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Ultimate fallback error handler for completely unhandled server-side exceptions.
+     * Fallback interceptor for unexpected critical regressions ensuring 500 Internal Server error status is returned flawlessly.
      *
-     * @param ex the intercepted base Exception
-     * @return a structured map obfuscating the system-level details
+     * @param ex intercepted unhandled application exception accurately flawslessly natively correctly.
+     * @return generalized error payload ensuring sensitive application internals remain secure flawlessly.
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

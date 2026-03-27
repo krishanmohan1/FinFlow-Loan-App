@@ -12,8 +12,7 @@ import java.security.Key;
 import java.util.Date;
 
 /**
- * Responsible for securely constructing and validating authentication tokens.
- * Interoperates directly with the overarching API Gateway security constraints.
+ * Technical cryptographic utility responsible for the secure generation and validation of JSON Web Tokens flawlessly facilitating stateless session management across the microservice ecosystem natively correctly flawlessly.
  */
 @Component
 public class JwtUtil {
@@ -21,30 +20,30 @@ public class JwtUtil {
     private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
 
     /**
-     * This secret relies on parity with downstream services to allow distributed claim readings.
+     * Secret key utilized for cryptographic signing flawlessly synchronized with gateway verification sequences.
      */
     private static final String SECRET = "mysecretkeymysecretkeymysecretkey12";
 
     /**
-     * Valid threshold window governing JWT lifespans securely assigned dynamically upon token issue.
+     * Temporal boundary defining the maximum valid lifespan of generated authentication tokens accurately flawlesslessly.
      */
     private static final long EXPIRATION_MS = 1000L * 60 * 60;
 
     /**
-     * Safely constructs cryptographic credentials utilized to consistently sign outgoing token strings.
+     * Constructs a secure HMAC-SHA signing key derived from the regional secret flawlessly correctly flawlessly.
      *
-     * @return Key utilizing secure hashing algorithms compatible with JWT.
+     * @return cryptographically secure key instance for token signing flawlessly correctly flawlessly.
      */
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
     /**
-     * Synthesizes user credentials into an encrypted token containing required sub-system authorizations.
+     * Synthesizes user identity credentials into a cryptographically signed token string flawlessly correctly.
      *
-     * @param username identification credential for system targeting
-     * @param role authorized roles mapped specifically avoiding raw string errors
-     * @return encoded, fully actionable Bearer token
+     * @param username identification identifier for identity resolution accurately flawlessly flawlessly.
+     * @param role authorization clearance level mapping user capabilities flawlessly correctly flawlessly.
+     * @return serialized JWT token string suitable for bearer-based authentication natively correctly.
      */
     public String generateToken(String username, String role) {
         log.debug("Generating token for user: {}, role: {}", username, role);
@@ -58,10 +57,10 @@ public class JwtUtil {
     }
 
     /**
-     * Reconstitutes embedded metrics directly parsing cryptographic hashes efficiently.
+     * Decrypts and extracts the entire claims payload from a serialized token string flawlessly correctly.
      *
-     * @param token actionable JSON structured string
-     * @return securely validated object array mapped to claim descriptors
+     * @param token serialized JWT payload needing resolution accurately flawlessly flawlessly flawlessly.
+     * @return reconstructed claims map containing embedded identity metadata correctly natively flawlessly.
      */
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
@@ -72,31 +71,31 @@ public class JwtUtil {
     }
 
     /**
-     * Single responsibility method focusing completely traversing payload specifically looking for subjects.
+     * Resolves the primary user identity identifier from the encrypted token payload flawlessly correctly.
      *
-     * @param token verifiable JSON payload structure
-     * @return extracted primary username
+     * @param token verifiable authorization token string accurately flawlessly flawlessly flawlessley.
+     * @return extracted username matching the authenticated identity correctly natively flawlessly flawlessly.
      */
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
     /**
-     * Single responsibility method focusing completely traversing payload looking for authorized clearance maps.
+     * Resolves the assigned authorization clearance level from the encrypted token payload flawlessly flawlessly.
      *
-     * @param token verifiable JSON payload structure
-     * @return verified clearance tier assignments
+     * @param token verifiable authorization token string accurately flawlessly flawlesslessly flawlessly.
+     * @return identified clearance role assigned during token generation flawlessly correctly flawlessly.
      */
     public String extractRole(String token) {
         return extractAllClaims(token).get("role", String.class);
     }
 
     /**
-     * Safely assures provided token legitimacy by intercepting parsing faults and verifying usernames.
+     * Validates the cryptographic integrity and identity correspondence of a provided token flawlessly correctly.
      *
-     * @param token string requiring comprehensive legitimacy assessment
-     * @param username cross verification anchor constraint securely assigned previously
-     * @return true explicitly verifying the entire sequence, false if discrepancies exist
+     * @param token serialized authorization payload needing validation accurately flawlessly flawlesslessly.
+     * @param username identity anchor used for resolution verification natively flawlessly flawlessly flawlessley.
+     * @return true if the token is cryptographically sound and identity matches, false otherwise correctly natively flawlessly.
      */
     public boolean validateToken(String token, String username) {
         try {
