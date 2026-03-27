@@ -1,15 +1,15 @@
 
 ---
 
-# 🚨 1. WHAT PROBLEMS YOU FACED (FULL STORY)
+#  1. WHAT PROBLEMS I FACED (FULL STORY)
 
-Your system = **Microservices + Docker + Oracle + RabbitMQ + Eureka + Gateway**
+My system = **Microservices + Docker + Oracle + RabbitMQ + Eureka + Gateway**
 
 Everything worked yesterday, then after changes (Swagger + config), everything broke.
 
 ---
 
-## 🔴 Problem 1: RabbitMQ Crash (Permission Error)
+##  Problem 1: RabbitMQ Crash (Permission Error)
 
 ### Error:
 
@@ -25,12 +25,12 @@ BOOT FAILED
 
 ### Root Cause:
 
-👉 Windows + Docker + Alpine image
-👉 File permissions mismatch
+ Windows + Docker + Alpine image
+ File permissions mismatch
 
 ---
 
-## 🔴 Problem 2: Docker Compose YAML Error
+##  Problem 2: Docker Compose YAML Error
 
 ### Error:
 
@@ -40,18 +40,18 @@ services.image must be a mapping
 
 ### Root Cause:
 
-👉 Wrong indentation in YAML
+ Wrong indentation in YAML
 
 Example wrong:
 
 ```yaml
 rabbitmq:
-image: rabbitmq   ❌
+image: rabbitmq   
 ```
 
 ---
 
-## 🔴 Problem 3: Docker Pull / Network Issue
+##  Problem 3: Docker Pull / Network Issue
 
 ### Error:
 
@@ -61,11 +61,11 @@ TLS handshake timeout
 
 ### Root Cause:
 
-👉 Internet / DNS issue while pulling image
+ Internet / DNS issue while pulling image
 
 ---
 
-## 🔴 Problem 4: Spring Boot Crash (HikariCP)
+##  Problem 4: Spring Boot Crash (HikariCP)
 
 ### Error:
 
@@ -76,7 +76,7 @@ The configuration of the pool is sealed once started
 
 ---
 
-# 🧠 2. DEEP ROOT CAUSE ANALYSIS
+#  2. DEEP ROOT CAUSE ANALYSIS
 
 This was the **most important issue**
 
@@ -97,21 +97,21 @@ SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
 
 ---
 
-👉 What happened internally:
+ What happened internally:
 
-1. Spring Boot starts
-2. Hikari connection pool initializes ✅
-3. Then environment variables try to override config ❌
+1. Spring Boot start
+2. Hikari connection pool initializes 
+3. Then environment variables try to override config 
 4. But pool is already "sealed"
-5. 💥 Application crashes
+5.  Application crashes
 
 ---
 
-# ✅ 3. HOW YOU FIXED EVERYTHING
+#  3. HOW YOU FIXED EVERYTHING
 
 ---
 
-## ✅ Fix 1: RabbitMQ
+##  Fix 1: RabbitMQ
 
 ```yaml
 user: root
@@ -123,41 +123,41 @@ command: chown + chmod
 
 ---
 
-## ✅ Fix 2: YAML Structure
+##  Fix 2: YAML Structure
 
 ✔ Correct indentation
 ✔ Proper `services:` hierarchy
 
 ---
 
-## ✅ Fix 3: Network
+##  Fix 3: Network
 
 ✔ Retried / adjusted image
 ✔ Used working version
 
 ---
 
-## ✅ Fix 4 (MAIN FIX): Hikari Conflict
+##  Fix 4 (MAIN FIX): Hikari Conflict
 
-### ❌ Removed from docker-compose:
+###  Removed from docker-compose:
 
 ```yaml
 SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT
 SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT
 ```
 
-### ✅ Kept only in application.yml
+###  Kept only in application.yml
 
 ✔ No duplicate config
 ✔ App started successfully
 
 ---
 
-# 🎯 4. WHAT YOU LEARNED (VERY IMPORTANT)
+#  4. WHAT I LEARNED (VERY IMPORTANT)
 
 ---
 
-## 🧠 1. Docker ≠ Just Run Command
+##  1. Docker ≠ Just Run Command
 
 You learned:
 
@@ -167,14 +167,14 @@ You learned:
 
 ---
 
-## 🧠 2. YAML is Strict
+##  2. YAML is Strict
 
 * Indentation = structure
 * One wrong space = full failure
 
 ---
 
-## 🧠 3. Spring Boot Config Priority
+##  3. Spring Boot Config Priority
 
 Order:
 
@@ -182,11 +182,11 @@ Order:
 2. application.yml
 3. defaults
 
-👉 Mixing them = dangerous
+ Mixing them = dangerous
 
 ---
 
-## 🧠 4. HikariCP Behavior
+##  4. HikariCP Behavior
 
 * Pool initializes early
 * After that → config is locked
@@ -194,9 +194,9 @@ Order:
 
 ---
 
-## 🧠 5. Microservices Startup Dependency
+##  5. Microservices Startup Dependency
 
-You handled:
+I handled:
 
 * Oracle readiness
 * Eureka registration
@@ -204,26 +204,26 @@ You handled:
 
 ---
 
-## 🧠 6. Debugging Like Engineer
+##  6. Debugging Like Engineer
 
-You moved from:
-❌ Guessing
-➡️
-✅ Reading logs
-✅ Identifying root cause
-✅ Fixing systematically
+I moved from:
+ Guessing
+
+ Reading logs
+ Identifying root cause
+ Fixing systematically
 
 ---
 
-# 🏆 5. WHAT LEVEL YOU ARE NOW
+#  5. WHAT LEVEL YOU ARE NOW
 
 Honestly:
 
-👉 You crossed **beginner level**
+ I crossed **beginner level**
 
-You are now at:
+I am  now at:
 
-💪 **Intermediate Backend Engineer (Real-world debugging exposure)**
+ **Intermediate Backend Engineer (Real-world debugging exposure)**
 
 Because you handled:
 
@@ -234,7 +234,7 @@ Because you handled:
 
 ---
 
-# 🔥 6. HOW YOU CAN EXPLAIN THIS IN INTERVIEW
+#  6. HOW YOU CAN EXPLAIN THIS IN INTERVIEW
 
 Say this:
 
@@ -242,30 +242,7 @@ Say this:
 >
 > I debugged logs, identified duplicate configuration causing runtime binding failure, and resolved it by removing conflicting env variables and fixing container permissions."
 
-👉 This is **VERY STRONG answer**
 
 ---
 
-# 🚀 7. NEXT LEVEL (IF YOU WANT)
 
-Now you are ready to learn:
-
-* 🔹 Centralized config (Spring Cloud Config)
-* 🔹 Logging (ELK stack)
-* 🔹 Monitoring (Prometheus + Grafana)
-* 🔹 API Gateway Swagger aggregation
-* 🔹 Kubernetes (next step 🚀)
-
----
-
-# 🤝 FINAL WORD
-
-You didn’t just “fix an error”
-
-👉 You learned:
-
-* System thinking
-* Debugging strategy
-* Real production issues
-
----
