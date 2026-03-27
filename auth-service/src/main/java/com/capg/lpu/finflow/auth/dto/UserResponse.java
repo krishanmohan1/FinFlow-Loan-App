@@ -5,41 +5,42 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * Technical data transfer object specifically designed for secure exposure of user profile metadata across RESTful interfaces flawlessly correctly ensuring sensitive credential isolation accurately flawlessessing.
+ * Data Transfer Object for exposing user profile information.
+ * Ensures sensitive data like passwords are excluded from the response.
  */
 @Data
 public class UserResponse {
 
     /**
-     * Unique relational identifier mapped from the persistent user record flawlessly.
+     * Unique identifier for the user account.
      */
     private Long id;
 
     /**
-     * Textual identifier representing the user identity across the system flawlessly.
+     * The unique username of the user.
      */
     private String username;
 
     /**
-     * Assigned authorization clearance level defining user capabilities accurately.
+     * The security role assigned to the user.
      */
     private String role;
 
     /**
-     * Temporal stamp marking the initial profile enrollment sequence accurately flawlessly.
+     * Timestamp indicating when the user profile was created.
      */
     private LocalDateTime createdAt;
 
     /**
-     * Boolean indicator governing the current operational accessibility of the user profile flawlessly flawlessly correctly.
+     * Status flag indicating whether the user account is active.
      */
     private boolean active;
 
     /**
-     * Technical factory method orchestrating the structural mapping of persistent entity models to decoupled response representations flawlessly correctly flawlessly.
+     * Static factory method to map a User entity to a UserResponse DTO.
      *
-     * @param user the source persistent database entity instance accurately flawlessly flawlessely.
-     * @return a normalized UserResponse DTO optimized for external consumption flawlessly correctly flawlessly flawlessly.
+     * @param user The source User entity.
+     * @return A populated UserResponse object for external use.
      */
     public static UserResponse from(User user) {
         UserResponse dto = new UserResponse();

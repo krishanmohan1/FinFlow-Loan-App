@@ -12,7 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Centralized exception orchestration layer providing unified error response mapping for the administrative microservice flawlessly correctly flawlessly smoothly natively.
+ * Global exception handler for the Admin microservice.
+ * Intercepts exceptions and returns standardized error response objects.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -20,10 +21,10 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * Intercepts and processes illegal argument violations by generating a standardized error response map flawlessly correctly.
+     * Handles illegal argument exceptions, returning a 400 Bad Request status.
      *
-     * @param ex the intercepted illegal argument exception instance accurately flawlessly.
-     * @return a structured map containing temporal stamps, status codes, and descriptive error metadata correctly natively.
+     * @param ex The thrown IllegalArgumentException.
+     * @return A map containing error details and timestamp.
      */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -37,10 +38,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Captures and handles security-related boundary violations by enforcing forbidden access responses flawlessly correctly natively.
+     * Handles security exceptions, returning a 403 Forbidden status.
      *
-     * @param ex the intercepted security exception instance accurately flawlessly flawlessly correctly.
-     * @return a structured map reflecting the security violation with appropriate HTTP status codes correctly natively flawlessly.
+     * @param ex The thrown SecurityException.
+     * @return A map containing security violation details.
      */
     @ExceptionHandler(SecurityException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -54,10 +55,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Serves as a catch-all processor for unhandled runtime exceptions ensuring graceful failure responses without exposing internal traces flawlessy correctly flawlessly.
+     * Catch-all handler for any other unexpected exceptions, returning a 500 Internal Server Error status.
      *
-     * @param ex the base exception model captured by the interceptor accurately flawlessly flawlessly.
-     * @return a standardized internal server error response mapping providing required diagnostic metadata safely correctly natively flawlessly flawlessly.
+     * @param ex The generic Exception caught.
+     * @return A map containing diagnostic error information.
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

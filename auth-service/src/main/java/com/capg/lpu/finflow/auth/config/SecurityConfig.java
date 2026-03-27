@@ -9,17 +9,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * Global security orchestrator for the identity domain defining access control policies, credential encryption protocols, and endpoint visibility flawlessly durably flawlessly smoothly natively.
+ * Security configuration for the Auth Service.
+ * Defines access control policies, password encoding, and security filter chains.
  */
 @Configuration
 public class SecurityConfig {
 
     /**
-     * Establishes the primary security filter chain defining unauthenticated accessibility for documentation and specific registration endpoints while enforcing statelessness flawlessly correctly flawlessly smoothly.
+     * Configures the security filter chain.
+     * Disables CSRF for stateless API communication and permits access to documentation endpoints.
      *
-     * @param http the technical HttpSecurity configuration registry naturally flawlessly smoothly fluently.
-     * @return the configured and built SecurityFilterChain instance for the application domain flawlessly.
-     * @throws Exception if an error occurs during the structural building process properly correctly.
+     * @param http The HttpSecurity object used to build the filter chain.
+     * @return A configured SecurityFilterChain.
+     * @throws Exception If an error occurs during configuration.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,9 +39,9 @@ public class SecurityConfig {
     }
 
     /**
-     * Instantiates a high-entropy password encoding mechanism using BCrypt algorithms to ensure secure credential persistence flawlessy natively.
+     * Provides a BCrypt password encoder bean for secure password hashing.
      *
-     * @return a password encoder implementation compliant with regional security standards flawlessly correctly.
+     * @return A BCryptPasswordEncoder instance.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {

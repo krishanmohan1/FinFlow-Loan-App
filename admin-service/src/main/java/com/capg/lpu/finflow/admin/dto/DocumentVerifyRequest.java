@@ -3,18 +3,19 @@ package com.capg.lpu.finflow.admin.dto;
 import lombok.Data;
 
 /**
- * Technical property container carrying verification assignments directed specifically against targeted repository files flawlessly.
+ * Data Transfer Object for document verification.
+ * Contains the administrative status and remarks for a specific document.
  */
 @Data
 public class DocumentVerifyRequest {
 
     /**
-     * Administrative explicit assessment mark (e.g., VERIFIED or REJECTED) accurately flawlessly.
+     * The verification status (e.g., VERIFIED, REJECTED).
      */
     private String status;
 
     /**
-     * Contextual commentary substantiating distinct assessment conditions accurately flawlessly.
+     * Administrative remarks explaining the verification outcome.
      */
     private String remarks;
 }

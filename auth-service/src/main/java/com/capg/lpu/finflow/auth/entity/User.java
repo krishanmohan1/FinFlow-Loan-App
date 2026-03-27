@@ -5,7 +5,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * Technical domain representation mapping secure identity records to relational persistence flawlessly tracking user profiles and authorization states accurately flawlessy.
+ * Entity class representing a user in the authentication system.
+ * Maps user profile data and authorization states to the 'users' database table.
  */
 @Entity
 @Table(name = "users")
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 public class User {
 
     /**
-     * Unique system-generated identifier for internal tracking and relational mapping flawlessly flawlessly flawlessly.
+     * Unique system-generated identifier for the user account.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_gen")
@@ -24,31 +25,31 @@ public class User {
     private Long id;
 
     /**
-     * Unique textual identifier assigned during registration used for identity resolution flawlessly correctly.
+     * Unique username chosen by the user during registration.
      */
     @Column(nullable = false, unique = true)
     private String username;
 
     /**
-     * Cryptographically hashed credential sequence providing secure proof of identity flawlessly correctly.
+     * Cryptographically hashed password for secure authentication.
      */
     @Column(nullable = false)
     private String password;
 
     /**
-     * Hierarchical authorization scope mapping user capabilities to predefined system roles accurately flawlesslessly.
+     * The security role assigned to the user (e.g., ROLE_USER, ROLE_ADMIN).
      */
     @Column(nullable = false)
     private String role;
 
     /**
-     * Temporal boundary marking the initial creation of the user profile record accurately flawlessly.
+     * Timestamp indicating when the user profile was created.
      */
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     /**
-     * Boolean indicator governing the operational accessibility of the user account flawlessly.
+     * Status flag indicating whether the user account is currently active.
      */
     @Column(nullable = false)
     private boolean active;

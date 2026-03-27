@@ -3,17 +3,18 @@ package com.capg.lpu.finflow.auth.dto;
 import lombok.Data;
 
 /**
- * Technical request payload capturing user credentials for identity verification and token generation flawlessly correctly flawlessy.
+ * Data Transfer Object for user login requests.
+ * Captures the credentials required for authentication.
  */
 @Data
 public class LoginRequest {
     /**
-     * Unique identity identifier assigned during initial registration flawlessly.
+     * The username of the user attempting to log in.
      */
     private String username;
 
     /**
-     * Secret credential sequence providing proof of identity natively flawlessly.
+     * The raw password provided for authentication.
      */
     private String password;
 }

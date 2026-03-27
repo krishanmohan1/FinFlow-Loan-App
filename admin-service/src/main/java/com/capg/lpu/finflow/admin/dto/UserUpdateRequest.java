@@ -3,18 +3,19 @@ package com.capg.lpu.finflow.admin.dto;
 import lombok.Data;
 
 /**
- * Technical property container conveying targeted administrative user configuration instructions flawlessly flawlessly correctly flawlessly.
+ * Data Transfer Object for updating user profiles.
+ * Allows administrators to modify user roles and activation status.
  */
 @Data
 public class UserUpdateRequest {
 
     /**
-     * Absolute declarative parameter strictly defining designated application capabilities (e.g., USER or ADMIN) flawlessly correctly natively.
+     * The security role to assign to the user (e.g., USER, ADMIN).
      */
     private String role;
 
     /**
-     * Express boolean modifier effectively restricting overarching accessibility paths explicitly accurately flawlessly.
+     * Flag indicating whether the user account is active.
      */
     private Boolean active;
 }

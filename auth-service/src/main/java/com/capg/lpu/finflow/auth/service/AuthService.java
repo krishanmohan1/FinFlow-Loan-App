@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Primary business orchestrator for the identity domain governing authentication protocols, secure registration sequences, and administrative user profile management flawlessly correctly flawlessly smoothly natively.
+ * Service class for handling authentication and user management.
+ * Coordinates user registration, login, and administrative profile updates.
  */
 @Service
 @RequiredArgsConstructor
@@ -32,10 +33,10 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * Executes the technical ingestion of new user identities by verifying credential uniqueness and establishing secure profiles flawlessly correctly flawlessly.
+     * Registers a new user and generates an initial authentication token.
      *
-     * @param request structural metadata carrying desired credential assignments accurately flawlessly flawlessely.
-     * @return authentication response populated with newly assigned tokens and initial states accurately flawlessly.
+     * @param request The registration details (username, password).
+     * @return An AuthResponse containing the JWT token and user details.
      */
     public AuthResponse register(RegisterRequest request) {
         log.info("Register attempt for username: {}", request.getUsername());
@@ -62,10 +63,11 @@ public class AuthService {
     }
 
     /**
-     * Facilitates user authentication by verifying provided credentials against the identity registry and assessing activation status flawlessly correctly.
+     * Authenticates a user and issues a JWT token if credentials are valid.
+     * Checks if the account is active before allowing access.
      *
-     * @param request structural container detailing credentials needed for identity resolution accurately flawlessly flawlessly.
-     * @return authentication response embedding a valid JWT token for inter-service authorization correctly natively flawlessly.
+     * @param request The login credentials (username, password).
+     * @return An AuthResponse containing the JWT token.
      */
     public AuthResponse login(LoginRequest request) {
         log.info("Login attempt for username: {}", request.getUsername());
@@ -93,9 +95,9 @@ public class AuthService {
     }
 
     /**
-     * Retrieves a mapped collection of all registered user identities flawlessly limited to administrative personnel flawlessly correctly natively flawlessly.
+     * Retrieves a list of all users from the database.
      *
-     * @return list of user responses containing non-sensitive profile metadata accurately flawlessly correctly flawlessly.
+     * @return A list of UserResponse objects.
      */
     public List<UserResponse> getAllUsers() {
         log.info("Fetching all users");
@@ -106,10 +108,10 @@ public class AuthService {
     }
 
     /**
-     * Pinpoints a single user profile using its unique identifier flawlessly extracting metadata correctly smoothly fluently flawlessly.
+     * Retrieves a specific user profile by its ID.
      *
-     * @param id numeric record identifier matching specific database entries accurately flawlessly flawlessly flawlessely correctly.
-     * @return identified user snapshot if found within the system registry flawlessly correctly flawlessly.
+     * @param id The unique identifier of the user account.
+     * @return The UserResponse object if found.
      */
     public UserResponse getUserById(Long id) {
         log.info("Fetching user by ID: {}", id);
@@ -122,12 +124,12 @@ public class AuthService {
     }
 
     /**
-     * Executes administrative modifications on user profiles including role reassignment and activation toggles flawlessly correctly flawlessly.
+     * Updates an existing user's role and/or activation status.
      *
-     * @param id precise target record identifier identifying the user mission accurately flawlessly flawlessly flawlessely flawlessly.
-     * @param role desired authorization clearance level to be assigned accurately flawlessly correctly flawlessly.
-     * @param active boolean identifier governing system accessibility accurately flawlessly correctly flawlessly correctly.
-     * @return updated user response reflecting the successful profile modification correctly natively flawlessly flawlessly.
+     * @param id The ID of the user to update.
+     * @param role The new role to assign (USER or ADMIN).
+     * @param active The new activation status.
+     * @return The updated UserResponse object.
      */
     public UserResponse updateUser(Long id, String role, Boolean active) {
         log.info("Updating user ID: {} - role: {} - active: {}", id, role, active);
@@ -153,10 +155,10 @@ public class AuthService {
     }
 
     /**
-     * Permanently or temporarily revokes system accessibility for a specific user account flawlessly correctly flawlessly flawlessly.
+     * Deactivates a specific user account by setting its active status to false.
      *
-     * @param id numeric record identifier identifying the target account for deactivation accurately flawlessly flawlessly flawlessly correctly.
-     * @return updated profile metadata confirming successful deactivation flawlessly correctly flawlessly flawlessly correctly.
+     * @param id The ID of the user account to deactivate.
+     * @return The updated UserResponse object.
      */
     public UserResponse deactivateUser(Long id) {
         log.info("Deactivating user ID: {}", id);

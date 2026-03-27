@@ -6,22 +6,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Technical registry defining external API visibility boundaries for identity and authentication protocols via OpenAPI compliance flawlessly correctly flawlessly smoothly natively.
+ * Configuration for OpenAPI/Swagger documentation in the Auth Service.
  */
 @Configuration
 public class OpenApiConfig {
 
     /**
-     * Constructs the categorical metadata mapping describing available authentication, registration, and user management endpoints accurately flawslessly smoothly fluently.
+     * Configures the OpenAPI instance with service-specific metadata for the authentication API.
      *
-     * @return registered API metadata definition for secure identity management securely durably natively elegantly.
+     * @return A configured OpenAPI instance for documentation purposes.
      */
     @Bean
     public OpenAPI authServiceOpenAPI() {
         return new OpenAPI()
             .info(new Info()
                 .title("FinFlow - Auth Service API")
-                .description("User registration, login, JWT token generation and user management.")
+                .description("Authentication API for user registration, login, and JWT token management.")
                 .version("1.0.0")
             );
     }

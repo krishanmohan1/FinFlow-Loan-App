@@ -3,33 +3,34 @@ package com.capg.lpu.finflow.admin.dto;
 import lombok.Data;
 
 /**
- * Technical property container describing required metadata for administrative approval decisions flawlessly correctly flawlessly.
+ * Data Transfer Object for administrative loan decisions.
+ * Carries the final decision, remarks, and financial parameters for approved loans.
  */
 @Data
 public class DecisionRequest {
 
     /**
-     * Express decision state marking transition (e.g., APPROVED or REJECTED) flawlessly correctly.
+     * The decision for the loan application (e.g., APPROVED, REJECTED).
      */
     private String decision;
 
     /**
-     * Discretionary justification annotations provided exclusively evaluating contexts accurately flawlessly.
+     * Administrative remarks or justification for the decision.
      */
     private String remarks;
 
     /**
-     * Assigned structural interest percentages (e.g., 8.5) accurately flawlessly.
+     * The interest rate assigned to the approved loan.
      */
     private Double interestRate;
 
     /**
-     * Agreed structural duration spans specifying exact limits (e.g., 60) accurately flawlessly.
+     * The duration of the loan in months.
      */
     private Integer tenureMonths;
 
     /**
-     * Evaluated and explicitly approved monetary thresholds permitted (e.g., 500000.0) accurately flawlessly.
+     * The final amount sanctioned for the loan.
      */
     private Double sanctionedAmount;
 }

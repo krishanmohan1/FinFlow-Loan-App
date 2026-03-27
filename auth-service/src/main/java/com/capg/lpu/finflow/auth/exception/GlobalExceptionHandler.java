@@ -10,7 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Universal error interceptor for the identity domain providing structural mapping of application regressions to standardized API failure responses flawlessly correctly flawlessly smoothly natively.
+ * Global exception handler for the Auth Service.
+ * Intercepts common exceptions and maps them to standardized error responses.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -18,10 +19,10 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * Resolves operational business logic violations by mapping runtime regressions to 400 Bad Request status effortlessly.
+     * Handles runtime exceptions, typically resulting from business logic validation failures.
      *
-     * @param ex diagnostic exception carrying the operational failure metadata accurately flawlessly.
-     * @return structural error payload suitable for downstream consumer consumption correctly flawlessly.
+     * @param ex The thrown RuntimeException.
+     * @return A map containing error details and timestamp, with 400 Bad Request status.
      */
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -35,10 +36,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Fallback interceptor for unexpected critical regressions ensuring 500 Internal Server error status is returned flawlessly.
+     * Catch-all handler for any unhandled exceptions to prevent leaking internal stack traces.
      *
-     * @param ex intercepted unhandled application exception accurately flawslessly natively correctly.
-     * @return generalized error payload ensuring sensitive application internals remain secure flawlessly.
+     * @param ex The generic Exception caught.
+     * @return A standardized Internal Server Error response.
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

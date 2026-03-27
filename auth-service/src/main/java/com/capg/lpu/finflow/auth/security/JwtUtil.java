@@ -12,7 +12,8 @@ import java.security.Key;
 import java.util.Date;
 
 /**
- * Technical cryptographic utility responsible for the secure generation and validation of JSON Web Tokens flawlessly facilitating stateless session management across the microservice ecosystem natively correctly flawlessly.
+ * Utility class for JSON Web Token (JWT) operations.
+ * Handles the generation, parsing, and validation of JWTs for stateless authentication.
  */
 @Component
 public class JwtUtil {
@@ -20,30 +21,30 @@ public class JwtUtil {
     private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
 
     /**
-     * Secret key utilized for cryptographic signing flawlessly synchronized with gateway verification sequences.
+     * Secret key used for signing JWTs.
      */
     private static final String SECRET = "mysecretkeymysecretkeymysecretkey12";
 
     /**
-     * Temporal boundary defining the maximum valid lifespan of generated authentication tokens accurately flawlesslessly.
+     * Token expiration time in milliseconds (1 hour).
      */
     private static final long EXPIRATION_MS = 1000L * 60 * 60;
 
     /**
-     * Constructs a secure HMAC-SHA signing key derived from the regional secret flawlessly correctly flawlessly.
+     * Generates a signing key from the configured secret.
      *
-     * @return cryptographically secure key instance for token signing flawlessly correctly flawlessly.
+     * @return A Key object for HMAC-SHA signing.
      */
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
     /**
-     * Synthesizes user identity credentials into a cryptographically signed token string flawlessly correctly.
+     * Generates a JWT token for a given user and their associated role.
      *
-     * @param username identification identifier for identity resolution accurately flawlessly flawlessly.
-     * @param role authorization clearance level mapping user capabilities flawlessly correctly flawlessly.
-     * @return serialized JWT token string suitable for bearer-based authentication natively correctly.
+     * @param username The username of the authenticated user.
+     * @param role The security role assigned to the user.
+     * @return A compact, URL-safe JWT string.
      */
     public String generateToken(String username, String role) {
         log.debug("Generating token for user: {}, role: {}", username, role);
@@ -57,10 +58,10 @@ public class JwtUtil {
     }
 
     /**
-     * Decrypts and extracts the entire claims payload from a serialized token string flawlessly correctly.
+     * Parses the JWT token and extracts all contained claims.
      *
-     * @param token serialized JWT payload needing resolution accurately flawlessly flawlessly flawlessly.
-     * @return reconstructed claims map containing embedded identity metadata correctly natively flawlessly.
+     * @param token The serialized JWT string.
+     * @return The Claims object containing token metadata.
      */
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
@@ -71,31 +72,31 @@ public class JwtUtil {
     }
 
     /**
-     * Resolves the primary user identity identifier from the encrypted token payload flawlessly correctly.
+     * Extracts the subject (username) from the token.
      *
-     * @param token verifiable authorization token string accurately flawlessly flawlessly flawlessley.
-     * @return extracted username matching the authenticated identity correctly natively flawlessly flawlessly.
+     * @param token The serialized JWT string.
+     * @return The username embedded in the token.
      */
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
     /**
-     * Resolves the assigned authorization clearance level from the encrypted token payload flawlessly flawlessly.
+     * Extracts the security role claim from the token.
      *
-     * @param token verifiable authorization token string accurately flawlessly flawlesslessly flawlessly.
-     * @return identified clearance role assigned during token generation flawlessly correctly flawlessly.
+     * @param token The serialized JWT string.
+     * @return The role string embedded in the token.
      */
     public String extractRole(String token) {
         return extractAllClaims(token).get("role", String.class);
     }
 
     /**
-     * Validates the cryptographic integrity and identity correspondence of a provided token flawlessly correctly.
+     * Validates if a token matches the expected user and is cryptographically sound.
      *
-     * @param token serialized authorization payload needing validation accurately flawlessly flawlesslessly.
-     * @param username identity anchor used for resolution verification natively flawlessly flawlessly flawlessley.
-     * @return true if the token is cryptographically sound and identity matches, false otherwise correctly natively flawlessly.
+     * @param token The serialized JWT string.
+     * @param username The expected username.
+     * @return true if the token is valid and belongs to the user, false otherwise.
      */
     public boolean validateToken(String token, String username) {
         try {

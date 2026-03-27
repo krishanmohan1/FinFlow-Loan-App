@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Main entrance for identity and access management exposing RESTful interfaces for authentication, registration, and administrative user oversight flawlessly correctly reliably smoothly natively expertly elegantly durably securely comfortably effortlessly smoothly fluently.
+ * REST controller for identity and access management.
+ * Provides endpoints for user authentication, registration, and administrative user management.
  */
 @RestController
 @RequestMapping("/auth")
@@ -32,9 +33,9 @@ public class AuthController {
     private final AuthService authService;
 
     /**
-     * Executes a technical health check verifying the operational status of the authentication microservice flawlessly.
+     * Basic health check endpoint to verify the Auth Service is operational.
      *
-     * @return response entity confirming the service is operational correctly natively.
+     * @return A response entity confirming the service is running.
      */
     @Operation(summary = "Health check")
     @GetMapping("/test")
@@ -44,9 +45,9 @@ public class AuthController {
     }
 
     /**
-     * Validates administrative routing accessibility by intercepting role-based clearance markers flawlessly correctly.
+     * Verification endpoint for administrative access.
      *
-     * @return response entity granting access if administrative clearance is verified correctly.
+     * @return A response entity confirming administrative access.
      */
     @Operation(summary = "Admin health check")
     @GetMapping("/admin/test")
@@ -56,9 +57,9 @@ public class AuthController {
     }
 
     /**
-     * Assesses standard user routing accessibility by verifying baseline authentication tokens flawlessly correctly.
+     * Verification endpoint for standard user access.
      *
-     * @return response entity granting access if user-level clearance is verified correctly.
+     * @return A response entity confirming user-level access.
      */
     @Operation(summary = "User health check")
     @GetMapping("/user/test")
@@ -68,10 +69,11 @@ public class AuthController {
     }
 
     /**
-     * Orchestrates the technical ingestion of new user identities by validating credential uniqueness and establishing secure profiles flawlessly.
+     * Registers a new user identity in the system.
+     * Validates credentials and initializes a user profile.
      *
-     * @param request encapsulates required signup metadata accurately flawslessly natively.
-     * @return authentication response populated with newly assigned tokens and initial states flawlessly.
+     * @param request The registration details (username, password, email).
+     * @return An authentication response containing the generated JWT token.
      */
     @Operation(summary = "Register a new user", description = "Creates a USER role account and returns a JWT token")
     @PostMapping("/register")
@@ -81,10 +83,10 @@ public class AuthController {
     }
 
     /**
-     * Facilitates user authentication by verifying provided credentials against the identity registry flawlessly.
+     * Authenticates a user based on provided credentials.
      *
-     * @param request structural container detailing credentials needed for identity resolution accurately flawlessly.
-     * @return authentication response embedding a valid JWT token for inter-service authorization correctly natively.
+     * @param request The login credentials (username, password).
+     * @return An authentication response containing a valid JWT token.
      */
     @Operation(summary = "Login", description = "Validates credentials and returns a JWT token")
     @PostMapping("/login")
@@ -94,9 +96,9 @@ public class AuthController {
     }
 
     /**
-     * Retrieves a collection of all registered user identities flawlessly limited to administrative personnel flawlessly correctly.
+     * Retrieves a list of all users registered in the system.
      *
-     * @return list of user responses containing non-sensitive profile metadata flawlessly correctly.
+     * @return A list of user responses containing non-sensitive profile metadata.
      */
     @Operation(summary = "Get all users", description = "Returns all registered users without passwords")
     @GetMapping("/users/all")
@@ -106,10 +108,10 @@ public class AuthController {
     }
 
     /**
-     * Pinpoints a single user profile using its unique identifier flawlessly extracting metadata correctly smoothly.
+     * Retrieves a detailed user profile by its ID.
      *
-     * @param id numeric record identifier matching specific database entries accurately flawlessly.
-     * @return identified user snapshot if found within the system registry flawlessly correctly.
+     * @param id The unique identifier of the user account.
+     * @return The requested user response if found.
      */
     @Operation(summary = "Get user by ID")
     @GetMapping("/users/{id}")
@@ -119,11 +121,11 @@ public class AuthController {
     }
 
     /**
-     * Executes administrative modifications on user profiles including role reassignment and activation toggles flawlessly correctly.
+     * Updates an existing user profile's role or active status.
      *
-     * @param id precise target record identifier identifying the user mission accurately flawlessly.
-     * @param request structural metadata carrying desired state transitions flawlessly flawlessly.
-     * @return updated user response reflecting the successful profile modification correctly natively flawlessly.
+     * @param id The ID of the user account to update.
+     * @param request The target role and active status bit.
+     * @return The updated user profile data.
      */
     @Operation(summary = "Update user role or active status")
     @PutMapping("/users/{id}")
@@ -135,10 +137,10 @@ public class AuthController {
     }
 
     /**
-     * Permanently or temporarily revokes system accessibility for a specific user account flawlessly correctly.
+     * Deactivates a user account, disabling further platform access.
      *
-     * @param id numeric record identifier identifying the target account for deactivation accurately flawlessly.
-     * @return updated profile metadata confirming successful deactivation flawlessly correctly flawlessly.
+     * @param id The ID of the user account to deactivate.
+     * @return The updated user profile data.
      */
     @Operation(summary = "Deactivate a user account")
     @PutMapping("/users/{id}/deactivate")
@@ -148,17 +150,17 @@ public class AuthController {
     }
 
     /**
-     * Internal request DTO specifically modeling state modification parameters for user profiles flawlessly correctly.
+     * Internal DTO for defining user profile update parameters.
      */
     @Data
     static class UpdateUserRequest {
         /**
-         * Desired authorization clearance level to be assigned flawlessly.
+         * The new role to be assigned to the user.
          */
         private String role;
 
         /**
-         * Boolean identifier governing system accessibility flawlessly correctly.
+         * The activation status to be set for the account.
          */
         private Boolean active;
     }

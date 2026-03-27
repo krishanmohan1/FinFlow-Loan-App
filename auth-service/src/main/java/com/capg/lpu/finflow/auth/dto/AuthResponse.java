@@ -4,28 +4,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * Technical response payload encapsulating authenticated identity metadata and generated access tokens flawlessly following successful credential verification flawlessly correctly.
+ * Data Transfer Object for authentication responses.
+ * Carries the JWT token and user profile metadata after successful login or registration.
  */
 @Data
 @AllArgsConstructor
 public class AuthResponse {
     /**
-     * Dynamically generated JWT bearer token for stateless session management flawlessly flawslessy.
+     * The generated JWT token for subsequent authenticated requests.
      */
     private String token;
 
     /**
-     * Unique identifier of the authenticated service user correctly natively.
+     * The username of the authenticated user.
      */
     private String username;
 
     /**
-     * Authorization clearance level assigned to specifying user capabilities flawlessly.
+     * The security role assigned to the user.
      */
     private String role;
 
     /**
-     * Contextual determination message providing operational feedback to callers correctly flawlessly.
+     * A descriptive message regarding the authentication result.
      */
     private String message;
 }

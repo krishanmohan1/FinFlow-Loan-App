@@ -6,7 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Technical entry point for bootstrapping the identity and access management microservice flawlessly establishing application context and establishing remote connectivity sequences naturally durably correctly properly cleanly effectively safely reliably stably inherently successfully effectively.
+ * Main entry point for the Auth Service.
+ * Bootstraps the identity and access management microservice, initializing the application context.
  */
 @SpringBootApplication
 public class AuthServiceApplication {
@@ -14,9 +15,9 @@ public class AuthServiceApplication {
     private static final Logger log = LoggerFactory.getLogger(AuthServiceApplication.class);
 
     /**
-     * Initializes the microservice execution loop correctly linking internal dependencies and establishing active listeners for secure authentication workflows flawlessly smoothly transparently fluently structurally comprehensively explicitly clearly predictably optimally successfully optimally logically effectively successfully efficiently elegantly flawlessly creatively natively smoothly natively comfortably comfortably cleanly.
+     * Starts the Auth Service microservice and initializes secure authentication workflows.
      *
-     * @param args console array capturing runtime execution arguments natively smoothly transparently fluently structurally comprehensively explicitly clearly predictably optimally successfully optimally logically effectively successfully efficiently elegantly flawlessly creatively natively smoothly natively comfortably comfortably cleanly
+     * @param args Command-line arguments passed during application startup.
      */
     public static void main(String[] args) {
         SpringApplication.run(AuthServiceApplication.class, args);
