@@ -10,6 +10,11 @@ import org.springframework.stereotype.Component;
 
 import com.capg.lpu.finflow.gateway.security.JwtUtil;
 
+/**
+ * Filter that intercepts incoming requests to the API Gateway.
+ * It validates JWT tokens for protected endpoints and manages 
+ * role-based access control checking before forwarding to downstream services.
+ */
 @Component
 public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
 
@@ -17,40 +22,52 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
 
     private final JwtUtil jwtUtil;
 
+    /**
+     * Constructs a new JwtGatewayFilter with the necessary dependency.
+     *
+     * @param jwtUtil the utility class responsible for extracting and validating JWTs
+     */
     public JwtGatewayFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 
+    /**
+     * Applies the filter logic to the incoming request. Check for public paths,
+     * extract and validate tokens, applies role checks, and forwards headers.
+     *
+     * @param config the configuration object for this filter instance
+     * @return the GatewayFilter implementation
+     */
     @Override
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
 
             String path = exchange.getRequest().getURI().getPath();
             String method = exchange.getRequest().getMethod().name();
-            log.info(" Incoming request → [{} {}]", method, path);
+            log.info("Incoming request - [{} {}]", method, path);
 
-            //  PUBLIC ENDPOINTS — skip JWT check
+            // Skip JWT validation for public endpoints
             if (isPublicPath(path)) {
-                log.info(" Public path, skipping JWT check → {}", path);
+                log.info("Public path, skipping JWT check - {}", path);
                 return chain.filter(exchange);
             }
 
-            //  GET AUTH HEADER
+            // Extract the Authorization header
             String authHeader = exchange.getRequest()
                     .getHeaders()
                     .getFirst("Authorization");
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                log.warn(" Missing or invalid Authorization header for path: {}", path);
+                log.warn("Missing or invalid Authorization header for path: {}", path);
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
 
             String token = authHeader.substring(7);
 
-            //  VALIDATE TOKEN
+            // Validate the extracted JWT token
             if (!jwtUtil.validateToken(token)) {
-                log.warn(" Invalid or expired token for path: {}", path);
+                log.warn("Invalid or expired token for path: {}", path);
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
@@ -58,48 +75,53 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
             String username = jwtUtil.extractUsername(token);
             String role = jwtUtil.extractRole(token);
 
-            log.info(" Token valid → user: {}, role: {}, path: {}", username, role, path);
+            log.info("Token valid - user: {}, role: {}, path: {}", username, role, path);
 
-            //  ADMIN SERVICE — ADMIN only
+            // Role-based Access Control (RBAC): Ensure only ADMIN role accesses /admin paths
             if (path.startsWith("/admin") && !"ADMIN".equals(role)) {
-                log.warn(" Access denied → user: {} (role: {}) tried to access ADMIN path: {}",
+                log.warn("Access denied - user: {} (role: {}) tried to access ADMIN path: {}",
                         username, role, path);
                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
 
-            //  APPLICATION SERVICE — USER + ADMIN
+            // Role-based Access Control: Verify users have proper roles for /application paths
             if (path.startsWith("/application") &&
                     !("USER".equals(role) || "ADMIN".equals(role))) {
-                log.warn(" Access denied → user: {} (role: {}) tried to access APPLICATION path: {}",
+                log.warn("Access denied - user: {} (role: {}) tried to access APPLICATION path: {}",
                         username, role, path);
                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
 
-            //  DOCUMENT SERVICE — USER + ADMIN
+            // Role-based Access Control: Verify users have proper roles for /document paths
             if (path.startsWith("/document") &&
                     !("USER".equals(role) || "ADMIN".equals(role))) {
-                log.warn(" Access denied → user: {} tried to access DOCUMENT path: {}", username, path);
+                log.warn("Access denied - user: {} tried to access DOCUMENT path: {}", username, path);
                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
 
-            //  PASS USER INFO TO DOWNSTREAM SERVICES via headers
+            // Pass the extracted user information to downstream services via HTTP headers
             ServerHttpRequest mutatedRequest = exchange.getRequest()
                     .mutate()
                     .header("X-Auth-Username", username)
                     .header("X-Auth-Role", role)
                     .build();
 
-            log.info(" Forwarding request to service with headers X-Auth-Username={}, X-Auth-Role={}",
+            log.info("Forwarding request to service with headers X-Auth-Username={}, X-Auth-Role={}",
                     username, role);
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
         };
     }
 
-    //  Public paths that skip JWT
+    /**
+     * Determines whether the given path corresponds to a public, unsecured endpoint.
+     *
+     * @param path the request path to evaluate
+     * @return true if the path is public, otherwise false
+     */
     private boolean isPublicPath(String path) {
         return path.contains("/auth/login")
                 || path.contains("/auth/register")

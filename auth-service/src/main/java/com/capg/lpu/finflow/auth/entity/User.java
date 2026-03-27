@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+/**
+ * Persisted entity representing a registered system user.
+ * Defines the database schema constraints and holds authentication status data.
+ */
 @Entity
 @Table(name = "users")
 @Data
@@ -23,15 +27,21 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // USER or ADMIN
+    /**
+     * Defines the authorization boundary of the user (e.g., USER or ADMIN).
+     */
     @Column(nullable = false)
     private String role;
 
-    // Auto-set at registration time
+    /**
+     * Stamped automatically sequentially upon initial profile creation.
+     */
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // Track if account is active
+    /**
+     * Tracks authorization accessibility. If false, the account is disabled.
+     */
     @Column(nullable = false)
     private boolean active;
 }

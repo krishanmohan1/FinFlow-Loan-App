@@ -18,6 +18,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service orchestrating authentication flows and persistent user management interactions.
+ * Central authority on authorization logic execution and profile modifications across the system.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -28,10 +32,13 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-    // ----------------------------------------------------------------
-    // AUTH — completely unchanged
-    // ----------------------------------------------------------------
-
+    /**
+     * Executes robust business logic verifying initial account registrations to securely persist user accounts.
+     * Validates uniqueness prior to cryptographic allocation safely constructing the required database models.
+     *
+     * @param request encapsulates structural required credential boundaries
+     * @return correctly configured authorization responses wrapping validated dynamic tokens
+     */
     public AuthResponse register(RegisterRequest request) {
         log.info("Register attempt for username: {}", request.getUsername());
 
@@ -56,6 +63,13 @@ public class AuthService {
                 "Registration successful");
     }
 
+    /**
+     * Scrutinizes presented logging parameters, enforcing strong access controls effectively
+     * managing activation variables alongside cryptographic signature alignments.
+     *
+     * @param request contextual credentials passed inherently
+     * @return explicitly authorized response embedding actionable validation signatures
+     */
     public AuthResponse login(LoginRequest request) {
         log.info("Login attempt for username: {}", request.getUsername());
 
@@ -81,10 +95,11 @@ public class AuthService {
         return new AuthResponse(token, user.getUsername(), user.getRole(), "Login successful");
     }
 
-    // ----------------------------------------------------------------
-    // USER MANAGEMENT — now returns UserResponse (no password exposed)
-    // ----------------------------------------------------------------
-
+    /**
+     * Systematically aggregates a mapped dataset containing user records stripped of strict sensitive identifiers.
+     *
+     * @return collection dynamically mapping persisted relational user models onto independent response representations
+     */
     public List<UserResponse> getAllUsers() {
         log.info("Fetching all users");
         return userRepository.findAll()
@@ -93,6 +108,12 @@ public class AuthService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Exposes single explicit profile datasets isolating targeted users explicitly mapping required details.
+     *
+     * @param id identifying persistent database unique sequence record
+     * @return mapped details conforming safely to architectural interfaces
+     */
     public UserResponse getUserById(Long id) {
         log.info("Fetching user by ID: {}", id);
         User user = userRepository.findById(id)
@@ -103,6 +124,14 @@ public class AuthService {
         return UserResponse.from(user);
     }
 
+    /**
+     * Processes transactional mutations securely adapting authorization boundaries enforcing explicit logical checks.
+     *
+     * @param id precise target relational identifier
+     * @param role hierarchical scope intended for update
+     * @param active boolean switch governing system accessibility
+     * @return resultant database representation immediately preceding persistence changes mapped successfully
+     */
     public UserResponse updateUser(Long id, String role, Boolean active) {
         log.info("Updating user ID: {} | role: {} | active: {}", id, role, active);
 
@@ -126,6 +155,12 @@ public class AuthService {
         return UserResponse.from(updated);
     }
 
+    /**
+     * Explicitly revokes overarching application clearance for target persisting profiles independently processing restrictions.
+     *
+     * @param id sequence tracker defining targeted entity bounds
+     * @return completely restricted, valid persisting mapped snapshot
+     */
     public UserResponse deactivateUser(Long id) {
         log.info("Deactivating user ID: {}", id);
 

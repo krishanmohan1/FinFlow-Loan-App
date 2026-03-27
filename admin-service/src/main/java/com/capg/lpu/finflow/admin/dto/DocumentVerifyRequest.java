@@ -1,10 +1,20 @@
-// DocumentVerifyRequest.java
 package com.capg.lpu.finflow.admin.dto;
 
 import lombok.Data;
 
+/**
+ * Data Transfer Object carrying verification assignments directed specifically against targeted repository files.
+ */
 @Data
 public class DocumentVerifyRequest {
-    private String status;   // VERIFIED or REJECTED
-    private String remarks;  // Admin note
+
+    /**
+     * Administrative explicit assessment mark (e.g., VERIFIED or REJECTED).
+     */
+    private String status;
+
+    /**
+     * Contextual commentary substantiating distinct assessment conditions.
+     */
+    private String remarks;
 }
