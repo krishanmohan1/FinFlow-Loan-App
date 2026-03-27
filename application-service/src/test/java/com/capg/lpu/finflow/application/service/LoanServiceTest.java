@@ -22,7 +22,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Technical unit testing suite validating core loan orchestration logic via Mockito-driven dependency isolation flawlessly correctly reliably smoothly natively.
+ * Unit testing suite for LoanService.
+ * Validates the core loan application lifecycle, including submission, status updates, and security checks.
  */
 @ExtendWith(MockitoExtension.class)
 class LoanServiceTest {
@@ -39,7 +40,7 @@ class LoanServiceTest {
     private LoanApplication sampleLoan;
 
     /**
-     * Initializes test fixtures establishing stable baseline state for subsequent behavioral validations flawlessly smoothly efficiently.
+     * Initializes a sample loan application entity for consistent state across test cases.
      */
     @BeforeEach
     void setUp() {
@@ -52,7 +53,7 @@ class LoanServiceTest {
     }
 
     /**
-     * Validates that application submission correctly persists records and triggers remote notifications flawlessly correctly smoothly fluently.
+     * Verifies that applying for a loan successfully persists the record and triggers an asynchronous notification.
      */
     @Test
     @DisplayName("test apply() - Should save loan successfully and send RabbitMQ message")
@@ -70,7 +71,7 @@ class LoanServiceTest {
     }
 
     /**
-     * Verifies that unauthorized access attempts to private loan records are strictly intercepted and blocked flawlessly durably securely.
+     * Confirms that a user is barred from accessing loan details belonging to another person.
      */
     @Test
     @DisplayName("test getByIdSecure() - Block access if user tries to view someone else's loan")
@@ -85,7 +86,7 @@ class LoanServiceTest {
     }
 
     /**
-     * Confirms that administrative status updates are properly reflected in state and broadcasted to integration layers flawlessly correctly fluently.
+     * Validates that updating the status of a loan correctly modifies the record and triggers a corresponding event.
      */
     @Test
     @DisplayName("test updateStatus() - Should update status, add remarks, and notify via RabbitMQ")
@@ -114,7 +115,7 @@ class LoanServiceTest {
     }
 
     /**
-     * Ensures that delete operations correctly identify absent targets and signal errors appropriately flawlessly correctly fluently.
+     * Ensures that attempting to delete a non-existent loan results in a ResourceNotFoundException.
      */
     @Test
     @DisplayName("test delete() - Should throw exception if loan does not exist")

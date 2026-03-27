@@ -239,5 +239,4 @@ public class DocumentController {
          */
         private String remarks;
     }
-}}
 }

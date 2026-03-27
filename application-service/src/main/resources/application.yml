@@ -56,3 +56,15 @@ logging:
     rollingpolicy:
       max-history: 7
       file-name-pattern: /app/logs/application-service.%d{yyyy-MM-dd}.log
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,tracing

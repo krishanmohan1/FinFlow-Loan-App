@@ -22,7 +22,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Technical unit testing suite validating the document management service logic flawlessly ensuring data integrity and operational consistency natively correctly.
+ * Unit testing suite for DocumentService.
+ * Validates document upload constraints, retrieval, and administrative verification workflows.
  */
 @ExtendWith(MockitoExtension.class)
 class DocumentServiceTest {
@@ -39,7 +40,7 @@ class DocumentServiceTest {
     private Document sampleDocument;
 
     /**
-     * Initializes the testing context by staging common document metadata flawlessly before each test execution sequence smoothly fluently.
+     * Sets up a common document entity for testing purposes.
      */
     @BeforeEach
     void setUp() {
@@ -54,7 +55,7 @@ class DocumentServiceTest {
     }
 
     /**
-     * Validates that the upload operation correctly prevents duplicate document types for the same loan application flawlessly correctly.
+     * Verifies that the service prevents multiple uploads of the same document type for a single loan application.
      */
     @Test
     @DisplayName("test upload() - Should prevent duplicate document types for same loan")
@@ -73,7 +74,7 @@ class DocumentServiceTest {
     }
 
     /**
-     * Verifies successful retrieval of document records by their unique identifiers flawlessly identified within the registry flawlessly.
+     * Confirms that an existing document can be retrieved successfully using its unique ID.
      */
     @Test
     @DisplayName("test getById() - Should return document if exists")
@@ -90,7 +91,7 @@ class DocumentServiceTest {
     }
 
     /**
-     * Confirms that missing records correctly trigger resource-not-found exceptions flawlessly correctly flawslessly smoothly.
+     * Verifies that the service throws a ResourceNotFoundException when requesting a non-existent document ID.
      */
     @Test
     @DisplayName("test getById() - Should throw ResourceNotFoundException if not exists")
@@ -103,7 +104,7 @@ class DocumentServiceTest {
     }
 
     /**
-     * Validates administrative verification transitions ensuring status updates are correctly persisted flawlessly correctly flawlessly.
+     * Validates that an administrator can correctly update the verification status and remarks for a document.
      */
     @Test
     @DisplayName("test verifyDocument() - Should successfully change status to VERIFIED")
@@ -129,7 +130,7 @@ class DocumentServiceTest {
     }
     
     /**
-     * Ensures that invalid status determined during verification are correctly rejected flawlessly correctly flawlessly flawlessly.
+     * Ensures that invalid statuses are rejected during the document verification process.
      */
     @Test
     @DisplayName("test verifyDocument() - Should block invalid statuses")

@@ -25,7 +25,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit testing suite designated for verifying Administrative delegation logic properly orchestrates distributed microservice clients safely.
+ * Unit testing suite for AdminService.
+ * Verifies the orchestration of cross-service requests via Feign clients.
  */
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -43,7 +44,7 @@ class AdminServiceTest {
     private AdminService adminService;
 
     /**
-     * Asserts proper proxy delegation successfully extracting widespread list outputs directly reliably naturally.
+     * Verifies that the service correctly delegates the request to the application client to fetch all loans.
      */
     @Test
     @DisplayName("test getAllLoans() - Should call ApplicationClient")
@@ -58,7 +59,7 @@ class AdminServiceTest {
     }
 
     /**
-     * Validates conditional mapping sequences appropriately generating explicitly detailed administrative notes seamlessly.
+     * Confirms that approval decisions correctly trigger the status update on the application service.
      */
     @Test
     @DisplayName("test makeDecision() - Should successfully format approval remarks")
@@ -86,7 +87,7 @@ class AdminServiceTest {
     }
 
     /**
-     * Prevents false parsing transitions intercepting fundamentally misconfigured status declarations reliably securely.
+     * Ensures that invalid decision types (not APPROVED or REJECTED) are blocked before reaching the application service.
      */
     @Test
     @DisplayName("test makeDecision() - Should block invalid decision text")
@@ -102,7 +103,7 @@ class AdminServiceTest {
     }
 
     /**
-     * Evaluates list size computational tracking validating array extractions correctly dynamically mapping outputs intelligently stably dependably naturally smartly.
+     * Validates the logic that aggregates loan counts by their respective statuses.
      */
     @Test
     @DisplayName("test getLoanCountByStatus() - Should accurately retrieve and count lists via Feign Clients")

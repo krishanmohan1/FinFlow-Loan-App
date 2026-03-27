@@ -28,6 +28,12 @@
     <!-- ✅ Dependencies -->
     <dependencies>
 
+        <!-- Actuator for Healthchecks -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- Eureka Server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

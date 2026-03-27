@@ -29,7 +29,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Technical unit testing suite validating the core business logic of the authentication service orchestration flawlessly correctly flawlessly smoothly natives correctly.
+ * Unit testing suite for AuthService.
+ * Validates core business logic for user registration, authentication, and profile management.
  */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -49,7 +50,7 @@ class AuthServiceTest {
     private User sampleUser;
 
     /**
-     * Staging sequence establishing common user metadata flawlessly before each test execution cycle flawlessly flawlessly correctly.
+     * Sets up a common user entity for use across multiple test cases.
      */
     @BeforeEach
     void setUp() {
@@ -64,7 +65,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Validates that new user registrations are correctly processed and result in valid authentication responses flawlessy smoothly fluently flawlessly.
+     * Verifies that a new user registration persists correctly and returns a valid JWT response.
      */
     @Test
     @DisplayName("test register() - Should successfully persist new user and return token")
@@ -92,7 +93,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Verifies that duplicate username scenarios are correctly blocked during the registration sequence flawlessly flawlessly correctly.
+     * Checks that the registration process correctly identifies and blocks duplicate usernames.
      */
     @Test
     @DisplayName("test register() - Should prevent registration if username exists")
@@ -112,7 +113,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Confirms that valid login credentials result in the successful generation of authentication tokens correctly flawlessly smoothly natively.
+     * Confirms that valid credentials result in a successful login and token generation.
      */
     @Test
     @DisplayName("test login() - Should return valid token for correct credentials")
@@ -134,7 +135,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Verifies that authentication attempts for non-existent users result in appropriate business logic failures flawlessly flawlessly.
+     * Ensures that login attempts for non-existent users result in appropriate error handling.
      */
     @Test
     @DisplayName("test login() - Should throw exception if user record not found")
@@ -153,7 +154,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Ensures that inactive accounts are prohibited from completing the authentication sequence flawlessly natively correctly flawlessly flawlessely flawlessly.
+     * Verifies that inactive accounts are barred from logging into the system.
      */
     @Test
     @DisplayName("test login() - Should prevent login for inactive accounts")
@@ -172,7 +173,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Validates that incorrect passwords correctly trigger authentication failures flawlessly correctly flawlessly flawlessly flawlessly.
+     * Confirms that incorrect passwords result in a rejected login attempt with proper error messaging.
      */
     @Test
     @DisplayName("test login() - Should reject invalid password credentials")
@@ -190,7 +191,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Confirms successful retrieval of unpaginated collection datasets containing user profile metadata accurately flawlessly correctly flawlessly flawlessly correctly flawlessly.
+     * Validates that all user records can be retrieved and mapped correctly to UserResponse objects.
      */
     @Test
     @DisplayName("test getAllUsers() - Should return list of all user records")
@@ -205,7 +206,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Verifies successful pinpointing of individual user records using relational identifiers flawlessly flawlessly correctly.
+     * Verifies successful retrieval of a specific user by its unique identifier.
      */
     @Test
     @DisplayName("test getUserById() - Should return identified user profile metadata")
@@ -219,7 +220,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Asserts proper failure handling when attempting to retrieve missing user records natively correctly flawlessy flawlessly flawlessly.
+     * Handles scenarios where a request is made for an ID that does not exist in the persistence layer.
      */
     @Test
     @DisplayName("test getUserById() - Should throw exception if id mapping fails")
@@ -232,7 +233,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Validates that administrative role and status updates are correctly persisted for targeted users flawlessly flawlessy correctly flawlessly.
+     * Confirms that administrative updates to user roles and status are correctly handled.
      */
     @Test
     @DisplayName("test updateUser() - Should successfully modify role and activation status")
@@ -247,7 +248,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Verifies that invalid authorization roles are correctly rejected during administration modification sequences flawlessly natively correctly flawslessly.
+     * Blocks administrative updates if an unauthorized or non-existent role is provided.
      */
     @Test
     @DisplayName("test updateUser() - Should reject unmapped authorization roles")
@@ -260,7 +261,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Confirms that targeted user deactivation sequences result in correct state transitions flawlessly flawlessely flawlessly flawlesslessly flawlessly.
+     * Verifies that the deactivation of an account is correctly processed and persisted.
      */
     @Test
     @DisplayName("test deactivateUser() - Should correctly transition account to inactive")
@@ -275,7 +276,7 @@ class AuthServiceTest {
     }
 
     /**
-     * Demonstrates resistance when attempting deactivation on non-existent identities flawlessly correctly flawlessly natively correctly.
+     * Ensures that deactivation attempts for missing user identities trigger appropriate exceptions.
      */
     @Test
     @DisplayName("test deactivateUser() - Should throw exception for untracked identifiers")

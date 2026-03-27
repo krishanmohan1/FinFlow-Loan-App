@@ -5,6 +5,7 @@ services:
     image: gvenzl/oracle-xe:21-slim
     container_name: oracle-db
     restart: always
+    mem_limit: 2g
     ports:
       - "1521:1521"
     environment:
@@ -12,7 +13,7 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s system/oracle@localhost:1521/XEPDB1 | grep -q 1 || exit 1" ]
       interval: 30s
-      timeout: 15s
+      timeout: 30s
       retries: 20
       start_period: 180s
     networks:
@@ -23,6 +24,7 @@ services:
     image: rabbitmq:3.12-management
     container_name: rabbitmq
     hostname: rabbitmq
+    mem_limit: 512m
     user: root
     command: >
       sh -c "chown -R rabbitmq:rabbitmq /var/lib/rabbitmq &&
@@ -43,8 +45,11 @@ services:
       context: ./eureka-server
     container_name: eureka-server
     restart: always
+    mem_limit: 512m
     ports:
       - "8761:8761"
+    environment:
+      JAVA_OPTS: "-Xmx384m -Xms256m"
     healthcheck:
       test: [ "CMD-SHELL", "wget -qO- http://localhost:8761/actuator/health 2>/dev/null | grep -q UP || exit 1" ]
       interval: 15s
@@ -60,9 +65,10 @@ services:
       context: ./auth-service
     container_name: auth-service
     restart: always
+    mem_limit: 512m
     ports:
       - "9091:9091"
-    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ]
+    command: [ "sh", "-c", "sleep 30 && java -Xmx384m -jar app.jar" ]
     environment:
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
       SPRING_DATASOURCE_USERNAME: system
@@ -82,9 +88,10 @@ services:
       context: ./application-service
     container_name: application-service
     restart: always
+    mem_limit: 512m
     ports:
       - "9092:9092"
-    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ]
+    command: [ "sh", "-c", "sleep 45 && java -Xmx384m -jar app.jar" ]
     environment:
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
       SPRING_DATASOURCE_USERNAME: system
@@ -110,9 +117,10 @@ services:
       context: ./document-service
     container_name: document-service
     restart: always
+    mem_limit: 512m
     ports:
       - "9093:9093"
-    command: [ "sh", "-c", "sleep 60 && java -jar app.jar" ]
+    command: [ "sh", "-c", "sleep 60 && java -Xmx384m -jar app.jar" ]
     environment:
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
       SPRING_DATASOURCE_USERNAME: system
@@ -140,8 +148,10 @@ services:
       context: ./admin-service
     container_name: admin-service
     restart: always
+    mem_limit: 512m
     ports:
       - "9094:9094"
+    command: [ "sh", "-c", "sleep 75 && java -Xmx384m -jar app.jar" ]
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
@@ -156,13 +166,28 @@ services:
       context: ./api-gateway
     container_name: api-gateway
     restart: always
+    mem_limit: 512m
     ports:
       - "9090:9090"
+    command: [ "sh", "-c", "sleep 90 && java -Xmx384m -jar app.jar" ]
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
       eureka-server:
         condition: service_healthy
+    networks:
+      - finflow-network
+
+  # ---------------- ZIPKIN ----------------
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    mem_limit: 512m
+    environment:
+      JAVA_OPTS: "-Xmx384m"
+    ports:
+      - "9411:9411"
+    restart: always
     networks:
       - finflow-network
 
