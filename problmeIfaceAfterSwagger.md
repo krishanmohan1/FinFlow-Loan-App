@@ -215,7 +215,7 @@ I moved from:
 
 ---
 
-#  5. WHAT LEVEL YOU ARE NOW
+#  5. WHAT LEVEL I AM NOW
 
 Honestly:
 
@@ -234,7 +234,7 @@ Because you handled:
 
 ---
 
-#  6. HOW YOU CAN EXPLAIN THIS IN INTERVIEW
+#  6. HOW I CAN EXPLAIN THIS IN INTERVIEW
 
 Say this:
 
