@@ -38,6 +38,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
      * @param config the configuration object for this filter instance
      * @return the GatewayFilter implementation
      */
+    
     @Override
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
@@ -85,6 +86,14 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
                 return exchange.getResponse().setComplete();
             }
 
+            // Role-based Access Control: Ensure only ADMIN role accesses sensitive user management paths in Auth Service
+            if (path.startsWith("/auth/users") && !"ADMIN".equals(role)) {
+                log.warn("Access denied - user: {} (role: {}) tried to access sensitive AUTH/USERS path: {}",
+                        username, role, path);
+                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                return exchange.getResponse().setComplete();
+            }
+
             // Role-based Access Control: Verify users have proper roles for /application paths
             if (path.startsWith("/application") &&
                     !("USER".equals(role) || "ADMIN".equals(role))) {
@@ -123,8 +132,11 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
      * @return true if the path is public, otherwise false
      */
     private boolean isPublicPath(String path) {
-        return path.contains("/auth/login")
-                || path.contains("/auth/register")
-                || path.contains("/actuator");
+        return path.startsWith("/auth/login")
+                || path.startsWith("/auth/register")
+                || path.startsWith("/auth/test")
+                || path.contains("/actuator")
+                || path.contains("/v3/api-docs")
+                || path.contains("swagger-ui");
     }
-}
+}

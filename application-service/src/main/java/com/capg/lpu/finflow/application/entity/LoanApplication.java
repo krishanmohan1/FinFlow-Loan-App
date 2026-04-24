@@ -1,6 +1,10 @@
 package com.capg.lpu.finflow.application.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -27,31 +31,46 @@ public class LoanApplication {
     /**
      * The username of the applicant who submitted the loan request.
      */
-    @Column(nullable = false)
+    @NotBlank(message = "Username is required")
+    @Size(min = 4, max = 30, message = "Username must be between 4 and 30 characters")
+    @Column(nullable = false, length = 30)
     private String username;
 
     /**
      * The total amount of the loan requested by the applicant.
      */
+    @DecimalMin(value = "1000.00", message = "Loan amount must be at least 1000")
     @Column(nullable = false)
     private Double amount;
 
     /**
      * The current status of the loan application (e.g., PENDING, APPROVED, REJECTED).
      */
-    @Column(nullable = false)
+    @NotBlank(message = "Status is required")
+    @Pattern(
+            regexp = "^(PENDING|APPROVED|REJECTED|UNDER_REVIEW)$",
+            message = "Status must be PENDING, APPROVED, REJECTED, or UNDER_REVIEW"
+    )
+    @Column(nullable = false, length = 20)
     private String status;
 
     /**
      * The category or purpose classification of the loan (e.g., PERSONAL, MORTGAGE).
      */
-    @Column(name = "loan_type")
+    @NotBlank(message = "Loan type is required")
+    @Pattern(
+            regexp = "^(PERSONAL|HOME|AUTO|EDUCATION|BUSINESS|GOLD)$",
+            message = "Loan type must be PERSONAL, HOME, AUTO, EDUCATION, BUSINESS, or GOLD"
+    )
+    @Column(name = "loan_type", nullable = false, length = 20)
     private String loanType;
 
     /**
      * A description or detailed purpose for why the loan is being requested.
      */
-    @Column(name = "purpose")
+    @NotBlank(message = "Purpose is required")
+    @Size(min = 10, max = 255, message = "Purpose must be between 10 and 255 characters")
+    @Column(name = "purpose", nullable = false, length = 255)
     private String purpose;
 
     /**
@@ -63,7 +82,8 @@ public class LoanApplication {
     /**
      * Administrative remarks or justification for decisions made regarding the application.
      */
-    @Column(name = "remarks")
+    @Size(max = 500, message = "Remarks must be at most 500 characters")
+    @Column(name = "remarks", length = 500)
     private String remarks;
 
     /**

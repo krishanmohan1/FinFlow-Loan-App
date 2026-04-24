@@ -1,8 +1,21 @@
 package com.capg.lpu.finflow.auth.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Entity class representing a user in the authentication system.
@@ -27,19 +40,29 @@ public class User {
     /**
      * Unique username chosen by the user during registration.
      */
-    @Column(nullable = false, unique = true)
+    @NotBlank(message = "Username is required")
+    @Size(min = 4, max = 30, message = "Username must be between 4 and 30 characters")
+    @Pattern(
+            regexp = "^[A-Za-z][A-Za-z0-9_]{3,29}$",
+            message = "Username must start with a letter and contain only letters, numbers, and underscores"
+    )
+    @Column(nullable = false, unique = true, length = 30)
     private String username;
 
     /**
      * Cryptographically hashed password for secure authentication.
      */
-    @Column(nullable = false)
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
+    @Column(nullable = false, length = 100)
     private String password;
 
     /**
      * The security role assigned to the user (e.g., ROLE_USER, ROLE_ADMIN).
      */
-    @Column(nullable = false)
+    @NotBlank(message = "Role is required")
+    @Pattern(regexp = "^(USER|ADMIN)$", message = "Role must be USER or ADMIN")
+    @Column(nullable = false, length = 10)
     private String role;
 
     /**

@@ -1,0 +1,147 @@
+<section class="hero-section">
+  <div class="hero-copy">
+    <p class="eyebrow">FinFlow Financial Services</p>
+    <h1>Loans made calm, clear, and confidently digital.</h1>
+    <p class="hero-text">
+      FinFlow helps individuals, families, students, and growing businesses access credit with a guided application,
+      transparent document review, and fast digital decisions from a trusted finance team.
+    </p>
+    <div class="hero-actions">
+      @if (auth.isAuthenticated()) {
+        <a class="solid-button large" routerLink="/dashboard">Open workspace</a>
+        @if (auth.isAdmin()) {
+          <a class="ghost-button large" routerLink="/admin">Admin command center</a>
+        }
+      } @else {
+        <a class="solid-button large" routerLink="/register">Start as applicant</a>
+        <a class="ghost-button large" routerLink="/login">Sign in</a>
+      }
+    </div>
+  </div>
+
+  <div class="hero-card">
+    <div class="card-header">
+      <span>Customer Journey</span>
+      <strong>4 simple steps</strong>
+    </div>
+    <div class="flow-line">
+      <span>Apply online</span>
+      <span>Upload documents</span>
+      <span>Expert review</span>
+      <span>Decision & support</span>
+    </div>
+    <div class="metric-grid">
+      <article>
+        <strong>24/7</strong>
+        <span>digital access</span>
+      </article>
+      <article>
+        <strong>360°</strong>
+        <span>loan visibility</span>
+      </article>
+      <article>
+        <strong>100%</strong>
+        <span>guided process</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="health-section">
+  <div>
+    <p class="eyebrow">Live backend connection</p>
+    <h2>Frontend service readiness</h2>
+    <p>These checks confirm whether Angular can reach the running FinFlow backend services.</p>
+  </div>
+  <div class="health-grid">
+    @for (check of healthChecks; track check.name) {
+      <article [class.ok]="check.ok">
+        <span>{{ check.ok ? 'Online' : 'Check' }}</span>
+        <strong>{{ check.name }}</strong>
+        <small>{{ check.detail }}</small>
+      </article>
+    }
+  </div>
+</section>
+
+<section id="services" class="services-section">
+  <div class="section-heading">
+    <p class="eyebrow">What FinFlow offers</p>
+    <h2>Smart credit products for real financial moments.</h2>
+  </div>
+  <div class="feature-grid">
+    <article>
+      <span class="feature-icon">Home</span>
+      <h2>Home Loans</h2>
+      <p>Plan your dream home with structured repayment visibility, document guidance, and approval tracking.</p>
+    </article>
+    <article>
+      <span class="feature-icon">Personal</span>
+      <h2>Personal Loans</h2>
+      <p>Access funds for important life needs with a simple application and transparent review journey.</p>
+    </article>
+    <article>
+      <span class="feature-icon">Business</span>
+      <h2>Business Loans</h2>
+      <p>Support expansion, inventory, equipment, and working capital with a clean digital loan workflow.</p>
+    </article>
+    <article>
+      <span class="feature-icon">Education</span>
+      <h2>Education Finance</h2>
+      <p>Move confidently toward higher education with easy document uploads and status-first communication.</p>
+    </article>
+    <article>
+      <span class="feature-icon">Vehicle</span>
+      <h2>Vehicle Loans</h2>
+      <p>Apply for two-wheeler, car, and commercial vehicle finance through a guided digital experience.</p>
+    </article>
+    <article>
+      <span class="feature-icon">Support</span>
+      <h2>Document Advisory</h2>
+      <p>Know exactly what to upload, what is pending, and what the verification team needs next.</p>
+    </article>
+  </div>
+</section>
+
+<section id="process" class="process-section">
+  <div class="section-heading">
+    <p class="eyebrow">How it works</p>
+    <h2>A premium experience from first click to final decision.</h2>
+  </div>
+  <div class="timeline">
+    <article><strong>01</strong><h3>Create profile</h3><p>Register securely and enter your applicant workspace.</p></article>
+    <article><strong>02</strong><h3>Submit loan</h3><p>Choose loan type, amount, and purpose with clear next steps.</p></article>
+    <article><strong>03</strong><h3>Upload documents</h3><p>Attach Aadhaar, PAN, bank statements, salary slips, or required proofs.</p></article>
+    <article><strong>04</strong><h3>Track decision</h3><p>Admins review, verify, and update your application status transparently.</p></article>
+  </div>
+</section>
+
+<section class="trust-section">
+  <div>
+    <p class="eyebrow">Why customers choose us</p>
+    <h2>Finance should feel premium, not confusing.</h2>
+  </div>
+  <div class="trust-grid">
+    <article><strong>Transparent</strong><span>Status-first loan tracking without hidden workflow confusion.</span></article>
+    <article><strong>Responsive</strong><span>Designed for phone, tablet, and laptop from day one.</span></article>
+    <article><strong>Secure</strong><span>Role-based access keeps applicant and admin experiences separated.</span></article>
+  </div>
+</section>
+
+<section class="feature-grid legacy-grid">
+  <article>
+    <span class="feature-icon">01</span>
+    <h2>For Applicants</h2>
+    <p>A beautiful dashboard for applying, uploading documents, and seeing status changes clearly.</p>
+  </article>
+  <article>
+    <span class="feature-icon">02</span>
+    <h2>For FinFlow Teams</h2>
+    <p>A command center for loan review, document verification, user control, and reports.</p>
+  </article>
+  <article>
+    <span class="feature-icon">03</span>
+    <h2>For Trust</h2>
+    <p>Every important action is connected to the live FinFlow backend and protected by JWT access.</p>
+  </article>
+</section>

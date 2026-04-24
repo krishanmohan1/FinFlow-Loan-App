@@ -8,10 +8,14 @@ import com.capg.lpu.finflow.admin.service.AdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
+@Validated
 public class AdminController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
@@ -93,8 +98,8 @@ public class AdminController {
     @Operation(summary = "Make a loan decision", description = "Full decision with interest rate, tenure, sanctioned amount")
     @PostMapping("/loans/{id}/decision")
     public ResponseEntity<Object> makeDecision(
-            @PathVariable Long id,
-            @RequestBody DecisionRequest request) {
+            @PathVariable @Positive Long id,
+            @Valid @RequestBody DecisionRequest request) {
         log.info("POST /admin/loans/{}/decision | decision: {}", id, request.getDecision());
         return ResponseEntity.ok(adminService.makeDecision(id, request));
     }
@@ -110,8 +115,8 @@ public class AdminController {
     @Operation(summary = "Quick approve a loan")
     @PutMapping("/loans/{id}/approve")
     public ResponseEntity<Object> approveLoan(
-            @PathVariable Long id,
-            @RequestParam(defaultValue = "Loan approved by admin") String remarks) {
+            @PathVariable @Positive Long id,
+            @RequestParam(defaultValue = "Loan approved by admin") @NotBlank String remarks) {
         log.info("PUT /admin/loans/{}/approve", id);
         return ResponseEntity.ok(adminService.approveLoan(id, remarks));
     }
@@ -127,8 +132,8 @@ public class AdminController {
     @Operation(summary = "Quick reject a loan")
     @PutMapping("/loans/{id}/reject")
     public ResponseEntity<Object> rejectLoan(
-            @PathVariable Long id,
-            @RequestParam(defaultValue = "Loan rejected by admin") String remarks) {
+            @PathVariable @Positive Long id,
+            @RequestParam(defaultValue = "Loan rejected by admin") @NotBlank String remarks) {
         log.info("PUT /admin/loans/{}/reject", id);
         return ResponseEntity.ok(adminService.rejectLoan(id, remarks));
     }
@@ -142,7 +147,7 @@ public class AdminController {
     @Tag(name = "Loans")
     @Operation(summary = "Mark loan as under review")
     @PutMapping("/loans/{id}/review")
-    public ResponseEntity<Object> markUnderReview(@PathVariable Long id) {
+    public ResponseEntity<Object> markUnderReview(@PathVariable @Positive Long id) {
         log.info("PUT /admin/loans/{}/review", id);
         return ResponseEntity.ok(adminService.markUnderReview(id));
     }
@@ -156,7 +161,7 @@ public class AdminController {
     @Tag(name = "Loans")
     @Operation(summary = "Delete a loan application permanently")
     @DeleteMapping("/loans/{id}")
-    public ResponseEntity<String> deleteLoan(@PathVariable Long id) {
+    public ResponseEntity<String> deleteLoan(@PathVariable @Positive Long id) {
         log.info("DELETE /admin/loans/{}", id);
         return ResponseEntity.ok(adminService.deleteLoan(id));
     }
@@ -183,7 +188,7 @@ public class AdminController {
     @Tag(name = "Documents")
     @Operation(summary = "Get document by ID")
     @GetMapping("/documents/{id}")
-    public ResponseEntity<Object> getDocumentById(@PathVariable Long id) {
+    public ResponseEntity<Object> getDocumentById(@PathVariable @Positive Long id) {
         log.info("GET /admin/documents/{}", id);
         return ResponseEntity.ok(adminService.getDocumentById(id));
     }
@@ -227,8 +232,8 @@ public class AdminController {
     @Operation(summary = "Verify or reject a document")
     @PutMapping("/documents/{id}/verify")
     public ResponseEntity<Object> verifyDocument(
-            @PathVariable Long id,
-            @RequestBody DocumentVerifyRequest request) {
+            @PathVariable @Positive Long id,
+            @Valid @RequestBody DocumentVerifyRequest request) {
         log.info("PUT /admin/documents/{}/verify | status: {}", id, request.getStatus());
         return ResponseEntity.ok(adminService.verifyDocument(id, request));
     }
@@ -242,7 +247,7 @@ public class AdminController {
     @Tag(name = "Documents")
     @Operation(summary = "Delete a document permanently")
     @DeleteMapping("/documents/{id}")
-    public ResponseEntity<String> deleteDocument(@PathVariable Long id) {
+    public ResponseEntity<String> deleteDocument(@PathVariable @Positive Long id) {
         log.info("DELETE /admin/documents/{}", id);
         return ResponseEntity.ok(adminService.deleteDocument(id));
     }
@@ -269,7 +274,7 @@ public class AdminController {
     @Tag(name = "Users")
     @Operation(summary = "Get user by ID")
     @GetMapping("/users/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable Long id) {
+    public ResponseEntity<Object> getUserById(@PathVariable @Positive Long id) {
         log.info("GET /admin/users/{}", id);
         return ResponseEntity.ok(adminService.getUserById(id));
     }
@@ -285,8 +290,8 @@ public class AdminController {
     @Operation(summary = "Update user role or active status")
     @PutMapping("/users/{id}")
     public ResponseEntity<Object> updateUser(
-            @PathVariable Long id,
-            @RequestBody UserUpdateRequest request) {
+            @PathVariable @Positive Long id,
+            @Valid @RequestBody UserUpdateRequest request) {
         log.info("PUT /admin/users/{}", id);
         return ResponseEntity.ok(adminService.updateUser(id, request));
     }
@@ -300,7 +305,7 @@ public class AdminController {
     @Tag(name = "Users")
     @Operation(summary = "Deactivate a user account")
     @PutMapping("/users/{id}/deactivate")
-    public ResponseEntity<Object> deactivateUser(@PathVariable Long id) {
+    public ResponseEntity<Object> deactivateUser(@PathVariable @Positive Long id) {
         log.info("PUT /admin/users/{}/deactivate", id);
         return ResponseEntity.ok(adminService.deactivateUser(id));
     }

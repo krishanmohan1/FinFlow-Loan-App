@@ -32,3 +32,9 @@ logging:
     com.netflix.eureka: WARN
     com.netflix.discovery: WARN
     org.springframework: INFO
+  file:
+    name: /app/logs/eureka-server.log
+  logback:
+    rollingpolicy:
+      max-history: 7
+      file-name-pattern: /app/logs/eureka-server.%d{yyyy-MM-dd}.log

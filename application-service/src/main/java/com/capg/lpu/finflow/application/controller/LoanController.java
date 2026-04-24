@@ -1,5 +1,6 @@
 package com.capg.lpu.finflow.application.controller;
 
+import com.capg.lpu.finflow.application.dto.LoanApplicationRequest;
 import com.capg.lpu.finflow.application.dto.LoanStatusUpdateRequest;
 import com.capg.lpu.finflow.application.entity.LoanApplication;
 import com.capg.lpu.finflow.application.service.LoanService;
@@ -12,8 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
 /**
  * REST Controller for managing loan applications.
@@ -23,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/application")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Loan Application", description = "Apply for loans and manage applications")
 public class LoanController {
 
@@ -38,14 +44,20 @@ public class LoanController {
      * @param authUsername The username of the authenticated user submitting the application.
      * @return The created loan application entity.
      */
+    
     @Operation(summary = "Apply for a loan", description = "USER submits a new loan application")
     @PostMapping("/apply")
     public ResponseEntity<LoanApplication> apply(
-            @RequestBody LoanApplication loan,
-            @RequestHeader("X-Auth-Username") String authUsername) {
+            @Valid @RequestBody LoanApplicationRequest request,
+            @RequestHeader("X-Auth-Username") @NotBlank String authUsername) {
 
         log.info("POST /application/apply - user: {}", authUsername);
-        loan.setUsername(authUsername);
+        LoanApplication loan = LoanApplication.builder()
+                .username(authUsername)
+                .amount(request.getAmount())
+                .loanType(request.getLoanType())
+                .purpose(request.getPurpose())
+                .build();
         return ResponseEntity.ok(loanService.apply(loan));
     }
 
@@ -57,11 +69,12 @@ public class LoanController {
      * @param authRole The security role used to determine authorization levels.
      * @return A list of loan applications authorized for the requester.
      */
+    
     @Operation(summary = "Get all loans", description = "ADMIN sees all loans, USER sees only their own")
     @GetMapping("/all")
     public ResponseEntity<List<LoanApplication>> getAll(
-            @RequestHeader("X-Auth-Username") String authUsername,
-            @RequestHeader("X-Auth-Role") String authRole) {
+            @RequestHeader("X-Auth-Username") @NotBlank String authUsername,
+            @RequestHeader("X-Auth-Role") @NotBlank String authRole) {
 
         log.info("GET /application/all - user: {}, role: {}", authUsername, authRole);
         if ("ADMIN".equals(authRole)) {
@@ -82,9 +95,9 @@ public class LoanController {
     @Operation(summary = "Get loan by ID", description = "USER can only see their own, ADMIN sees any")
     @GetMapping("/{id}")
     public ResponseEntity<LoanApplication> getById(
-            @PathVariable Long id,
-            @RequestHeader("X-Auth-Username") String authUsername,
-            @RequestHeader("X-Auth-Role") String authRole) {
+            @PathVariable @Positive Long id,
+            @RequestHeader("X-Auth-Username") @NotBlank String authUsername,
+            @RequestHeader("X-Auth-Role") @NotBlank String authRole) {
 
         log.info("GET /application/{} - user: {}, role: {}", id, authUsername, authRole);
         return ResponseEntity.ok(loanService.getByIdSecure(id, authUsername, authRole));
@@ -102,8 +115,8 @@ public class LoanController {
     @Operation(summary = "Get loans by username", description = "ADMIN only")
     @GetMapping("/user/{username}")
     public ResponseEntity<List<LoanApplication>> getByUsername(
-            @PathVariable String username,
-            @RequestHeader("X-Auth-Role") String authRole) {
+            @PathVariable @NotBlank String username,
+            @RequestHeader("X-Auth-Role") @NotBlank String authRole) {
 
         log.info("GET /application/user/{} - role: {}", username, authRole);
         if (!"ADMIN".equals(authRole)) {
@@ -124,9 +137,9 @@ public class LoanController {
     @Operation(summary = "Get loans by status", description = "ADMIN sees all by status, USER sees their own by status")
     @GetMapping("/status/{status}")
     public ResponseEntity<List<LoanApplication>> getByStatus(
-            @PathVariable String status,
-            @RequestHeader("X-Auth-Username") String authUsername,
-            @RequestHeader("X-Auth-Role") String authRole) {
+            @PathVariable @NotBlank String status,
+            @RequestHeader("X-Auth-Username") @NotBlank String authUsername,
+            @RequestHeader("X-Auth-Role") @NotBlank String authRole) {
 
         log.info("GET /application/status/{} - user: {}, role: {}", status, authUsername, authRole);
         if ("ADMIN".equals(authRole)) {
@@ -148,9 +161,9 @@ public class LoanController {
     @Operation(summary = "Update loan status", description = "ADMIN only - approve or reject a loan")
     @PutMapping("/status/{id}")
     public ResponseEntity<LoanApplication> updateStatus(
-            @PathVariable Long id,
-            @RequestBody LoanStatusUpdateRequest request,
-            @RequestHeader("X-Auth-Role") String authRole) {
+            @PathVariable @Positive Long id,
+            @Valid @RequestBody LoanStatusUpdateRequest request,
+            @RequestHeader("X-Auth-Role") @NotBlank String authRole) {
 
         log.info("PUT /application/status/{} - {}", id, request.getStatus());
         if (!"ADMIN".equals(authRole)) {
@@ -171,8 +184,8 @@ public class LoanController {
     @Operation(summary = "Delete a loan application", description = "ADMIN only")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(
-            @PathVariable Long id,
-            @RequestHeader("X-Auth-Role") String authRole) {
+            @PathVariable @Positive Long id,
+            @RequestHeader("X-Auth-Role") @NotBlank String authRole) {
 
         log.info("DELETE /application/{}", id);
         if (!"ADMIN".equals(authRole)) {

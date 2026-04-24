@@ -1,5 +1,6 @@
 package com.capg.lpu.finflow.admin.dto;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 /**
@@ -12,6 +13,7 @@ public class UserUpdateRequest {
     /**
      * The security role to assign to the user (e.g., USER, ADMIN).
      */
+    @Pattern(regexp = "^(USER|ADMIN)$", message = "Role must be USER or ADMIN")
     private String role;
 
     /**

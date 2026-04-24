@@ -1,0 +1,123 @@
+<section class="workspace-page">
+  <div class="page-heading">
+    <p class="eyebrow">Applicant workspace</p>
+    <h1>Hello, {{ username() }}</h1>
+    <p>Submit applications, upload documents, and watch the lifecycle move through the backend services.</p>
+  </div>
+
+  <div class="stat-grid">
+    <article><strong>{{ loans().length }}</strong><span>Total loans</span></article>
+    <article><strong>{{ pendingLoans() }}</strong><span>Pending review</span></article>
+    <article><strong>{{ approvedLoans() }}</strong><span>Approved</span></article>
+    <article><strong>{{ documentsPending() }}</strong><span>Docs pending</span></article>
+  </div>
+
+  @if (message()) {
+    <p class="notice success">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="notice danger">{{ error() }}</p>
+  }
+
+  <div class="workspace-grid">
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Apply for a loan</h2>
+        <span>POST /application/apply</span>
+      </div>
+      <form [formGroup]="loanForm" (ngSubmit)="submitLoan()">
+        <label>Amount <input type="number" formControlName="amount"></label>
+        <label>
+          Loan type
+          <select formControlName="loanType">
+            <option value="HOME">Home</option>
+            <option value="PERSONAL">Personal</option>
+            <option value="EDUCATION">Education</option>
+            <option value="BUSINESS">Business</option>
+            <option value="VEHICLE">Vehicle</option>
+          </select>
+        </label>
+        <label>Purpose <textarea formControlName="purpose" rows="4"></textarea></label>
+        <button class="solid-button large" type="submit">Submit application</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Upload document</h2>
+        <span>POST /document/upload</span>
+      </div>
+      <form [formGroup]="documentForm" (ngSubmit)="uploadDocument()">
+        <label>Loan ID <input formControlName="loanId" placeholder="Example: 1"></label>
+        <label>
+          Document type
+          <select formControlName="documentType">
+            <option value="AADHAAR">Aadhaar</option>
+            <option value="PAN">PAN</option>
+            <option value="SALARY_SLIP">Salary slip</option>
+            <option value="BANK_STATEMENT">Bank statement</option>
+            <option value="PROPERTY_PROOF">Property proof</option>
+          </select>
+        </label>
+        <label>File <input type="file" (change)="onFileSelected($event)"></label>
+        <button class="solid-button large" type="submit">Upload document</button>
+      </form>
+    </section>
+  </div>
+
+  <section class="table-panel">
+    <div class="panel-heading">
+      <h2>My loan applications</h2>
+      <button class="ghost-button" type="button" (click)="loadWorkspace()">Refresh</button>
+    </div>
+    <div class="responsive-table">
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Type</th><th>Amount</th><th>Status</th><th>Applied</th><th>Remarks</th></tr>
+        </thead>
+        <tbody>
+          @for (loan of loans(); track loan.id) {
+            <tr>
+              <td>#{{ loan.id }}</td>
+              <td>{{ loan.loanType }}</td>
+              <td>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</td>
+              <td><ff-status-pill [status]="loan.status || 'PENDING'" /></td>
+              <td>{{ loan.appliedAt | date:'medium' }}</td>
+              <td>{{ loan.remarks || 'No remarks yet' }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6">No loans yet. Submit your first application above.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="table-panel">
+    <div class="panel-heading">
+      <h2>My documents</h2>
+      <span>GET /document/my</span>
+    </div>
+    <div class="responsive-table">
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Loan</th><th>Type</th><th>File</th><th>Status</th><th>Remarks</th></tr>
+        </thead>
+        <tbody>
+          @for (doc of documents(); track doc.id) {
+            <tr>
+              <td>#{{ doc.id }}</td>
+              <td>{{ doc.loanId }}</td>
+              <td>{{ doc.documentType }}</td>
+              <td>{{ doc.fileName }}</td>
+              <td><ff-status-pill [status]="doc.verificationStatus" /></td>
+              <td>{{ doc.verifiedRemarks || 'Awaiting admin review' }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6">No documents uploaded yet.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

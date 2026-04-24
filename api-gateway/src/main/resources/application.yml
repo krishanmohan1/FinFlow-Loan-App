@@ -39,6 +39,20 @@ spring:
               filters:
                 - name: JwtGatewayFilter
 
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - http://localhost:4200
+              - http://127.0.0.1:4200
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+
 eureka:
   client:
     service-url:
@@ -49,6 +63,12 @@ logging:
     com.finflow: DEBUG
     org.springframework.cloud.gateway: INFO
     org.springframework: INFO
+  file:
+    name: /app/logs/api-gateway.log
+  logback:
+    rollingpolicy:
+      max-history: 7
+      file-name-pattern: /app/logs/api-gateway.%d{yyyy-MM-dd}.log
 
 management:
   tracing:
@@ -61,3 +81,22 @@ management:
     web:
       exposure:
         include: health,info,prometheus,tracing
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  gateway:
+    discovery:
+      enabled: true
+  swagger-ui:
+    urls:
+      - name: Auth-Service
+        url: /auth/v3/api-docs
+      - name: Application-Service
+        url: /application/v3/api-docs
+      - name: Document-Service
+        url: /document/v3/api-docs
+      - name: Admin-Service
+        url: /admin/v3/api-docs

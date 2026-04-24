@@ -21,6 +21,7 @@ import java.util.Map;
  * Coordinates operations across multiple microservices by delegating to their respective Feign clients.
  * Provides higher-level administrative workflows and data aggregation.
  */
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -47,6 +48,8 @@ public class AdminService {
      * @param id The unique identifier of the loan application.
      * @return The requested loan application data.
      */
+    
+    
     public Object getLoanById(Long id) {
         log.info("Admin fetching loan by ID: {}", id);
         return applicationClient.getLoanById(id);
@@ -58,6 +61,7 @@ public class AdminService {
      * @param status The status to filter by (e.g., PENDING, APPROVED).
      * @return A collection of matching loan applications.
      */
+    
     public Object getLoansByStatus(String status) {
         log.info("Admin fetching loans with status: {}", status);
         return applicationClient.getLoansByStatus(status);

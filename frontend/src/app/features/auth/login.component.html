@@ -1,0 +1,28 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <p class="eyebrow">Welcome back</p>
+    <h1>Sign in to FinFlow</h1>
+    <p class="hint">Use `admin/admin123` for the seeded admin account, or your registered user account.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label>
+        Username
+        <input formControlName="username" autocomplete="username" placeholder="admin or user1">
+      </label>
+      <label>
+        Password
+        <input formControlName="password" type="password" autocomplete="current-password" placeholder="Your password">
+      </label>
+
+      @if (error()) {
+        <p class="form-error">{{ error() }}</p>
+      }
+
+      <button class="solid-button large full" type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Signing in...' : 'Login securely' }}
+      </button>
+    </form>
+
+    <p class="switch-text">New applicant? <a routerLink="/register">Create an account</a></p>
+  </div>
+</section>

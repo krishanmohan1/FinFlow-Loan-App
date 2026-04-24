@@ -1,0 +1,32 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <p class="eyebrow">Join FinFlow</p>
+    <h1>Create your applicant profile</h1>
+    <p class="hint">Start your loan journey with a secure FinFlow account. Your profile lets you apply, upload documents, and track decisions in real time.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label>
+        Username
+        <input formControlName="username" autocomplete="username" placeholder="user1">
+      </label>
+      <button class="helper-button" type="button" (click)="useFreshUsername()">Suggest username</button>
+      <label>
+        Password
+        <input formControlName="password" type="password" autocomplete="new-password" placeholder="Minimum 6 characters">
+      </label>
+
+      @if (error()) {
+        <p class="form-error">{{ error() }}</p>
+      }
+      @if (success()) {
+        <p class="form-success">{{ success() }}</p>
+      }
+
+      <button class="solid-button large full" type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Creating account...' : 'Create account' }}
+      </button>
+    </form>
+
+    <p class="switch-text">Already registered? <a routerLink="/login">Sign in</a></p>
+  </div>
+</section>

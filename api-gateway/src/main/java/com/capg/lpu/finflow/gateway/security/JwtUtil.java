@@ -26,6 +26,7 @@ public class JwtUtil {
      *
      * @return the Key object used for HMAC-SHA algorithms
      */
+    
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
@@ -37,6 +38,7 @@ public class JwtUtil {
      * @param token the JWT string 
      * @return the claims embedded within the token
      */
+    
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -51,6 +53,7 @@ public class JwtUtil {
      * @param token the JWT string
      * @return the username extracted from the token
      */
+    
     public String extractUsername(String token) {
         String username = extractAllClaims(token).getSubject();
         log.debug("Extracted username from token: {}", username);
@@ -63,6 +66,7 @@ public class JwtUtil {
      * @param token the JWT string
      * @return the user role extracted from the token
      */
+    
     public String extractRole(String token) {
         String role = extractAllClaims(token).get("role", String.class);
         log.debug("Extracted role from token: {}", role);
@@ -76,6 +80,7 @@ public class JwtUtil {
      * @param token the JWT string to validate
      * @return true if the token is valid, false otherwise
      */
+    
     public boolean validateToken(String token) {
         try {
             // Parsing the claims inherently validates both the cryptographic signature and the expiration date.

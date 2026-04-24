@@ -1,20 +1,34 @@
 package com.capg.lpu.finflow.document.controller;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.validation.annotation.Validated;
+
 import com.capg.lpu.finflow.document.entity.Document;
 import com.capg.lpu.finflow.document.service.DocumentService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 /**
  * REST Controller for managing document operations including uploads, updates, and verification.
@@ -24,6 +38,7 @@ import java.util.List;
 @RequestMapping("/document")
 @RequiredArgsConstructor
 @Tag(name = "Document", description = "Upload, verify and manage loan documents")
+@Validated
 public class DocumentController {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentController.class);
@@ -39,13 +54,14 @@ public class DocumentController {
      * @param username The username of the authenticated uploader.
      * @return A ResponseEntity containing the uploaded Document metadata.
      */
+    
     @Operation(summary = "Upload a document", description = "USER uploads a document for their loan")
     @PostMapping("/upload")
     public ResponseEntity<Document> upload(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("loanId") String loanId,
-            @RequestParam("documentType") String documentType,
-            @RequestHeader("X-Auth-Username") String username) {
+            @RequestParam("loanId") @NotBlank @Size(max = 50) String loanId,
+            @RequestParam("documentType") @NotBlank String documentType,
+            @RequestHeader("X-Auth-Username") @NotBlank String username) {
 
         log.info("POST /document/upload - user: {}, loanId: {}, type: {}", username, loanId, documentType);
         return ResponseEntity.ok(documentService.upload(file, loanId, documentType, username));
@@ -64,10 +80,10 @@ public class DocumentController {
     @Operation(summary = "Update a document file", description = "USER updates their own, ADMIN can update any")
     @PutMapping("/update/{id}")
     public ResponseEntity<Document> update(
-            @PathVariable Long id,
+            @PathVariable @Positive Long id,
             @RequestParam("file") MultipartFile file,
-            @RequestHeader("X-Auth-Username") String username,
-            @RequestHeader("X-Auth-Role") String role) {
+            @RequestHeader("X-Auth-Username") @NotBlank String username,
+            @RequestHeader("X-Auth-Role") @NotBlank String role) {
 
         log.info("PUT /document/update/{} - user: {}, role: {}", id, username, role);
         if (!"ADMIN".equals(role)) {
@@ -88,7 +104,7 @@ public class DocumentController {
     @Operation(summary = "Get all documents", description = "ADMIN only")
     @GetMapping("/all")
     public ResponseEntity<List<Document>> getAll(
-            @RequestHeader("X-Auth-Role") String role) {
+            @RequestHeader("X-Auth-Role") @NotBlank String role) {
 
         log.info("GET /document/all - role: {}", role);
         if (!"ADMIN".equals(role)) {
@@ -109,9 +125,9 @@ public class DocumentController {
     @Operation(summary = "Get document by ID", description = "USER sees their own, ADMIN sees any")
     @GetMapping("/{id}")
     public ResponseEntity<Document> getById(
-            @PathVariable Long id,
-            @RequestHeader("X-Auth-Username") String username,
-            @RequestHeader("X-Auth-Role") String role) {
+            @PathVariable @Positive Long id,
+            @RequestHeader("X-Auth-Username") @NotBlank String username,
+            @RequestHeader("X-Auth-Role") @NotBlank String role) {
 
         log.info("GET /document/{} - user: {}, role: {}", id, username, role);
         Document doc = documentService.getById(id);
@@ -133,9 +149,9 @@ public class DocumentController {
     @Operation(summary = "Get documents by loan ID", description = "USER sees their own for that loan, ADMIN sees all")
     @GetMapping("/loan/{loanId}")
     public ResponseEntity<List<Document>> getByLoan(
-            @PathVariable String loanId,
-            @RequestHeader("X-Auth-Username") String username,
-            @RequestHeader("X-Auth-Role") String role) {
+            @PathVariable @NotBlank String loanId,
+            @RequestHeader("X-Auth-Username") @NotBlank String username,
+            @RequestHeader("X-Auth-Role") @NotBlank String role) {
 
         log.info("GET /document/loan/{} - user: {}, role: {}", loanId, username, role);
         if ("ADMIN".equals(role)) {
@@ -153,7 +169,7 @@ public class DocumentController {
     @Operation(summary = "Get my documents", description = "USER gets all their own uploaded documents")
     @GetMapping("/my")
     public ResponseEntity<List<Document>> getMyDocuments(
-            @RequestHeader("X-Auth-Username") String username) {
+            @RequestHeader("X-Auth-Username") @NotBlank String username) {
 
         log.info("GET /document/my - user: {}", username);
         return ResponseEntity.ok(documentService.getByUsername(username));
@@ -170,8 +186,8 @@ public class DocumentController {
     @Operation(summary = "Get documents by verification status", description = "ADMIN only — PENDING, VERIFIED, REJECTED")
     @GetMapping("/status/{status}")
     public ResponseEntity<List<Document>> getByStatus(
-            @PathVariable String status,
-            @RequestHeader("X-Auth-Role") String role) {
+            @PathVariable @NotBlank String status,
+            @RequestHeader("X-Auth-Role") @NotBlank String role) {
 
         log.info("GET /document/status/{} - role: {}", status, role);
         if (!"ADMIN".equals(role)) {
@@ -192,9 +208,9 @@ public class DocumentController {
     @Operation(summary = "Verify or reject a document", description = "ADMIN only — set status to VERIFIED or REJECTED")
     @PutMapping("/verify/{id}")
     public ResponseEntity<Document> verify(
-            @PathVariable Long id,
-            @RequestBody VerifyRequest request,
-            @RequestHeader("X-Auth-Role") String role) {
+            @PathVariable @Positive Long id,
+            @Valid @RequestBody VerifyRequest request,
+            @RequestHeader("X-Auth-Role") @NotBlank String role) {
 
         log.info("PUT /document/verify/{} - status: {}, role: {}", id, request.getStatus(), role);
         if (!"ADMIN".equals(role)) {
@@ -214,8 +230,8 @@ public class DocumentController {
     @Operation(summary = "Delete a document", description = "ADMIN only")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(
-            @PathVariable Long id,
-            @RequestHeader("X-Auth-Role") String role) {
+            @PathVariable @Positive Long id,
+            @RequestHeader("X-Auth-Role") @NotBlank String role) {
 
         log.info("DELETE /document/{} - role: {}", id, role);
         if (!"ADMIN".equals(role)) {
@@ -232,11 +248,17 @@ public class DocumentController {
         /**
          * The desired verification status (e.g., VERIFIED, REJECTED).
          */
+        @NotBlank(message = "Status is required")
+        @jakarta.validation.constraints.Pattern(
+                regexp = "^(VERIFIED|REJECTED)$",
+                message = "Status must be VERIFIED or REJECTED"
+        )
         private String status;
 
         /**
          * Administrative remarks explaining the verification decision.
          */
+        @Size(max = 500, message = "Remarks must be at most 500 characters")
         private String remarks;
     }
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -63,6 +64,8 @@ public class DocumentService {
             );
         }
 
+        validateUploadFile(file);
+
         try {
             Path uploadPath = Paths.get(UPLOAD_DIR);
             if (!Files.exists(uploadPath)) {
@@ -74,7 +77,7 @@ public class DocumentService {
             throw new RuntimeException("Failed to create upload directory");
         }
 
-        String originalFileName = file.getOriginalFilename();
+        String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
         String fileName = System.currentTimeMillis() + "_" + originalFileName;
         String filePath = UPLOAD_DIR + fileName;
 
@@ -114,6 +117,7 @@ public class DocumentService {
         log.info("Updating document ID: {}", id);
 
         Document doc = getById(id);
+        validateUploadFile(file);
 
         try {
             Path oldFilePath = Paths.get(doc.getFilePath());
@@ -125,7 +129,7 @@ public class DocumentService {
             log.warn("Could not delete old file: {}", e.getMessage());
         }
 
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        String fileName = System.currentTimeMillis() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
         String filePath = UPLOAD_DIR + fileName;
 
         try {
@@ -268,5 +272,21 @@ public class DocumentService {
         documentRepository.delete(doc);
         log.info("Document ID: {} deleted from DB", id);
         return "Document with ID " + id + " deleted successfully.";
+    }
+
+    /**
+     * Validates that uploaded file metadata is usable before filesystem operations begin.
+     *
+     * @param file Uploaded multipart file.
+     */
+    private void validateUploadFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("A non-empty file is required");
+        }
+
+        String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+        if (!StringUtils.hasText(originalFileName)) {
+            throw new IllegalArgumentException("Uploaded file name is missing");
+        }
     }
 }

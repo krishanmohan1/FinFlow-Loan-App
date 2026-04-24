@@ -1,0 +1,40 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/">
+      <span class="brand-mark">F</span>
+      <span>
+        <strong>FinFlow</strong>
+        <small>Loan lifecycle OS</small>
+      </span>
+    </a>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Overview</a>
+      <a routerLink="/" fragment="services">Services</a>
+      <a routerLink="/" fragment="process">Process</a>
+      @if (auth.isAuthenticated()) {
+        <a routerLink="/dashboard" routerLinkActive="active">Workspace</a>
+        @if (auth.isAdmin()) {
+          <a routerLink="/admin" routerLinkActive="active">Admin Command</a>
+        }
+      }
+    </nav>
+
+    <div class="nav-actions">
+      @if (auth.isAuthenticated()) {
+        <div class="identity">
+          <span>{{ auth.username() }}</span>
+          <strong>{{ auth.role() }}</strong>
+        </div>
+        <button class="ghost-button" type="button" (click)="auth.logout()">Logout</button>
+      } @else {
+        <a class="ghost-button" routerLink="/login">Login</a>
+        <a class="solid-button" routerLink="/register">Get started</a>
+      }
+    </div>
+  </header>
+
+  <main>
+    <router-outlet />
+  </main>
+</div>

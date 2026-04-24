@@ -9,6 +9,7 @@ import com.capg.lpu.finflow.auth.repository.UserRepository;
 import com.capg.lpu.finflow.auth.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -126,15 +127,14 @@ public class AuthService {
     /**
      * Updates an existing user's role and/or activation status.
      *
-     * @param id The ID of the user to update.
-     * @param role The new role to assign (USER or ADMIN).
+     * @param id     The ID of the user to update.
+     * @param role   The new role to assign (USER or ADMIN).
      * @param active The new activation status.
      * @return The updated UserResponse object.
      */
     public UserResponse updateUser(Long id, String role, Boolean active) {
         log.info("Updating user ID: {} - role: {} - active: {}", id, role, active);
 
-        // Fetch the raw User entity from DB (not DTO) so we can update it
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
 
@@ -163,7 +163,6 @@ public class AuthService {
     public UserResponse deactivateUser(Long id) {
         log.info("Deactivating user ID: {}", id);
 
-        // Fetch the raw User entity from DB (not DTO) so we can update it
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
 

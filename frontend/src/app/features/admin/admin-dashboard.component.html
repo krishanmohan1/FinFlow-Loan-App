@@ -1,0 +1,169 @@
+<section class="admin-page">
+  <div class="admin-hero">
+    <div>
+      <p class="eyebrow">Admin command center</p>
+      <h1>Control tower for loans, documents, users, and reports.</h1>
+      <p>Every action here calls the Admin Service, which orchestrates Auth, Application, and Document services through Feign.</p>
+    </div>
+    <button class="solid-button large" type="button" (click)="loadAdminData()">Refresh live data</button>
+  </div>
+
+  @if (message()) {
+    <p class="notice success">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="notice danger">{{ error() }}</p>
+  }
+
+  <div class="stat-grid">
+    <article><strong>{{ loans().length }}</strong><span>Total loans</span></article>
+    <article><strong>{{ pendingLoans() }}</strong><span>Pending loans</span></article>
+    <article><strong>{{ documents().length }}</strong><span>Documents</span></article>
+    <article><strong>{{ activeUsers() }}</strong><span>Active users</span></article>
+  </div>
+
+  <div class="action-grid">
+    <section class="panel accent">
+      <div class="panel-heading">
+        <h2>Loan decision</h2>
+        <span>POST /admin/loans/{{ decisionForm.controls.loanId.value }}/decision</span>
+      </div>
+      <form [formGroup]="decisionForm" (ngSubmit)="decideLoan()">
+        <label>Loan ID <input type="number" formControlName="loanId"></label>
+        <label>
+          Decision
+          <select formControlName="decision">
+            <option value="APPROVED">Approved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </label>
+        <label>Remarks <textarea rows="3" formControlName="remarks"></textarea></label>
+        <div class="mini-grid">
+          <label>Interest % <input type="number" formControlName="interestRate"></label>
+          <label>Tenure <input type="number" formControlName="tenureMonths"></label>
+          <label>Sanctioned <input type="number" formControlName="sanctionedAmount"></label>
+        </div>
+        <button class="solid-button large" type="submit">Submit decision</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Verify document</h2>
+        <span>PUT /admin/documents/id/verify</span>
+      </div>
+      <form [formGroup]="documentForm" (ngSubmit)="verifyDocument()">
+        <label>Document ID <input type="number" formControlName="documentId"></label>
+        <label>
+          Status
+          <select formControlName="status">
+            <option value="VERIFIED">Verified</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </label>
+        <label>Remarks <textarea rows="3" formControlName="remarks"></textarea></label>
+        <button class="solid-button large" type="submit">Update document</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>User controls</h2>
+        <span>PUT /admin/users/id</span>
+      </div>
+      <form [formGroup]="userForm" (ngSubmit)="updateUser()">
+        <label>User ID <input type="number" formControlName="userId"></label>
+        <label>
+          Role
+          <select formControlName="role">
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" formControlName="active">
+          Active account
+        </label>
+        <button class="solid-button large" type="submit">Update user</button>
+      </form>
+    </section>
+  </div>
+
+  <section class="table-panel">
+    <div class="panel-heading">
+      <h2>Loan queue</h2>
+      <span>GET /admin/loans</span>
+    </div>
+    <div class="responsive-table">
+      <table>
+        <thead><tr><th>ID</th><th>User</th><th>Type</th><th>Amount</th><th>Status</th><th>Applied</th><th>Action</th></tr></thead>
+        <tbody>
+          @for (loan of loans(); track loan.id) {
+            <tr>
+              <td>#{{ loan.id }}</td>
+              <td>{{ loan.username }}</td>
+              <td>{{ loan.loanType }}</td>
+              <td>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</td>
+              <td><ff-status-pill [status]="loan.status || 'PENDING'" /></td>
+              <td>{{ loan.appliedAt | date:'medium' }}</td>
+              <td><button class="small-button" type="button" (click)="markUnderReview(loan.id)">Review</button></td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7">No loans found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="table-panel">
+    <div class="panel-heading">
+      <h2>Document audit</h2>
+      <span>GET /admin/documents</span>
+    </div>
+    <div class="responsive-table">
+      <table>
+        <thead><tr><th>ID</th><th>User</th><th>Loan</th><th>Type</th><th>Status</th><th>Remarks</th></tr></thead>
+        <tbody>
+          @for (doc of documents(); track doc.id) {
+            <tr>
+              <td>#{{ doc.id }}</td>
+              <td>{{ doc.username }}</td>
+              <td>{{ doc.loanId }}</td>
+              <td>{{ doc.documentType }}</td>
+              <td><ff-status-pill [status]="doc.verificationStatus" /></td>
+              <td>{{ doc.verifiedRemarks || 'No remarks' }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6">No documents found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="table-panel">
+    <div class="panel-heading">
+      <h2>Users</h2>
+      <span>GET /admin/users</span>
+    </div>
+    <div class="responsive-table">
+      <table>
+        <thead><tr><th>ID</th><th>Username</th><th>Role</th><th>Active</th><th>Created</th></tr></thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr>
+              <td>#{{ user.id }}</td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.role }}</td>
+              <td>{{ user.active ? 'Yes' : 'No' }}</td>
+              <td>{{ user.createdAt | date:'medium' }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5">No users found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

@@ -1,0 +1,47 @@
+{
+  "/api/auth": {
+    "target": "http://127.0.0.1:9091",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api/auth": "/auth"
+    }
+  },
+  "/api/application": {
+    "target": "http://127.0.0.1:9092",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api/application": "/application"
+    }
+  },
+  "/api/document": {
+    "target": "http://127.0.0.1:9093",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api/document": "/document"
+    }
+  },
+  "/api/admin": {
+    "target": "http://127.0.0.1:9094",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api/admin": "/admin"
+    }
+  },
+  "/api": {
+    "target": "http://127.0.0.1:9090",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": ""
+    }
+  }
+}
