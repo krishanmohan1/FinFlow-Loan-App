@@ -67,7 +67,7 @@ class LoanServiceTest {
         assertThat(result.getUsername()).isEqualTo("testuser");
 
         verify(loanRepository, times(1)).save(sampleLoan);
-        verify(loanProducer, times(1)).sendMessage(anyString());
+        verify(loanProducer, times(1)).sendLoanCreated(any());
     }
 
     /**
@@ -111,7 +111,7 @@ class LoanServiceTest {
         assertThat(result.getRemarks()).isEqualTo("All documents verified ok.");
 
         verify(loanRepository, times(1)).save(sampleLoan);
-        verify(loanProducer, times(1)).sendMessage(contains("APPROVED"));
+        verify(loanProducer, times(1)).sendLoanStatusUpdated(any());
     }
 
     /**

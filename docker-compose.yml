@@ -69,14 +69,16 @@ services:
     container_name: auth-service
     restart: always
     mem_limit: 512m
-    ports:
-      - "9091:9091"
+    expose:
+      - "9091"
     command: [ "sh", "-c", "sleep 30 && java -Xmx384m -jar app.jar" ]
     environment:
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
       SPRING_DATASOURCE_USERNAME: system
       SPRING_DATASOURCE_PASSWORD: oracle
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: mysecretkeymysecretkeymysecretkey12
+      JWT_ISSUER: finflow-auth
     depends_on:
       oracle-db:
         condition: service_healthy
@@ -92,8 +94,8 @@ services:
     container_name: application-service
     restart: always
     mem_limit: 512m
-    ports:
-      - "9092:9092"
+    expose:
+      - "9092"
     command: [ "sh", "-c", "sleep 45 && java -Xmx384m -jar app.jar" ]
     environment:
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
@@ -104,6 +106,8 @@ services:
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: mysecretkeymysecretkeymysecretkey12
+      JWT_ISSUER: finflow-auth
     depends_on:
       oracle-db:
         condition: service_healthy
@@ -121,8 +125,8 @@ services:
     container_name: document-service
     restart: always
     mem_limit: 512m
-    ports:
-      - "9093:9093"
+    expose:
+      - "9093"
     command: [ "sh", "-c", "sleep 60 && java -Xmx384m -jar app.jar" ]
     environment:
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
@@ -133,6 +137,8 @@ services:
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: mysecretkeymysecretkeymysecretkey12
+      JWT_ISSUER: finflow-auth
     volumes:
       - finflow-uploads:/root/finflow-uploads
     depends_on:
@@ -152,11 +158,13 @@ services:
     container_name: admin-service
     restart: always
     mem_limit: 512m
-    ports:
-      - "9094:9094"
+    expose:
+      - "9094"
     command: [ "sh", "-c", "sleep 75 && java -Xmx384m -jar app.jar" ]
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: mysecretkeymysecretkeymysecretkey12
+      JWT_ISSUER: finflow-auth
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -175,6 +183,8 @@ services:
     command: [ "sh", "-c", "sleep 90 && java -Xmx384m -jar app.jar" ]
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: mysecretkeymysecretkeymysecretkey12
+      JWT_ISSUER: finflow-auth
     depends_on:
       eureka-server:
         condition: service_healthy

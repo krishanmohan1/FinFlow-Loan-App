@@ -1,10 +1,10 @@
 package com.capg.lpu.finflow;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Main entry point for the Eureka Service Registry.
@@ -12,9 +12,8 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
  */
 @EnableEurekaServer
 @SpringBootApplication
+@Slf4j
 public class EurekaServerApplication {
-
-    private static final Logger log = LoggerFactory.getLogger(EurekaServerApplication.class);
 
     /**
      * Bootstraps the Eureka Server Spring Boot application.

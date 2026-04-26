@@ -1,18 +1,17 @@
 package com.capg.lpu.finflow.auth;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Main entry point for the Auth Service.
  * Bootstraps the identity and access management microservice, initializing the application context.
  */
 @SpringBootApplication
+@Slf4j
 public class AuthServiceApplication {
-
-    private static final Logger log = LoggerFactory.getLogger(AuthServiceApplication.class);
 
     /**
      * Starts the Auth Service microservice and initializes secure authentication workflows.

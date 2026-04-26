@@ -9,8 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +17,7 @@ import java.util.List;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * REST Controller for managing loan applications.
@@ -30,9 +29,8 @@ import jakarta.validation.constraints.Positive;
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Loan Application", description = "Apply for loans and manage applications")
+@Slf4j
 public class LoanController {
-
-    private static final Logger log = LoggerFactory.getLogger(LoanController.class);
 
     private final LoanService loanService;
 

@@ -2,8 +2,6 @@ package com.capg.lpu.finflow.document.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +27,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * REST Controller for managing document operations including uploads, updates, and verification.
@@ -39,9 +38,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Document", description = "Upload, verify and manage loan documents")
 @Validated
+@Slf4j
 public class DocumentController {
-
-    private static final Logger log = LoggerFactory.getLogger(DocumentController.class);
 
     private final DocumentService documentService;
 

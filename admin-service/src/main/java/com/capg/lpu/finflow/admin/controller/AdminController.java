@@ -12,11 +12,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * REST controller for administrative management across the FinFlow microservices architecture.
@@ -26,9 +25,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class AdminController {
-
-    private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private final AdminService adminService;
 

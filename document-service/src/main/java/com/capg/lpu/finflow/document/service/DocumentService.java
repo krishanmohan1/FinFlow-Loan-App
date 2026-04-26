@@ -2,14 +2,15 @@ package com.capg.lpu.finflow.document.service;
 
 import com.capg.lpu.finflow.document.entity.Document;
 import com.capg.lpu.finflow.document.exception.ResourceNotFoundException;
+import com.capg.lpu.finflow.document.dto.DocumentVerificationEvent;
+import com.capg.lpu.finflow.document.producer.DocumentEventProducer;
 import com.capg.lpu.finflow.document.repository.DocumentRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -24,12 +25,12 @@ import java.util.Optional;
  * Handles physical file storage, database metadata persistence, and administrative verification workflows.
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DocumentService {
 
-    private static final Logger log = LoggerFactory.getLogger(DocumentService.class);
-
     private final DocumentRepository documentRepository;
+    private final DocumentEventProducer documentEventProducer;
 
     private static final String UPLOAD_DIR =
             System.getProperty("user.home") + File.separator + "finflow-uploads" + File.separator;
@@ -243,6 +244,15 @@ public class DocumentService {
         doc.setVerifiedRemarks(remarks);
 
         Document saved = documentRepository.save(doc);
+        documentEventProducer.publishVerificationEvent(DocumentVerificationEvent.builder()
+                .eventType("DOCUMENT_" + status)
+                .loanId(saved.getLoanId())
+                .username(saved.getUsername())
+                .documentType(saved.getDocumentType())
+                .status(status)
+                .remarks(remarks)
+                .occurredAt(LocalDateTime.now())
+                .build());
         log.info("Document ID: {} marked as: {}", id, status);
         return saved;
     }

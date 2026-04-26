@@ -1,48 +1,52 @@
 package com.capg.lpu.finflow.document.consumer;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 import com.capg.lpu.finflow.document.config.RabbitMQConfig;
+import com.capg.lpu.finflow.document.dto.LoanEventMessage;
+import com.capg.lpu.finflow.document.entity.Document;
+import com.capg.lpu.finflow.document.repository.DocumentRepository;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Message consumer for the Document service.
  * Listens for loan-related events from RabbitMQ and triggers internal document workflows.
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class LoanConsumer {
 
-    private static final Logger log = LoggerFactory.getLogger(LoanConsumer.class);
+    private final DocumentRepository documentRepository;
 
     /**
      * Entry point for messages arriving on the configured loan queue.
      * Routes the message to specialized handlers based on the event type.
      *
-     * @param message The raw string payload received from the message broker.
+     * @param message The event payload received from the message broker.
      */
     @RabbitListener(queues = RabbitMQConfig.LOAN_QUEUE)
-    public void receiveMessage(String message) {
+    public void receiveMessage(LoanEventMessage message) {
 
         log.info("[Document Service] Message received from queue: {}", message);
 
-        if (message == null || message.isBlank()) {
+        if (message == null || message.getEventType() == null || message.getEventType().isBlank()) {
             log.warn("Empty message received - skipping");
             return;
         }
 
         try {
-            if (message.startsWith("NEW_LOAN_APPLICATION")) {
+            if ("NEW_LOAN_APPLICATION".equals(message.getEventType())) {
                 handleNewLoanApplication(message);
 
-            } else if (message.startsWith("LOAN_STATUS_UPDATED")) {
+            } else if ("LOAN_STATUS_UPDATED".equals(message.getEventType())) {
                 handleLoanStatusUpdated(message);
 
             } else {
-                log.warn("Unknown event type received: {}", message);
+                log.warn("Unknown event type received: {}", message.getEventType());
             }
 
         } catch (Exception e) {
@@ -56,19 +60,14 @@ public class LoanConsumer {
      *
      * @param message The serialized message containing new application details.
      */
-    private void handleNewLoanApplication(String message) {
+    private void handleNewLoanApplication(LoanEventMessage message) {
         log.info("NEW LOAN APPLICATION event received");
 
-        String loanId   = extractValue(message, "loanId");
-        String username = extractValue(message, "username");
-        String amount   = extractValue(message, "amount");
-        String type     = extractValue(message, "type");
-
         log.info("Loan Details -> ID: {} | User: {} | Amount: {} | Type: {}",
-                loanId, username, amount, type);
+                message.getLoanId(), message.getUsername(), message.getAmount(), message.getLoanType());
 
         log.info("New loan [{}] registered in Document Service - awaiting document uploads",
-                loanId);
+                message.getLoanId());
     }
 
     /**
@@ -77,47 +76,37 @@ public class LoanConsumer {
      *
      * @param message The serialized message containing status update details.
      */
-    private void handleLoanStatusUpdated(String message) {
+    private void handleLoanStatusUpdated(LoanEventMessage message) {
         log.info("LOAN STATUS UPDATED event received");
 
-        String loanId    = extractValue(message, "loanId");
-        String username  = extractValue(message, "username");
-        String newStatus = extractValue(message, "newStatus");
-        String remarks   = extractValue(message, "remarks");
-
         log.info("Status Update -> ID: {} | User: {} | Status: {} | Remarks: {}",
-                loanId, username, newStatus, remarks);
+                message.getLoanId(), message.getUsername(), message.getStatus(), message.getRemarks());
 
-        if ("APPROVED".equals(newStatus)) {
-            log.info("Loan [{}] APPROVED - documents can now be marked as final", loanId);
+        if ("APPROVED".equals(message.getStatus())) {
+            log.info("Loan [{}] APPROVED - documents can now be marked as final", message.getLoanId());
 
-        } else if ("REJECTED".equals(newStatus)) {
-            log.warn("Loan [{}] REJECTED - Reason: {}", loanId, remarks);
+            documentRepository.findByLoanId(String.valueOf(message.getLoanId()))
+                    .forEach(document -> markDocumentComplete(document));
+
+        } else if ("REJECTED".equals(message.getStatus())) {
+            log.warn("Loan [{}] REJECTED - Reason: {}", message.getLoanId(), message.getRemarks());
 
         } else {
-            log.info("Loan [{}] status changed to: {}", loanId, newStatus);
+            log.info("Loan [{}] status changed to: {}", message.getLoanId(), message.getStatus());
         }
     }
 
     /**
-     * Utility method to extract specific key-value pairs from pipe-delimited message strings.
+     * Marks documents as complete once the full loan is approved.
      *
-     * @param message The full message string to parse.
-     * @param key The specific key whose value should be retrieved.
-     * @return The extracted value, or "UNKNOWN" if the key is not found.
+     * @param document document to update
      */
-    private String extractValue(String message, String key) {
-        try {
-            String[] parts = message.split("\\|");
-            for (String part : parts) {
-                part = part.trim();
-                if (part.startsWith(key + "=")) {
-                    return part.substring((key + "=").length()).trim();
-                }
-            }
-        } catch (Exception e) {
-            log.warn("Could not extract [{}] from message", key);
-        }
-        return "UNKNOWN";
+    private void markDocumentComplete(Document document) {
+        String existingRemarks = document.getVerifiedRemarks() == null ? "" : document.getVerifiedRemarks().trim();
+        String approvedRemark = "Loan approved - document locked as final";
+        document.setVerifiedRemarks(existingRemarks.isBlank()
+                ? approvedRemark
+                : existingRemarks + " | " + approvedRemark);
+        documentRepository.save(document);
     }
 }

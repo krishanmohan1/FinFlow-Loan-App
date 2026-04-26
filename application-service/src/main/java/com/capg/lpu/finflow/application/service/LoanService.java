@@ -1,17 +1,18 @@
 package com.capg.lpu.finflow.application.service;
 
 import com.capg.lpu.finflow.application.dto.LoanStatusUpdateRequest;
+import com.capg.lpu.finflow.application.dto.LoanEventMessage;
 import com.capg.lpu.finflow.application.entity.LoanApplication;
 import com.capg.lpu.finflow.application.exception.ResourceNotFoundException;
 import com.capg.lpu.finflow.application.producer.LoanProducer;
 import com.capg.lpu.finflow.application.repository.LoanRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service class for managing loan application lifecycles.
@@ -19,9 +20,8 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LoanService {
-
-    private static final Logger log = LoggerFactory.getLogger(LoanService.class);
 
     private final LoanRepository loanRepository;
     private final LoanProducer loanProducer;
@@ -37,13 +37,15 @@ public class LoanService {
         log.info("Applying loan for user: {}", loan.getUsername());
 
         LoanApplication saved = loanRepository.save(loan);
-
-        String message = "NEW_LOAN_APPLICATION | loanId=" + saved.getId()
-                + " | username=" + saved.getUsername()
-                + " | amount=" + saved.getAmount()
-                + " | type=" + saved.getLoanType();
-
-        loanProducer.sendMessage(message);
+        loanProducer.sendLoanCreated(LoanEventMessage.builder()
+                .eventType("NEW_LOAN_APPLICATION")
+                .loanId(saved.getId())
+                .username(saved.getUsername())
+                .amount(saved.getAmount())
+                .loanType(saved.getLoanType())
+                .status(saved.getStatus())
+                .occurredAt(LocalDateTime.now())
+                .build());
 
         log.info("Loan saved with ID: {}", saved.getId());
         return saved;
@@ -138,13 +140,14 @@ public class LoanService {
         loan.setRemarks(request.getRemarks());
 
         LoanApplication updated = loanRepository.save(loan);
-
-        String message = "LOAN_STATUS_UPDATED | loanId=" + updated.getId()
-                + " | username=" + updated.getUsername()
-                + " | newStatus=" + updated.getStatus()
-                + " | remarks=" + updated.getRemarks();
-
-        loanProducer.sendMessage(message);
+        loanProducer.sendLoanStatusUpdated(LoanEventMessage.builder()
+                .eventType("LOAN_STATUS_UPDATED")
+                .loanId(updated.getId())
+                .username(updated.getUsername())
+                .status(updated.getStatus())
+                .remarks(updated.getRemarks())
+                .occurredAt(LocalDateTime.now())
+                .build());
 
         log.info("Loan ID: {} status updated to: {}", id, request.getStatus());
         return updated;

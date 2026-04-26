@@ -1,18 +1,17 @@
 package com.capg.lpu.finflow.application;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Main entry point for the Application Service microservice.
  * Bootstraps the Spring Boot application context and initializes service-specific configurations.
  */
 @SpringBootApplication
+@Slf4j
 public class ApplicationServiceApplication {
-
-    private static final Logger log = LoggerFactory.getLogger(ApplicationServiceApplication.class);
 
     /**
      * Application entry point for initializing the FinFlow Application microservice.

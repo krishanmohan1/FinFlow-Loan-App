@@ -1,39 +1,47 @@
 package com.capg.lpu.finflow.application.producer;
 
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import com.capg.lpu.finflow.application.config.RabbitMQConfig;
+import com.capg.lpu.finflow.application.dto.LoanEventMessage;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Message producer service for the Application microservice.
  * Handles the dispatching of loan-related events and notifications to the message broker.
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class LoanProducer {
-
-    private static final Logger log = LoggerFactory.getLogger(LoanProducer.class);
 
     private final RabbitTemplate rabbitTemplate;
 
     /**
-     * Sends a message to the designated loan processing queue.
-     * Includes error handling to ensure application stability if the broker is unavailable.
+     * Publishes a strongly typed event when a new loan is created.
      *
-     * @param message The serialized message payload to be sent.
+     * @param message event payload
      */
-    public void sendMessage(String message) {
+    public void sendLoanCreated(LoanEventMessage message) {
         try {
-            log.info("Sending to queue [{}]: {}", RabbitMQConfig.LOAN_QUEUE, message);
+            log.info("Sending event [{}] to queue [{}]", message.getEventType(), RabbitMQConfig.LOAN_QUEUE);
             rabbitTemplate.convertAndSend(RabbitMQConfig.LOAN_QUEUE, message);
             log.info("Message sent to RabbitMQ successfully");
         } catch (Exception e) {
             log.error("Failed to send message to RabbitMQ: {}", e.getMessage(), e);
             log.warn("Loan was saved but Document Service was NOT notified via queue");
         }
+    }
+
+    /**
+     * Publishes a strongly typed event when a loan status changes.
+     *
+     * @param message event payload
+     */
+    public void sendLoanStatusUpdated(LoanEventMessage message) {
+        sendLoanCreated(message);
     }
 }

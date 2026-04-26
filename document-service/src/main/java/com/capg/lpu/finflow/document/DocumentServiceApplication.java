@@ -1,18 +1,17 @@
 package com.capg.lpu.finflow.document;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Main entry point for the Document Service microservice.
  * Bootstraps the Spring Boot application and initializes document management configurations.
  */
 @SpringBootApplication
+@Slf4j
 public class DocumentServiceApplication {
-
-    private static final Logger log = LoggerFactory.getLogger(DocumentServiceApplication.class);
 
     /**
      * Application entry point for initializing the FinFlow Document microservice.

@@ -4,31 +4,31 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.jsonwebtoken.JwtException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Utility class for JSON Web Token (JWT) operations.
  * Handles the generation, parsing, and validation of JWTs for stateless authentication.
  */
 @Component
+@Slf4j
 public class JwtUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
+    @Value("${security.jwt.secret}")
+    private String secret;
 
-    /**
-     * Secret key used for signing JWTs.
-     */
-    private static final String SECRET = "mysecretkeymysecretkeymysecretkey12";
+    @Value("${security.jwt.issuer}")
+    private String issuer;
 
-    /**
-     * Token expiration time in milliseconds (1 hour).
-     */
-    private static final long EXPIRATION_MS = 1000L * 60 * 60;
+    @Value("${security.jwt.expiration-ms}")
+    private long expirationMs;
 
     /**
      * Generates a signing key from the configured secret.
@@ -36,7 +36,7 @@ public class JwtUtil {
      * @return A Key object for HMAC-SHA signing.
      */
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes());
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     /**
@@ -52,7 +52,8 @@ public class JwtUtil {
                 .setSubject(username)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .setIssuer(issuer)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -100,11 +101,12 @@ public class JwtUtil {
      */
     public boolean validateToken(String token, String username) {
         try {
-            String extracted = extractUsername(token);
-            boolean valid = extracted.equals(username);
+            Claims claims = extractAllClaims(token);
+            String extracted = claims.getSubject();
+            boolean valid = extracted.equals(username) && issuer.equals(claims.getIssuer());
             log.debug("Token validation for user {}: {}", username, valid);
             return valid;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             log.warn("Token validation error: {}", e.getMessage());
             return false;
         }

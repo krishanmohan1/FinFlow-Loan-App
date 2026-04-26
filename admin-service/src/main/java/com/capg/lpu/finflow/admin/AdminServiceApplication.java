@@ -1,13 +1,13 @@
 package com.capg.lpu.finflow.admin;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Main entry point for the Admin Service microservice.
@@ -21,9 +21,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
     HibernateJpaAutoConfiguration.class
 })
 @EnableFeignClients
+@Slf4j
 public class AdminServiceApplication {
-
-    private static final Logger log = LoggerFactory.getLogger(AdminServiceApplication.class);
 
     /**
      * Bootstraps the Admin Service application.

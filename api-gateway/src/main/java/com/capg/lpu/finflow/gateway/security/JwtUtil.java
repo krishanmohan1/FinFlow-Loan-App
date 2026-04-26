@@ -3,23 +3,27 @@ package com.capg.lpu.finflow.gateway.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.jsonwebtoken.JwtException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Utility component responsible for validating and extracting information from JSON Web Tokens (JWT).
  * This class ensures that tokens presented to the API Gateway are legitimate and not expired.
  */
 @Component
+@Slf4j
 public class JwtUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
+    @Value("${security.jwt.secret}")
+    private String secret;
 
-    // The secret key must be identical to the one used in the Auth Service to successfully verify signatures.
-    private static final String SECRET = "mysecretkeymysecretkeymysecretkey12";
+    @Value("${security.jwt.issuer}")
+    private String issuer;
 
     /**
      * Generates a cryptographic Key object from the predefined secret string.
@@ -28,7 +32,7 @@ public class JwtUtil {
      */
     
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes());
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     /**
@@ -83,11 +87,13 @@ public class JwtUtil {
     
     public boolean validateToken(String token) {
         try {
-            // Parsing the claims inherently validates both the cryptographic signature and the expiration date.
-            extractAllClaims(token);
-            log.debug("Token is valid");
-            return true;
-        } catch (Exception e) {
+            Claims claims = extractAllClaims(token);
+            boolean valid = issuer.equals(claims.getIssuer())
+                    && claims.getSubject() != null
+                    && claims.get("role", String.class) != null;
+            log.debug("Token is valid: {}", valid);
+            return valid;
+        } catch (JwtException | IllegalArgumentException e) {
             log.warn("Token validation failed: {}", e.getMessage());
             return false;
         }

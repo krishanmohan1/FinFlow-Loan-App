@@ -1,7 +1,5 @@
 package com.capg.lpu.finflow.gateway.filter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
@@ -10,15 +8,16 @@ import org.springframework.stereotype.Component;
 
 import com.capg.lpu.finflow.gateway.security.JwtUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Filter that intercepts incoming requests to the API Gateway.
  * It validates JWT tokens for protected endpoints and manages 
  * role-based access control checking before forwarding to downstream services.
  */
 @Component
+@Slf4j
 public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
-
-    private static final Logger log = LoggerFactory.getLogger(JwtGatewayFilter.class);
 
     private final JwtUtil jwtUtil;
 
@@ -75,6 +74,11 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
 
             String username = jwtUtil.extractUsername(token);
             String role = jwtUtil.extractRole(token);
+            if (!"USER".equals(role) && !"ADMIN".equals(role)) {
+                log.warn("Access denied - invalid role {} for path {}", role, path);
+                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                return exchange.getResponse().setComplete();
+            }
 
             log.info("Token valid - user: {}, role: {}, path: {}", username, role, path);
 
@@ -139,4 +143,4 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
                 || path.contains("/v3/api-docs")
                 || path.contains("swagger-ui");
     }
-}
+}

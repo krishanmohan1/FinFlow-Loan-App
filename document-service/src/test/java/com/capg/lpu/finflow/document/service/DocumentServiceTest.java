@@ -2,6 +2,7 @@ package com.capg.lpu.finflow.document.service;
 
 import com.capg.lpu.finflow.document.entity.Document;
 import com.capg.lpu.finflow.document.exception.ResourceNotFoundException;
+import com.capg.lpu.finflow.document.producer.DocumentEventProducer;
 import com.capg.lpu.finflow.document.repository.DocumentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +34,9 @@ class DocumentServiceTest {
 
     @Mock
     private MultipartFile mockFile;
+
+    @Mock
+    private DocumentEventProducer documentEventProducer;
 
     @InjectMocks
     private DocumentService documentService;
@@ -127,6 +131,7 @@ class DocumentServiceTest {
         assertThat(result.getVerifiedRemarks()).isEqualTo("Looks perfectly authentic.");
         
         verify(documentRepository, times(1)).save(sampleDocument);
+        verify(documentEventProducer, times(1)).publishVerificationEvent(any());
     }
     
     /**

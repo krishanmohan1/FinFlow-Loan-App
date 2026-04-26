@@ -9,12 +9,11 @@ import com.capg.lpu.finflow.admin.dto.LoanStatusUpdateRequest;
 import com.capg.lpu.finflow.admin.dto.UserUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service class for administrative orchestration.
@@ -24,9 +23,8 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminService {
-
-    private static final Logger log = LoggerFactory.getLogger(AdminService.class);
 
     private final ApplicationClient applicationClient;
     private final DocumentClient documentClient;

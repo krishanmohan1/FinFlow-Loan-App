@@ -9,15 +9,13 @@ import com.capg.lpu.finflow.auth.repository.UserRepository;
 import com.capg.lpu.finflow.auth.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service class for handling authentication and user management.
@@ -25,9 +23,8 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
-
-    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;

@@ -2,8 +2,6 @@ package com.capg.lpu.finflow.auth.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +24,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * REST controller for identity and access management.
@@ -36,9 +35,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Auth", description = "Registration, login and user management")
+@Slf4j
 public class AuthController {
-
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthService authService;
 

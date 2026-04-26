@@ -1,18 +1,17 @@
 package com.capg.lpu.finflow.gateway;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Main application class for the API Gateway service.
  * This service acts as the entry point for all incoming requests and routes them to the appropriate microservices.
  */
 @SpringBootApplication
+@Slf4j
 public class ApiGatewayApplication {
-
-    private static final Logger log = LoggerFactory.getLogger(ApiGatewayApplication.class);
 
     /**
      * The main method that bootstraps the API Gateway Spring Boot application.
