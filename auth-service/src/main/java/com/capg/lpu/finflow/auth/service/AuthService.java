@@ -2,6 +2,7 @@ package com.capg.lpu.finflow.auth.service;
 
 import com.capg.lpu.finflow.auth.dto.AuthResponse;
 import com.capg.lpu.finflow.auth.dto.LoginRequest;
+import com.capg.lpu.finflow.auth.dto.ProfileUpdateRequest;
 import com.capg.lpu.finflow.auth.dto.RegisterRequest;
 import com.capg.lpu.finflow.auth.dto.UserResponse;
 import com.capg.lpu.finflow.auth.entity.User;
@@ -44,8 +45,23 @@ public class AuthService {
             throw new RuntimeException("Username already taken: " + request.getUsername());
         }
 
+        if (userRepository.existsByEmail(request.getEmail())) {
+            log.warn("Email already exists: {}", request.getEmail());
+            throw new RuntimeException("Email already registered: " + request.getEmail());
+        }
+
         User user = User.builder()
                 .username(request.getUsername())
+                .fullName(request.getFullName())
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .dateOfBirth(request.getDateOfBirth())
+                .addressLine1(request.getAddressLine1())
+                .city(request.getCity())
+                .state(request.getState())
+                .postalCode(request.getPostalCode())
+                .occupation(request.getOccupation())
+                .annualIncome(request.getAnnualIncome())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role("USER")
                 .createdAt(LocalDateTime.now())
@@ -119,6 +135,51 @@ public class AuthService {
                     return new RuntimeException("User not found with ID: " + id);
                 });
         return UserResponse.from(user);
+    }
+
+    /**
+     * Retrieves the profile for the authenticated user.
+     *
+     * @param username The authenticated username.
+     * @return The mapped profile response.
+     */
+    public UserResponse getCurrentUser(String username) {
+        log.info("Fetching current user by username: {}", username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+        return UserResponse.from(user);
+    }
+
+    /**
+     * Updates the authenticated user's borrower profile.
+     *
+     * @param username The authenticated username.
+     * @param request The updated profile details.
+     * @return The updated profile response.
+     */
+    public UserResponse updateCurrentUser(String username, ProfileUpdateRequest request) {
+        log.info("Updating current user profile for username: {}", username);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+
+        if (!user.getEmail().equalsIgnoreCase(request.getEmail())
+                && userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email already registered: " + request.getEmail());
+        }
+
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setDateOfBirth(request.getDateOfBirth());
+        user.setAddressLine1(request.getAddressLine1());
+        user.setCity(request.getCity());
+        user.setState(request.getState());
+        user.setPostalCode(request.getPostalCode());
+        user.setOccupation(request.getOccupation());
+        user.setAnnualIncome(request.getAnnualIncome());
+
+        return UserResponse.from(userRepository.save(user));
     }
 
     /**

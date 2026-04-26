@@ -11,16 +11,10 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
     return next(request);
   }
 
-  const session = authService.session();
-
   return next(
     request.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`,
-        // In production the API Gateway injects these headers. In local Angular
-        // development we also send them so direct service proxies work end-to-end.
-        'X-Auth-Username': session?.username ?? '',
-        'X-Auth-Role': session?.role ?? ''
+        Authorization: `Bearer ${token}`
       }
     })
   );

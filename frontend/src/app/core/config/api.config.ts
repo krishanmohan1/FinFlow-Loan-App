@@ -6,6 +6,7 @@ export const ApiRoutes = {
   auth: {
     login: '/auth/login',
     register: '/auth/register',
+    me: '/auth/users/me',
     users: '/auth/users/all',
     userById: (id: number) => `/auth/users/${id}`,
     deactivate: (id: number) => `/auth/users/${id}/deactivate`
@@ -14,7 +15,8 @@ export const ApiRoutes = {
     apply: '/application/apply',
     all: '/application/all',
     byId: (id: number) => `/application/${id}`,
-    byStatus: (status: string) => `/application/status/${status}`
+    byStatus: (status: string) => `/application/status/${status}`,
+    withdraw: (id: number) => `/application/${id}/withdraw`
   },
   documents: {
     upload: '/document/upload',

@@ -1,10 +1,9 @@
 <section class="hero-section">
   <div class="hero-copy">
     <p class="eyebrow">FinFlow Financial Services</p>
-    <h1>Loans made calm, clear, and confidently digital.</h1>
+    <h1>From first enquiry to final sanction, FinFlow makes lending feel premium.</h1>
     <p class="hero-text">
-      FinFlow helps individuals, families, students, and growing businesses access credit with a guided application,
-      transparent document review, and fast digital decisions from a trusted finance team.
+      FinFlow gives borrowers a guided digital journey and gives operations teams a clean review console. Applicants know exactly what to do next, and admins move every case with clarity, control, and traceable decisions.
     </p>
     <div class="hero-actions">
       @if (auth.isAuthenticated()) {
@@ -22,13 +21,13 @@
   <div class="hero-card">
     <div class="card-header">
       <span>Customer Journey</span>
-      <strong>4 simple steps</strong>
+      <strong>Borrower to decision</strong>
     </div>
     <div class="flow-line">
-      <span>Apply online</span>
-      <span>Upload documents</span>
-      <span>Expert review</span>
-      <span>Decision & support</span>
+      <span>Create account and sign in</span>
+      <span>Choose loan type, amount, and purpose</span>
+      <span>Upload the required supporting documents</span>
+      <span>Track admin review and final decision</span>
     </div>
     <div class="metric-grid">
       <article>
@@ -67,7 +66,7 @@
 <section id="services" class="services-section">
   <div class="section-heading">
     <p class="eyebrow">What FinFlow offers</p>
-    <h2>Smart credit products for real financial moments.</h2>
+    <h2>Credit products shaped around real customer journeys.</h2>
   </div>
   <div class="feature-grid">
     <article>
@@ -103,28 +102,118 @@
   </div>
 </section>
 
+<section class="journey-section">
+  <div class="section-heading">
+    <p class="eyebrow">Applicant flow</p>
+    <h2>Exactly what a borrower does inside FinFlow.</h2>
+  </div>
+  <div class="journey-grid">
+    <article>
+      <strong>01</strong>
+      <h3>Create account</h3>
+      <p>Register with a username and password, then enter your applicant workspace immediately after account creation.</p>
+    </article>
+    <article>
+      <strong>02</strong>
+      <h3>Profile and workspace</h3>
+      <p>See your account summary, application progress, loan status cards, and the next recommended actions in one place.</p>
+    </article>
+    <article>
+      <strong>03</strong>
+      <h3>Apply in guided steps</h3>
+      <p>Choose the product, enter the amount, and explain the purpose. FinFlow sends the application into the review pipeline.</p>
+    </article>
+    <article>
+      <strong>04</strong>
+      <h3>Upload documents</h3>
+      <p>Attach Aadhaar, PAN, salary slips, bank statements, or property proof against the right loan record.</p>
+    </article>
+    <article>
+      <strong>05</strong>
+      <h3>Track the lifecycle</h3>
+      <p>Watch statuses such as pending, under review, approved, or rejected without guessing what happened in the background.</p>
+    </article>
+    <article>
+      <strong>06</strong>
+      <h3>Receive decision</h3>
+      <p>Admins record the decision, remarks, and sanction details so the applicant sees a complete and transparent outcome.</p>
+    </article>
+  </div>
+</section>
+
+<section class="document-section">
+  <div class="section-heading">
+    <p class="eyebrow">What we ask for</p>
+    <h2>Only the information the current backend actually uses.</h2>
+  </div>
+  <div class="document-grid">
+    <article>
+      <h3>Account details</h3>
+      <ul>
+        <li>Username</li>
+        <li>Password</li>
+      </ul>
+      <p>Account creation is intentionally lightweight so the borrower can enter the workspace quickly.</p>
+    </article>
+    <article>
+      <h3>Loan details</h3>
+      <ul>
+        <li>Loan type</li>
+        <li>Requested amount</li>
+        <li>Purpose of borrowing</li>
+      </ul>
+      <p>The application form is aligned to the working backend contract instead of collecting unsupported fields.</p>
+    </article>
+    <article>
+      <h3>Document details</h3>
+      <ul>
+        <li>Linked loan ID</li>
+        <li>Document type</li>
+        <li>File upload</li>
+      </ul>
+      <p>Applicants upload only what the document service can currently store and verify end to end.</p>
+    </article>
+  </div>
+</section>
+
 <section id="process" class="process-section">
   <div class="section-heading">
     <p class="eyebrow">How it works</p>
-    <h2>A premium experience from first click to final decision.</h2>
+    <h2>A premium product flow for both applicants and FinFlow teams.</h2>
   </div>
   <div class="timeline">
-    <article><strong>01</strong><h3>Create profile</h3><p>Register securely and enter your applicant workspace.</p></article>
-    <article><strong>02</strong><h3>Submit loan</h3><p>Choose loan type, amount, and purpose with clear next steps.</p></article>
-    <article><strong>03</strong><h3>Upload documents</h3><p>Attach Aadhaar, PAN, bank statements, salary slips, or required proofs.</p></article>
-    <article><strong>04</strong><h3>Track decision</h3><p>Admins review, verify, and update your application status transparently.</p></article>
+    <article><strong>01</strong><h3>Borrower onboarding</h3><p>Create an account, sign in, and see a clear workspace instead of a blank form wall.</p></article>
+    <article><strong>02</strong><h3>Application intake</h3><p>Submit the loan request and let the platform route it into the application workflow.</p></article>
+    <article><strong>03</strong><h3>Document verification</h3><p>Attach supporting files and let operations teams verify each document with remarks.</p></article>
+    <article><strong>04</strong><h3>Decision operations</h3><p>Admins approve, reject, or move items under review with comments and sanction context.</p></article>
+  </div>
+</section>
+
+<section class="admin-section">
+  <div>
+    <p class="eyebrow">Admin workflow</p>
+    <h2>Where the operations team works.</h2>
+    <p>
+      Admin users sign in with the seeded admin account and land in a dedicated command center for loans, documents,
+      users, and reporting. The frontend now makes that path explicit instead of hiding it behind role-based routing.
+    </p>
+  </div>
+  <div class="admin-points">
+    <article><strong>Loan decisions</strong><span>Load a case, set approved or rejected, attach remarks, and save sanction details.</span></article>
+    <article><strong>Document checks</strong><span>Verify or reject borrower uploads with comments that feed back into the borrower journey.</span></article>
+    <article><strong>User controls</strong><span>Review users, update role or active status, and keep oversight in one secure area.</span></article>
   </div>
 </section>
 
 <section class="trust-section">
   <div>
     <p class="eyebrow">Why customers choose us</p>
-    <h2>Finance should feel premium, not confusing.</h2>
+    <h2>Finance software should feel trustworthy, not technical.</h2>
   </div>
   <div class="trust-grid">
     <article><strong>Transparent</strong><span>Status-first loan tracking without hidden workflow confusion.</span></article>
     <article><strong>Responsive</strong><span>Designed for phone, tablet, and laptop from day one.</span></article>
-    <article><strong>Secure</strong><span>Role-based access keeps applicant and admin experiences separated.</span></article>
+    <article><strong>Secure</strong><span>JWT-backed access, clean logout behavior, and role-based workspaces keep journeys separated.</span></article>
   </div>
 </section>
 
@@ -132,16 +221,16 @@
   <article>
     <span class="feature-icon">01</span>
     <h2>For Applicants</h2>
-    <p>A beautiful dashboard for applying, uploading documents, and seeing status changes clearly.</p>
+    <p>A guided product flow for applying, uploading documents, checking status, and understanding the next action.</p>
   </article>
   <article>
     <span class="feature-icon">02</span>
     <h2>For FinFlow Teams</h2>
-    <p>A command center for loan review, document verification, user control, and reports.</p>
+    <p>A command center for review, verification, user control, and report-led lending operations.</p>
   </article>
   <article>
     <span class="feature-icon">03</span>
     <h2>For Trust</h2>
-    <p>Every important action is connected to the live FinFlow backend and protected by JWT access.</p>
+    <p>Every important action maps to the real backend endpoints instead of a fake frontend-only workflow.</p>
   </article>
 </section>

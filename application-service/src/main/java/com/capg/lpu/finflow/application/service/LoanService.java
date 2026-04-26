@@ -52,6 +52,42 @@ public class LoanService {
     }
 
     /**
+     * Withdraws a borrower's own pending or under-review application.
+     *
+     * @param id The application identifier.
+     * @param username The authenticated borrower username.
+     * @return The updated application in withdrawn state.
+     */
+    public LoanApplication withdraw(Long id, String username) {
+        log.info("Withdrawing loan ID: {} for user: {}", id, username);
+
+        LoanApplication loan = loanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found with ID: " + id));
+
+        if (!loan.getUsername().equals(username)) {
+            throw new SecurityException("Access denied. This loan does not belong to you.");
+        }
+
+        if (!"PENDING".equals(loan.getStatus()) && !"UNDER_REVIEW".equals(loan.getStatus())) {
+            throw new IllegalStateException("Only PENDING or UNDER_REVIEW loans can be withdrawn");
+        }
+
+        loan.setStatus("WITHDRAWN");
+        loan.setRemarks("Application withdrawn by borrower");
+
+        LoanApplication updated = loanRepository.save(loan);
+        loanProducer.sendLoanStatusUpdated(LoanEventMessage.builder()
+                .eventType("LOAN_STATUS_UPDATED")
+                .loanId(updated.getId())
+                .username(updated.getUsername())
+                .status(updated.getStatus())
+                .remarks(updated.getRemarks())
+                .occurredAt(LocalDateTime.now())
+                .build());
+        return updated;
+    }
+
+    /**
      * Retrieves all loan applications from the system.
      *
      * @return A list of all stored loan application records.

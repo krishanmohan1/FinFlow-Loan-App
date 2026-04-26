@@ -48,8 +48,8 @@ public class LoanApplication {
      */
     @NotBlank(message = "Status is required")
     @Pattern(
-            regexp = "^(PENDING|APPROVED|REJECTED|UNDER_REVIEW)$",
-            message = "Status must be PENDING, APPROVED, REJECTED, or UNDER_REVIEW"
+            regexp = "^(PENDING|APPROVED|REJECTED|UNDER_REVIEW|WITHDRAWN)$",
+            message = "Status must be PENDING, APPROVED, REJECTED, UNDER_REVIEW, or WITHDRAWN"
     )
     @Column(nullable = false, length = 20)
     private String status;
@@ -64,6 +64,14 @@ public class LoanApplication {
     )
     @Column(name = "loan_type", nullable = false, length = 20)
     private String loanType;
+
+    /**
+     * Requested repayment tenure in months.
+     */
+    @jakarta.validation.constraints.Min(value = 6, message = "Tenure must be at least 6 months")
+    @jakarta.validation.constraints.Max(value = 360, message = "Tenure must be at most 360 months")
+    @Column(name = "tenure_months", nullable = false)
+    private Integer tenureMonths;
 
     /**
      * A description or detailed purpose for why the loan is being requested.

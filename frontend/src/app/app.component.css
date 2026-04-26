@@ -21,6 +21,26 @@
   backdrop-filter: blur(20px);
 }
 
+.nav-toggle {
+  display: none;
+  width: 46px;
+  height: 46px;
+  justify-self: end;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  margin: 4px auto;
+  border-radius: 999px;
+  background: var(--surface);
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -103,13 +123,24 @@
 @media (max-width: 860px) {
   .topbar {
     position: relative;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr auto;
+  }
+
+  .nav-toggle {
+    display: block;
   }
 
   .nav-links,
   .nav-actions {
+    display: none;
+    grid-column: 1 / -1;
     flex-wrap: wrap;
     justify-content: flex-start;
+  }
+
+  .nav-links.open,
+  .nav-actions.open {
+    display: flex;
   }
 
   .identity {

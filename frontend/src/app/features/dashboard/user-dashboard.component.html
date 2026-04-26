@@ -2,8 +2,26 @@
   <div class="page-heading">
     <p class="eyebrow">Applicant workspace</p>
     <h1>Hello, {{ username() }}</h1>
-    <p>Submit applications, upload documents, and watch the lifecycle move through the backend services.</p>
+    <p>Apply with confidence, keep your documents in one place, and track every status update from submission to decision.</p>
   </div>
+
+  <section class="journey-panel">
+    <div class="panel-heading">
+      <h2>Your FinFlow journey</h2>
+      <span>End-to-end applicant flow</span>
+    </div>
+    <div class="journey-steps">
+      @for (step of flowSteps; track step.id) {
+        <article class="journey-step" [class.complete]="isStepComplete(step.id)" [class.active]="isStepActive(step.id)">
+          <strong>{{ step.id }}</strong>
+          <div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.detail }}</p>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
 
   <div class="stat-grid">
     <article><strong>{{ loans().length }}</strong><span>Total loans</span></article>
@@ -19,61 +37,245 @@
     <p class="notice danger">{{ error() }}</p>
   }
 
+  <div class="profile-grid">
+    <section class="panel profile-panel">
+      <div class="panel-heading">
+        <h2>Profile snapshot</h2>
+        <span>Account summary</span>
+      </div>
+      <div class="profile-list">
+        @for (field of profileFields(); track field.label) {
+          <article>
+            <span>{{ field.label }}</span>
+            <strong>{{ field.value }}</strong>
+          </article>
+        }
+      </div>
+      <p class="profile-note">
+        This is the borrower record currently stored by FinFlow and used across your application journey.
+      </p>
+    </section>
+
+    <section class="panel profile-panel">
+      <div class="panel-heading">
+        <h2>What you need next</h2>
+        <span>Recommended checklist</span>
+      </div>
+      <div class="checklist-list">
+        @for (item of requiredDocuments(); track item) {
+          <article>{{ item }}</article>
+        }
+      </div>
+      <p class="profile-note">
+        The checklist updates with the selected loan type so applicants understand which supporting proofs are typically expected before review.
+      </p>
+    </section>
+  </div>
+
+  <section class="table-panel">
+    <div class="panel-heading">
+      <h2>Borrower profile details</h2>
+      <span>Update your customer record</span>
+    </div>
+    <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+      <label>
+        Full name
+        <input formControlName="fullName" autocomplete="name">
+        @if (profileFieldError('fullName')) {
+          <small class="field-error">{{ profileFieldError('fullName') }}</small>
+        }
+      </label>
+      <label>
+        Email
+        <input formControlName="email" autocomplete="email">
+        @if (profileFieldError('email')) {
+          <small class="field-error">{{ profileFieldError('email') }}</small>
+        }
+      </label>
+      <label>
+        Mobile number
+        <input formControlName="phoneNumber" autocomplete="tel">
+        @if (profileFieldError('phoneNumber')) {
+          <small class="field-error">{{ profileFieldError('phoneNumber') }}</small>
+        }
+      </label>
+      <label>
+        Date of birth
+        <input formControlName="dateOfBirth" type="date">
+        @if (profileFieldError('dateOfBirth')) {
+          <small class="field-error">{{ profileFieldError('dateOfBirth') }}</small>
+        }
+      </label>
+      <label>
+        Occupation
+        <input formControlName="occupation">
+        @if (profileFieldError('occupation')) {
+          <small class="field-error">{{ profileFieldError('occupation') }}</small>
+        }
+      </label>
+      <label>
+        Annual income (INR)
+        <input formControlName="annualIncome" type="number">
+        @if (profileFieldError('annualIncome')) {
+          <small class="field-error">{{ profileFieldError('annualIncome') }}</small>
+        }
+      </label>
+      <label class="profile-form-wide">
+        Address line
+        <input formControlName="addressLine1" autocomplete="street-address">
+        @if (profileFieldError('addressLine1')) {
+          <small class="field-error">{{ profileFieldError('addressLine1') }}</small>
+        }
+      </label>
+      <label>
+        City
+        <input formControlName="city" autocomplete="address-level2">
+        @if (profileFieldError('city')) {
+          <small class="field-error">{{ profileFieldError('city') }}</small>
+        }
+      </label>
+      <label>
+        State
+        <input formControlName="state" autocomplete="address-level1">
+        @if (profileFieldError('state')) {
+          <small class="field-error">{{ profileFieldError('state') }}</small>
+        }
+      </label>
+      <label>
+        Postal code
+        <input formControlName="postalCode" autocomplete="postal-code">
+        @if (profileFieldError('postalCode')) {
+          <small class="field-error">{{ profileFieldError('postalCode') }}</small>
+        }
+      </label>
+      <div class="profile-form-actions profile-form-wide">
+        <button class="solid-button large" type="submit" [disabled]="isSavingProfile()">
+          {{ isSavingProfile() ? 'Saving profile...' : 'Save profile' }}
+        </button>
+      </div>
+    </form>
+  </section>
+
   <div class="workspace-grid">
     <section class="panel">
       <div class="panel-heading">
         <h2>Apply for a loan</h2>
-        <span>POST /application/apply</span>
+        <span>Step 1 of your lending journey</span>
       </div>
       <form [formGroup]="loanForm" (ngSubmit)="submitLoan()">
-        <label>Amount <input type="number" formControlName="amount"></label>
+        <label>
+          Amount
+          <input type="number" formControlName="amount">
+          @if (amountError()) {
+            <small class="field-error">{{ amountError() }}</small>
+          }
+        </label>
         <label>
           Loan type
           <select formControlName="loanType">
-            <option value="HOME">Home</option>
-            <option value="PERSONAL">Personal</option>
-            <option value="EDUCATION">Education</option>
-            <option value="BUSINESS">Business</option>
-            <option value="VEHICLE">Vehicle</option>
+            @for (option of loanTypeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
           </select>
         </label>
-        <label>Purpose <textarea formControlName="purpose" rows="4"></textarea></label>
-        <button class="solid-button large" type="submit">Submit application</button>
+        <p class="field-hint">{{ selectedLoanTypeHint() }}</p>
+        <label>
+          Tenure (months)
+          <input type="number" formControlName="tenureMonths">
+          @if (tenureError()) {
+            <small class="field-error">{{ tenureError() }}</small>
+          }
+        </label>
+        <label>
+          Purpose
+          <textarea formControlName="purpose" rows="4"></textarea>
+          @if (purposeError()) {
+            <small class="field-error">{{ purposeError() }}</small>
+          }
+        </label>
+        <button class="solid-button large" type="submit" [disabled]="isSubmittingLoan()">
+          {{ isSubmittingLoan() ? 'Submitting...' : 'Submit application' }}
+        </button>
       </form>
     </section>
 
     <section class="panel">
       <div class="panel-heading">
         <h2>Upload document</h2>
-        <span>POST /document/upload</span>
+        <span>Step 2 of your lending journey</span>
       </div>
       <form [formGroup]="documentForm" (ngSubmit)="uploadDocument()">
-        <label>Loan ID <input formControlName="loanId" placeholder="Example: 1"></label>
+        <label>
+          Loan ID
+          <input formControlName="loanId" placeholder="Example: 1">
+          @if (loanIdError()) {
+            <small class="field-error">{{ loanIdError() }}</small>
+          }
+        </label>
+        @if (availableLoanIds().length) {
+          <div class="loan-chip-list">
+            @for (loan of availableLoanIds(); track loan.id) {
+              <button class="chip-button" type="button" (click)="documentForm.controls.loanId.setValue(loan.id)">
+                {{ loan.label }}
+              </button>
+            }
+          </div>
+        }
         <label>
           Document type
           <select formControlName="documentType">
-            <option value="AADHAAR">Aadhaar</option>
-            <option value="PAN">PAN</option>
-            <option value="SALARY_SLIP">Salary slip</option>
-            <option value="BANK_STATEMENT">Bank statement</option>
-            <option value="PROPERTY_PROOF">Property proof</option>
+            @for (option of documentTypeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
           </select>
         </label>
-        <label>File <input type="file" (change)="onFileSelected($event)"></label>
-        <button class="solid-button large" type="submit">Upload document</button>
+        <label>
+          File
+          <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)">
+        </label>
+        @if (selectedFile()) {
+          <p class="file-meta">Selected: <strong>{{ selectedFile()?.name }}</strong></p>
+        }
+        <button class="solid-button large" type="submit" [disabled]="isUploadingDocument()">
+          {{ isUploadingDocument() ? 'Uploading...' : 'Upload document' }}
+        </button>
       </form>
     </section>
   </div>
 
+  @if (recentLoans().length) {
+    <section class="table-panel">
+      <div class="panel-heading">
+        <h2>Next recommended actions</h2>
+        <span>Pick a loan and continue its document journey</span>
+      </div>
+      <div class="action-card-grid">
+        @for (loan of recentLoans(); track loan.id) {
+          <article class="action-card">
+            <div>
+              <p class="action-title">Loan #{{ loan.id }}</p>
+              <strong>{{ loan.loanType }}</strong>
+              <span>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</span>
+            </div>
+            <ff-status-pill [status]="loan.status || 'PENDING'" />
+            <button class="ghost-button" type="button" (click)="selectLoanForDocument(loan)">
+              Upload supporting document
+            </button>
+          </article>
+        }
+      </div>
+    </section>
+  }
+
   <section class="table-panel">
-    <div class="panel-heading">
-      <h2>My loan applications</h2>
-      <button class="ghost-button" type="button" (click)="loadWorkspace()">Refresh</button>
-    </div>
+      <div class="panel-heading">
+        <h2>My loan applications</h2>
+        <button class="ghost-button" type="button" (click)="loadWorkspace()">Refresh</button>
+      </div>
     <div class="responsive-table">
       <table>
         <thead>
-          <tr><th>ID</th><th>Type</th><th>Amount</th><th>Status</th><th>Applied</th><th>Remarks</th></tr>
+          <tr><th>ID</th><th>Type</th><th>Amount</th><th>Tenure</th><th>Status</th><th>Applied</th><th>Remarks</th><th>Action</th></tr>
         </thead>
         <tbody>
           @for (loan of loans(); track loan.id) {
@@ -81,12 +283,20 @@
               <td>#{{ loan.id }}</td>
               <td>{{ loan.loanType }}</td>
               <td>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</td>
+              <td>{{ loan.tenureMonths }} months</td>
               <td><ff-status-pill [status]="loan.status || 'PENDING'" /></td>
               <td>{{ loan.appliedAt | date:'medium' }}</td>
               <td>{{ loan.remarks || 'No remarks yet' }}</td>
+              <td>
+                @if (loan.status === 'PENDING' || loan.status === 'UNDER_REVIEW') {
+                  <button class="small-button" type="button" (click)="withdrawLoan(loan)">Withdraw</button>
+                } @else {
+                  <span class="action-disabled">Locked</span>
+                }
+              </td>
             </tr>
           } @empty {
-            <tr><td colspan="6">No loans yet. Submit your first application above.</td></tr>
+            <tr><td colspan="8">No loans yet. Submit your first application above.</td></tr>
           }
         </tbody>
       </table>
@@ -96,7 +306,7 @@
   <section class="table-panel">
     <div class="panel-heading">
       <h2>My documents</h2>
-      <span>GET /document/my</span>
+      <span>Step 3 of your lending journey</span>
     </div>
     <div class="responsive-table">
       <table>

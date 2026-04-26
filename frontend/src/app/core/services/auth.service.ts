@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { ApiRoutes } from '@core/config/api.config';
-import { AuthRequest, AuthResponse, SessionState, UserRole } from '@core/models/auth.models';
+import { AuthRequest, AuthResponse, ProfileUpdateRequest, SessionState, UserProfile, UserRole } from '@core/models/auth.models';
 import { HttpApiService } from './http-api.service';
 
 const SESSION_KEY = 'finflow.session';
@@ -29,6 +29,14 @@ export class AuthService {
     return this.api.post<AuthResponse>(ApiRoutes.auth.register, credentials).pipe(
       tap((response) => this.storeSession(response))
     );
+  }
+
+  getCurrentProfile(): Observable<UserProfile> {
+    return this.api.get<UserProfile>(ApiRoutes.auth.me);
+  }
+
+  updateCurrentProfile(payload: ProfileUpdateRequest): Observable<UserProfile> {
+    return this.api.put<UserProfile>(ApiRoutes.auth.me, payload);
   }
 
   logout(): void {

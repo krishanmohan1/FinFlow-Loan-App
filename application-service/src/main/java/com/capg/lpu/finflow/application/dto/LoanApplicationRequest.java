@@ -2,6 +2,7 @@ package com.capg.lpu.finflow.application.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -28,6 +29,14 @@ public class LoanApplicationRequest {
             message = "Loan type must be PERSONAL, HOME, AUTO, EDUCATION, BUSINESS, or GOLD"
     )
     private String loanType;
+
+    /**
+     * Requested tenure in months for the loan application.
+     */
+    @NotNull(message = "Tenure is required")
+    @jakarta.validation.constraints.Min(value = 6, message = "Tenure must be at least 6 months")
+    @jakarta.validation.constraints.Max(value = 360, message = "Tenure must be at most 360 months")
+    private Integer tenureMonths;
 
     /**
      * Borrower-provided purpose of the loan.

@@ -33,4 +33,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.username = :username")
     boolean existsByUsername(@Param("username") String username);
+
+    /**
+     * Checks if a user already exists with the given email address.
+     *
+     * @param email The email address to check.
+     * @return true if a user with the specified email exists.
+     */
+    @Query("SELECT COUNT(u) > 0 FROM User u WHERE lower(u.email) = lower(:email)")
+    boolean existsByEmail(@Param("email") String email);
 }

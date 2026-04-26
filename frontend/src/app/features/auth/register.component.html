@@ -2,18 +2,108 @@
   <div class="auth-card">
     <p class="eyebrow">Join FinFlow</p>
     <h1>Create your applicant profile</h1>
-    <p class="hint">Start your loan journey with a secure FinFlow account. Your profile lets you apply, upload documents, and track decisions in real time.</p>
+    <p class="hint">Start like a real borrower: share your identity, contact, and address details once, then use the same profile across applications, documents, and status tracking.</p>
+
+    <div class="mode-toggle" role="tablist" aria-label="Registration progress">
+      <button class="mode-button" type="button" [class.active]="step() === 1">1. Profile</button>
+      <button class="mode-button" type="button" [class.active]="step() === 2">2. Address</button>
+      <button class="mode-button" type="button" [class.active]="step() === 3">3. Access</button>
+    </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <label>
-        Username
-        <input formControlName="username" autocomplete="username" placeholder="user1">
-      </label>
-      <button class="helper-button" type="button" (click)="useFreshUsername()">Suggest username</button>
-      <label>
-        Password
-        <input formControlName="password" type="password" autocomplete="new-password" placeholder="Minimum 6 characters">
-      </label>
+      @if (step() === 1) {
+        <label>
+          Full name
+          <input formControlName="fullName" autocomplete="name" placeholder="Aarav Sharma">
+          @if (fieldError('fullName')) {
+            <small class="field-error">{{ fieldError('fullName') }}</small>
+          }
+        </label>
+        <label>
+          Email
+          <input formControlName="email" autocomplete="email" placeholder="aarav@example.com">
+          @if (fieldError('email')) {
+            <small class="field-error">{{ fieldError('email') }}</small>
+          }
+        </label>
+        <label>
+          Mobile number
+          <input formControlName="phoneNumber" autocomplete="tel" placeholder="9876543210">
+          @if (fieldError('phoneNumber')) {
+            <small class="field-error">{{ fieldError('phoneNumber') }}</small>
+          }
+        </label>
+        <label>
+          Date of birth
+          <input formControlName="dateOfBirth" type="date">
+          @if (fieldError('dateOfBirth')) {
+            <small class="field-error">{{ fieldError('dateOfBirth') }}</small>
+          }
+        </label>
+        <label>
+          Occupation
+          <input formControlName="occupation" placeholder="Software engineer">
+          @if (fieldError('occupation')) {
+            <small class="field-error">{{ fieldError('occupation') }}</small>
+          }
+        </label>
+        <label>
+          Annual income (INR)
+          <input formControlName="annualIncome" type="number" placeholder="600000">
+          @if (fieldError('annualIncome')) {
+            <small class="field-error">{{ fieldError('annualIncome') }}</small>
+          }
+        </label>
+      }
+
+      @if (step() === 2) {
+        <label>
+          Address line
+          <input formControlName="addressLine1" autocomplete="street-address" placeholder="Flat 203, Lake View Residency">
+          @if (fieldError('addressLine1')) {
+            <small class="field-error">{{ fieldError('addressLine1') }}</small>
+          }
+        </label>
+        <label>
+          City
+          <input formControlName="city" autocomplete="address-level2" placeholder="Bengaluru">
+          @if (fieldError('city')) {
+            <small class="field-error">{{ fieldError('city') }}</small>
+          }
+        </label>
+        <label>
+          State
+          <input formControlName="state" autocomplete="address-level1" placeholder="Karnataka">
+          @if (fieldError('state')) {
+            <small class="field-error">{{ fieldError('state') }}</small>
+          }
+        </label>
+        <label>
+          Postal code
+          <input formControlName="postalCode" autocomplete="postal-code" placeholder="560001">
+          @if (fieldError('postalCode')) {
+            <small class="field-error">{{ fieldError('postalCode') }}</small>
+          }
+        </label>
+      }
+
+      @if (step() === 3) {
+        <label>
+          Username
+          <input formControlName="username" autocomplete="username" placeholder="user1">
+          @if (usernameError()) {
+            <small class="field-error">{{ usernameError() }}</small>
+          }
+        </label>
+        <button class="helper-button" type="button" (click)="useFreshUsername()">Suggest username</button>
+        <label>
+          Password
+          <input formControlName="password" type="password" autocomplete="new-password" placeholder="8 to 64 characters">
+          @if (passwordError()) {
+            <small class="field-error">{{ passwordError() }}</small>
+          }
+        </label>
+      }
 
       @if (error()) {
         <p class="form-error">{{ error() }}</p>
@@ -22,9 +112,18 @@
         <p class="form-success">{{ success() }}</p>
       }
 
-      <button class="solid-button large full" type="submit" [disabled]="isSubmitting()">
-        {{ isSubmitting() ? 'Creating account...' : 'Create account' }}
-      </button>
+      <div class="form-actions">
+        @if (step() > 1) {
+          <button class="ghost-button large full" type="button" (click)="previousStep()">Back</button>
+        }
+        @if (step() < 3) {
+          <button class="solid-button large full" type="button" (click)="nextStep()">Continue</button>
+        } @else {
+          <button class="solid-button large full" type="submit" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Creating account...' : 'Create account' }}
+          </button>
+        }
+      </div>
     </form>
 
     <p class="switch-text">Already registered? <a routerLink="/login">Sign in</a></p>

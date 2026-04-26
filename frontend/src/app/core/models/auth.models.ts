@@ -2,6 +2,16 @@ export type UserRole = 'USER' | 'ADMIN';
 
 export interface AuthRequest {
   username: string;
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  dateOfBirth?: string;
+  addressLine1?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  occupation?: string;
+  annualIncome?: number;
   password: string;
 }
 
@@ -15,6 +25,16 @@ export interface AuthResponse {
 export interface UserProfile {
   id: number;
   username: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  dateOfBirth: string;
+  addressLine1: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  occupation: string;
+  annualIncome: number;
   role: UserRole;
   createdAt: string;
   active: boolean;
@@ -23,6 +43,19 @@ export interface UserProfile {
 export interface UserUpdateRequest {
   role?: UserRole;
   active?: boolean;
+}
+
+export interface ProfileUpdateRequest {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  dateOfBirth: string;
+  addressLine1: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  occupation: string;
+  annualIncome: number;
 }
 
 export interface SessionState {

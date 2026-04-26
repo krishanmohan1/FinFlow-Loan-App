@@ -4,9 +4,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize, forkJoin } from 'rxjs';
 import { UserProfile } from '@core/models/auth.models';
 import { LoanDocument } from '@core/models/document.models';
-import { LoanApplication } from '@core/models/loan.models';
+import { LoanApplication, LoanDecisionRequest } from '@core/models/loan.models';
 import { AdminReport } from '@core/models/report.models';
 import { AdminService } from '@core/services/admin.service';
+import { resolveApiError } from '@core/utils/api-error.util';
 import { StatusPillComponent } from '@shared/components/status-pill.component';
 
 @Component({
@@ -25,26 +26,28 @@ export class AdminDashboardComponent implements OnInit {
   protected readonly users = signal<UserProfile[]>([]);
   protected readonly report = signal<AdminReport | null>(null);
   protected readonly isLoading = signal(true);
+  protected readonly isActing = signal(false);
   protected readonly message = signal('');
   protected readonly error = signal('');
 
   protected readonly pendingLoans = computed(() => this.loans().filter((loan) => loan.status === 'PENDING').length);
   protected readonly verifiedDocuments = computed(() => this.documents().filter((doc) => doc.verificationStatus === 'VERIFIED').length);
   protected readonly activeUsers = computed(() => this.users().filter((user) => user.active).length);
+  protected readonly rejectedDocuments = computed(() => this.documents().filter((doc) => doc.verificationStatus === 'REJECTED').length);
 
   protected readonly decisionForm = this.fb.nonNullable.group({
     loanId: [1, [Validators.required, Validators.min(1)]],
     decision: ['APPROVED' as 'APPROVED' | 'REJECTED', [Validators.required]],
-    remarks: ['Approved after verification', [Validators.required]],
-    interestRate: [8.5, [Validators.min(0)]],
-    tenureMonths: [60, [Validators.min(1)]],
-    sanctionedAmount: [48000, [Validators.min(0)]]
+    remarks: ['Approved after verification and financial review.', [Validators.maxLength(500)]],
+    interestRate: [8.5, [Validators.min(0.1)]],
+    tenureMonths: [60, [Validators.min(1), Validators.max(600)]],
+    sanctionedAmount: [48000, [Validators.min(0.1)]]
   });
 
   protected readonly documentForm = this.fb.nonNullable.group({
     documentId: [1, [Validators.required, Validators.min(1)]],
     status: ['VERIFIED' as 'VERIFIED' | 'REJECTED', [Validators.required]],
-    remarks: ['Document looks valid', [Validators.required]]
+    remarks: ['Document looks valid and matches applicant details.', [Validators.maxLength(500)]]
   });
 
   protected readonly userForm = this.fb.nonNullable.group({
@@ -73,8 +76,66 @@ export class AdminDashboardComponent implements OnInit {
           this.users.set(users);
           this.report.set(report);
         },
-        error: () => this.error.set('Admin data failed to load. Confirm all backend services are UP in Eureka.')
+        error: (error) => this.error.set(resolveApiError(error, 'Admin data failed to load.'))
       });
+  }
+
+  selectLoan(loan: LoanApplication): void {
+    if (!loan.id) {
+      return;
+    }
+    this.decisionForm.patchValue({
+      loanId: loan.id,
+      decision: loan.status === 'REJECTED' ? 'REJECTED' : 'APPROVED',
+      remarks: loan.remarks || 'Approved after verification and financial review.',
+      sanctionedAmount: loan.amount,
+      interestRate: 8.5,
+      tenureMonths: 60
+    });
+    this.message.set(`Loan #${loan.id} loaded into the decision workspace.`);
+    this.error.set('');
+  }
+
+  selectDocument(document: LoanDocument): void {
+    this.documentForm.patchValue({
+      documentId: document.id,
+      status: document.verificationStatus === 'REJECTED' ? 'REJECTED' : 'VERIFIED',
+      remarks: document.verifiedRemarks || 'Document looks valid and matches applicant details.'
+    });
+    this.message.set(`Document #${document.id} loaded into the verification workspace.`);
+    this.error.set('');
+  }
+
+  selectUser(user: UserProfile): void {
+    this.userForm.patchValue({
+      userId: user.id,
+      role: user.role,
+      active: user.active
+    });
+    this.message.set(`User #${user.id} loaded into the user controls workspace.`);
+    this.error.set('');
+  }
+
+  decisionRemarksError(): string {
+    const control = this.decisionForm.controls.remarks;
+    if (!control.touched && !control.dirty) {
+      return '';
+    }
+    if (control.hasError('maxlength')) {
+      return 'Remarks must be 500 characters or fewer.';
+    }
+    return '';
+  }
+
+  documentRemarksError(): string {
+    const control = this.documentForm.controls.remarks;
+    if (!control.touched && !control.dirty) {
+      return '';
+    }
+    if (control.hasError('maxlength')) {
+      return 'Remarks must be 500 characters or fewer.';
+    }
+    return '';
   }
 
   decideLoan(): void {
@@ -84,8 +145,15 @@ export class AdminDashboardComponent implements OnInit {
     }
 
     const { loanId, ...request } = this.decisionForm.getRawValue();
+    const payload: LoanDecisionRequest = {
+      decision: request.decision,
+      remarks: request.remarks,
+      interestRate: request.interestRate ?? undefined,
+      tenureMonths: request.tenureMonths ?? undefined,
+      sanctionedAmount: request.sanctionedAmount ?? undefined
+    };
     this.runAction(
-      this.adminApi.decideLoan(loanId, request),
+      this.adminApi.decideLoan(loanId, payload),
       `Loan #${loanId} decision submitted.`
     );
   }
@@ -124,12 +192,13 @@ export class AdminDashboardComponent implements OnInit {
   private runAction<T>(request$: import('rxjs').Observable<T>, successMessage: string): void {
     this.message.set('');
     this.error.set('');
-    request$.subscribe({
+    this.isActing.set(true);
+    request$.pipe(finalize(() => this.isActing.set(false))).subscribe({
       next: () => {
         this.message.set(successMessage);
         this.loadAdminData();
       },
-      error: (error) => this.error.set(error?.error?.error ?? 'Admin action failed.')
+      error: (error) => this.error.set(resolveApiError(error, 'Admin action failed.'))
     });
   }
 }

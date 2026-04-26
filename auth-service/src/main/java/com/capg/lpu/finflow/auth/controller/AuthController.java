@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.capg.lpu.finflow.auth.dto.AuthResponse;
 import com.capg.lpu.finflow.auth.dto.LoginRequest;
+import com.capg.lpu.finflow.auth.dto.ProfileUpdateRequest;
 import com.capg.lpu.finflow.auth.dto.RegisterRequest;
 import com.capg.lpu.finflow.auth.dto.UserResponse;
 import com.capg.lpu.finflow.auth.service.AuthService;
@@ -134,6 +136,36 @@ public class AuthController {
     public ResponseEntity<UserResponse> getUserById(@PathVariable @Positive Long id) {
         log.info("GET /auth/users/{}", id);
         return ResponseEntity.ok(authService.getUserById(id));
+    }
+
+    /**
+     * Retrieves the authenticated user's own borrower profile.
+     *
+     * @param username The username injected by the gateway.
+     * @return The current user's profile.
+     */
+    @Operation(summary = "Get current user profile")
+    @GetMapping("/users/me")
+    public ResponseEntity<UserResponse> getCurrentUser(
+            @RequestHeader("X-Auth-Username") String username) {
+        log.info("GET /auth/users/me - username: {}", username);
+        return ResponseEntity.ok(authService.getCurrentUser(username));
+    }
+
+    /**
+     * Updates the authenticated user's own borrower profile fields.
+     *
+     * @param username The username injected by the gateway.
+     * @param request The updated borrower profile.
+     * @return The updated user profile.
+     */
+    @Operation(summary = "Update current user profile")
+    @PutMapping("/users/me")
+    public ResponseEntity<UserResponse> updateCurrentUser(
+            @RequestHeader("X-Auth-Username") String username,
+            @Valid @RequestBody ProfileUpdateRequest request) {
+        log.info("PUT /auth/users/me - username: {}", username);
+        return ResponseEntity.ok(authService.updateCurrentUser(username, request));
     }
 
     /**

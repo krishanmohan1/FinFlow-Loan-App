@@ -17,8 +17,8 @@ public class LoanStatusUpdateRequest {
      */
     @NotBlank(message = "Status is required")
     @Pattern(
-            regexp = "^(PENDING|APPROVED|REJECTED|UNDER_REVIEW)$",
-            message = "Status must be PENDING, APPROVED, REJECTED, or UNDER_REVIEW"
+            regexp = "^(PENDING|APPROVED|REJECTED|UNDER_REVIEW|WITHDRAWN)$",
+            message = "Status must be PENDING, APPROVED, REJECTED, UNDER_REVIEW, or WITHDRAWN"
     )
     private String status;
 

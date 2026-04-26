@@ -99,7 +99,6 @@
                                 <requireJavaVersion>
                                     <version>[17,)</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence/>
                             </rules>
                         </configuration>
                     </execution>

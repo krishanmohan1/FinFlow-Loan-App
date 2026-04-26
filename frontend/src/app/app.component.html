@@ -4,32 +4,44 @@
       <span class="brand-mark">F</span>
       <span>
         <strong>FinFlow</strong>
-        <small>Loan lifecycle OS</small>
+        <small>Modern lending experience</small>
       </span>
     </a>
 
-    <nav class="nav-links" aria-label="Main navigation">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Overview</a>
-      <a routerLink="/" fragment="services">Services</a>
-      <a routerLink="/" fragment="process">Process</a>
+    <button
+      class="nav-toggle"
+      type="button"
+      (click)="toggleNav()"
+      [attr.aria-expanded]="navOpen()"
+      aria-label="Toggle navigation"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav-links" aria-label="Main navigation" [class.open]="navOpen()">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeNav()">Overview</a>
+      <a routerLink="/" fragment="services" (click)="closeNav()">Services</a>
+      <a routerLink="/" fragment="process" (click)="closeNav()">Process</a>
       @if (auth.isAuthenticated()) {
-        <a routerLink="/dashboard" routerLinkActive="active">Workspace</a>
+        <a routerLink="/dashboard" routerLinkActive="active" (click)="closeNav()">Workspace</a>
         @if (auth.isAdmin()) {
-          <a routerLink="/admin" routerLinkActive="active">Admin Command</a>
+          <a routerLink="/admin" routerLinkActive="active" (click)="closeNav()">Admin Command</a>
         }
       }
     </nav>
 
-    <div class="nav-actions">
+    <div class="nav-actions" [class.open]="navOpen()">
       @if (auth.isAuthenticated()) {
         <div class="identity">
           <span>{{ auth.username() }}</span>
           <strong>{{ auth.role() }}</strong>
         </div>
-        <button class="ghost-button" type="button" (click)="auth.logout()">Logout</button>
+        <button class="ghost-button" type="button" (click)="auth.logout(); closeNav()">Logout</button>
       } @else {
-        <a class="ghost-button" routerLink="/login">Login</a>
-        <a class="solid-button" routerLink="/register">Get started</a>
+        <a class="ghost-button" routerLink="/login" (click)="closeNav()">Login</a>
+        <a class="solid-button" routerLink="/register" (click)="closeNav()">Get started</a>
       }
     </div>
   </header>

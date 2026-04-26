@@ -6,6 +6,7 @@ export interface LoanApplication {
   amount: number;
   status?: LoanStatus;
   loanType: string;
+  tenureMonths: number;
   purpose: string;
   appliedAt?: string;
   remarks?: string;

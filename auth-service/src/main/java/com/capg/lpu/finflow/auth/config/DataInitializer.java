@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +36,16 @@ public class DataInitializer implements CommandLineRunner {
             
             User admin = User.builder()
                     .username("admin")
+                    .fullName("FinFlow Administrator")
+                    .email("admin@finflow.example")
+                    .phoneNumber("9876543210")
+                    .dateOfBirth(LocalDate.of(1990, 1, 1))
+                    .addressLine1("FinFlow HQ, Business District")
+                    .city("Bengaluru")
+                    .state("Karnataka")
+                    .postalCode("560001")
+                    .occupation("Operations Admin")
+                    .annualIncome(1200000.0)
                     .password(passwordEncoder.encode("admin123"))
                     .role("ADMIN")
                     .active(true)

@@ -54,6 +54,7 @@ public class LoanController {
                 .username(authUsername)
                 .amount(request.getAmount())
                 .loanType(request.getLoanType())
+                .tenureMonths(request.getTenureMonths())
                 .purpose(request.getPurpose())
                 .build();
         return ResponseEntity.ok(loanService.apply(loan));
@@ -190,5 +191,27 @@ public class LoanController {
             throw new SecurityException("Only ADMIN can delete loans");
         }
         return ResponseEntity.ok(loanService.delete(id));
+    }
+
+    /**
+     * Allows a borrower to withdraw their own pending or under-review loan application.
+     *
+     * @param id The loan application identifier.
+     * @param authUsername The borrower username.
+     * @param authRole The requester role.
+     * @return The updated withdrawn loan record.
+     */
+    @Operation(summary = "Withdraw my loan application", description = "USER withdraws their own PENDING or UNDER_REVIEW loan")
+    @PutMapping("/{id}/withdraw")
+    public ResponseEntity<LoanApplication> withdraw(
+            @PathVariable @Positive Long id,
+            @RequestHeader("X-Auth-Username") @NotBlank String authUsername,
+            @RequestHeader("X-Auth-Role") @NotBlank String authRole) {
+
+        log.info("PUT /application/{}/withdraw - user: {}, role: {}", id, authUsername, authRole);
+        if ("ADMIN".equals(authRole)) {
+            throw new SecurityException("Admin cannot withdraw applications on behalf of borrowers from this endpoint");
+        }
+        return ResponseEntity.ok(loanService.withdraw(id, authUsername));
     }
 }

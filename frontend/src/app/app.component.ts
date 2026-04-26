@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 
@@ -11,4 +11,13 @@ import { AuthService } from '@core/services/auth.service';
 })
 export class AppComponent {
   protected readonly auth = inject(AuthService);
+  protected readonly navOpen = signal(false);
+
+  protected closeNav(): void {
+    this.navOpen.set(false);
+  }
+
+  protected toggleNav(): void {
+    this.navOpen.update((current) => !current);
+  }
 }

@@ -11,96 +11,49 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
- * Data Transfer Object for user registration requests.
- * Contains the initial credentials for a new user account.
+ * Request model for borrower self-service profile updates.
+ * Exposes customer-facing profile fields without security role mutation.
  */
 @Data
-public class RegisterRequest {
-    /**
-     * The desired username for the new account.
-     */
-	@NotBlank(message = "Username is required")
-    @Size(min = 4, max = 30, message = "Username must be between 4 and 30 characters")
-    @Pattern(
-            regexp = "^[A-Za-z][A-Za-z0-9_]{3,29}$",
-            message = "Username must start with a letter and contain only letters, numbers, and underscores"
-    )
-    private String username;
+public class ProfileUpdateRequest {
 
-    /**
-     * Full legal name of the applicant.
-     */
     @NotBlank(message = "Full name is required")
     @Size(min = 3, max = 80, message = "Full name must be between 3 and 80 characters")
     private String fullName;
 
-    /**
-     * Primary email address of the applicant.
-     */
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     @Size(max = 120, message = "Email must be at most 120 characters")
     private String email;
 
-    /**
-     * Mobile number for loan-related communication.
-     */
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^[6-9][0-9]{9}$", message = "Phone number must be a valid 10-digit Indian mobile number")
     private String phoneNumber;
 
-    /**
-     * Date of birth of the applicant.
-     */
     @NotNull(message = "Date of birth is required")
     private LocalDate dateOfBirth;
 
-    /**
-     * Residential address line of the applicant.
-     */
     @NotBlank(message = "Address line is required")
     @Size(min = 10, max = 120, message = "Address line must be between 10 and 120 characters")
     private String addressLine1;
 
-    /**
-     * City of residence.
-     */
     @NotBlank(message = "City is required")
     @Size(min = 2, max = 60, message = "City must be between 2 and 60 characters")
     private String city;
 
-    /**
-     * State of residence.
-     */
     @NotBlank(message = "State is required")
     @Size(min = 2, max = 60, message = "State must be between 2 and 60 characters")
     private String state;
 
-    /**
-     * Postal PIN code.
-     */
     @NotBlank(message = "Postal code is required")
     @Pattern(regexp = "^[1-9][0-9]{5}$", message = "Postal code must be a valid 6-digit PIN")
     private String postalCode;
 
-    /**
-     * Occupation or employment descriptor.
-     */
     @NotBlank(message = "Occupation is required")
     @Size(min = 2, max = 60, message = "Occupation must be between 2 and 60 characters")
     private String occupation;
 
-    /**
-     * Declared annual income in INR.
-     */
     @NotNull(message = "Annual income is required")
     @PositiveOrZero(message = "Annual income must be zero or positive")
     private Double annualIncome;
-
-    /**
-     * The plain-text password to be encoded and stored.
-     */
-	@NotBlank(message = "Password is required")
-    @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
-    private String password;
 }

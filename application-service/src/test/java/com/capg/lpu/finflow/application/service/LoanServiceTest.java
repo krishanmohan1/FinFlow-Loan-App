@@ -49,6 +49,8 @@ class LoanServiceTest {
         sampleLoan.setUsername("testuser");
         sampleLoan.setAmount(50000.0);
         sampleLoan.setLoanType("HOME");
+        sampleLoan.setTenureMonths(120);
+        sampleLoan.setPurpose("Buying a family home in Bengaluru.");
         sampleLoan.setStatus("PENDING");
     }
 
@@ -100,6 +102,8 @@ class LoanServiceTest {
         LoanApplication updatedMock = new LoanApplication();
         updatedMock.setId(101L);
         updatedMock.setUsername("testuser");
+        updatedMock.setTenureMonths(120);
+        updatedMock.setPurpose("Buying a family home in Bengaluru.");
         updatedMock.setStatus("APPROVED");
         updatedMock.setRemarks("All documents verified ok.");
         
@@ -127,5 +131,17 @@ class LoanServiceTest {
                 .hasMessageContaining("Loan not found with ID: 999");
 
         verify(loanRepository, never()).delete(any());
+    }
+
+    @Test
+    @DisplayName("test withdraw() - Should withdraw borrower owned pending loan")
+    void testWithdraw_success() {
+        when(loanRepository.findById(101L)).thenReturn(Optional.of(sampleLoan));
+        when(loanRepository.save(any(LoanApplication.class))).thenAnswer((invocation) -> invocation.getArgument(0));
+
+        LoanApplication result = loanService.withdraw(101L, "testuser");
+
+        assertThat(result.getStatus()).isEqualTo("WITHDRAWN");
+        verify(loanProducer).sendLoanStatusUpdated(any());
     }
 }

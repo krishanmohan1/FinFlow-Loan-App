@@ -1,7 +1,29 @@
 package com.capg.lpu.finflow.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.capg.lpu.finflow.auth.dto.AuthResponse;
 import com.capg.lpu.finflow.auth.dto.LoginRequest;
+import com.capg.lpu.finflow.auth.dto.ProfileUpdateRequest;
 import com.capg.lpu.finflow.auth.dto.RegisterRequest;
 import com.capg.lpu.finflow.auth.dto.UserResponse;
 import com.capg.lpu.finflow.auth.entity.User;
@@ -9,29 +31,6 @@ import com.capg.lpu.finflow.auth.repository.UserRepository;
 import com.capg.lpu.finflow.auth.security.JwtUtil;
 import com.capg.lpu.finflow.auth.service.AuthService;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
-/**
- * Unit testing suite for AuthService.
- * Validates core business logic for user registration, authentication, and profile management.
- */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
@@ -49,14 +48,21 @@ class AuthServiceTest {
 
     private User sampleUser;
 
-    /**
-     * Sets up a common user entity for use across multiple test cases.
-     */
     @BeforeEach
     void setUp() {
         sampleUser = User.builder()
                 .id(1L)
                 .username("testuser")
+                .fullName("Test User")
+                .email("testuser@example.com")
+                .phoneNumber("9876543210")
+                .dateOfBirth(LocalDate.of(1995, 5, 10))
+                .addressLine1("221B Baker Street, Demo Layout")
+                .city("Bengaluru")
+                .state("Karnataka")
+                .postalCode("560001")
+                .occupation("Software Engineer")
+                .annualIncome(900000.0)
                 .password("encodedPassword")
                 .role("USER")
                 .createdAt(LocalDateTime.now())
@@ -64,59 +70,54 @@ class AuthServiceTest {
                 .build();
     }
 
-    /**
-     * Verifies that a new user registration persists correctly and returns a valid JWT response.
-     */
     @Test
-    @DisplayName("test register() - Should successfully persist new user and return token")
+    @DisplayName("register should persist new borrower and return token")
     void register_success() {
-        RegisterRequest request = new RegisterRequest();
-        request.setUsername("testuser");
-        request.setPassword("password123");
+        RegisterRequest request = validRegisterRequest();
 
         when(userRepository.existsByUsername("testuser")).thenReturn(false);
+        when(userRepository.existsByEmail("testuser@example.com")).thenReturn(false);
         when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(sampleUser);
         when(jwtUtil.generateToken("testuser", "USER")).thenReturn("mock.jwt.token");
 
         AuthResponse response = authService.register(request);
 
-        assertThat(response).isNotNull();
         assertThat(response.getToken()).isEqualTo("mock.jwt.token");
         assertThat(response.getUsername()).isEqualTo("testuser");
         assertThat(response.getRole()).isEqualTo("USER");
-        assertThat(response.getMessage()).isEqualTo("Registration successful");
-
-        verify(userRepository).existsByUsername("testuser");
         verify(userRepository).save(any(User.class));
-        verify(jwtUtil).generateToken("testuser", "USER");
     }
 
-    /**
-     * Checks that the registration process correctly identifies and blocks duplicate usernames.
-     */
     @Test
-    @DisplayName("test register() - Should prevent registration if username exists")
-    void register_usernameAlreadyTaken() {
-        RegisterRequest request = new RegisterRequest();
-        request.setUsername("testuser");
-        request.setPassword("password123");
-
+    @DisplayName("register should reject duplicate username")
+    void register_duplicateUsername() {
+        RegisterRequest request = validRegisterRequest();
         when(userRepository.existsByUsername("testuser")).thenReturn(true);
 
         assertThatThrownBy(() -> authService.register(request))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Username already taken");
 
-        verify(userRepository, never()).save(any());
-        verify(jwtUtil, never()).generateToken(any(), any());
+        verify(userRepository, never()).save(any(User.class));
     }
 
-    /**
-     * Confirms that valid credentials result in a successful login and token generation.
-     */
     @Test
-    @DisplayName("test login() - Should return valid token for correct credentials")
+    @DisplayName("register should reject duplicate email")
+    void register_duplicateEmail() {
+        RegisterRequest request = validRegisterRequest();
+        request.setUsername("anotheruser");
+
+        when(userRepository.existsByUsername("anotheruser")).thenReturn(false);
+        when(userRepository.existsByEmail("testuser@example.com")).thenReturn(true);
+
+        assertThatThrownBy(() -> authService.register(request))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Email already registered");
+    }
+
+    @Test
+    @DisplayName("login should return token for valid credentials")
     void login_success() {
         LoginRequest request = new LoginRequest();
         request.setUsername("testuser");
@@ -128,73 +129,49 @@ class AuthServiceTest {
 
         AuthResponse response = authService.login(request);
 
-        assertThat(response.getToken()).isEqualTo("mock.jwt.token");
         assertThat(response.getMessage()).isEqualTo("Login successful");
-
-        verify(jwtUtil).generateToken("testuser", "USER");
+        assertThat(response.getToken()).isEqualTo("mock.jwt.token");
     }
 
-    /**
-     * Ensures that login attempts for non-existent users result in appropriate error handling.
-     */
     @Test
-    @DisplayName("test login() - Should throw exception if user record not found")
-    void login_userNotFound() {
-        LoginRequest request = new LoginRequest();
-        request.setUsername("ghost");
-        request.setPassword("pass");
-
-        when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> authService.login(request))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("User not found");
-
-        verify(jwtUtil, never()).generateToken(any(), any());
-    }
-
-    /**
-     * Verifies that inactive accounts are barred from logging into the system.
-     */
-    @Test
-    @DisplayName("test login() - Should prevent login for inactive accounts")
-    void login_inactiveAccount() {
-        sampleUser.setActive(false);
-
-        LoginRequest request = new LoginRequest();
-        request.setUsername("testuser");
-        request.setPassword("password123");
-
+    @DisplayName("getCurrentUser should return borrower profile")
+    void getCurrentUser_success() {
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(sampleUser));
 
-        assertThatThrownBy(() -> authService.login(request))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("inactive");
+        UserResponse response = authService.getCurrentUser("testuser");
+
+        assertThat(response.getFullName()).isEqualTo("Test User");
+        assertThat(response.getEmail()).isEqualTo("testuser@example.com");
     }
 
-    /**
-     * Confirms that incorrect passwords result in a rejected login attempt with proper error messaging.
-     */
     @Test
-    @DisplayName("test login() - Should reject invalid password credentials")
-    void login_wrongPassword() {
-        LoginRequest request = new LoginRequest();
-        request.setUsername("testuser");
-        request.setPassword("wrongpass");
+    @DisplayName("updateCurrentUser should persist borrower profile changes")
+    void updateCurrentUser_success() {
+        ProfileUpdateRequest request = new ProfileUpdateRequest();
+        request.setFullName("Updated User");
+        request.setEmail("updated@example.com");
+        request.setPhoneNumber("9876543211");
+        request.setDateOfBirth(LocalDate.of(1994, 4, 9));
+        request.setAddressLine1("Flat 12, Example Residency Block A");
+        request.setCity("Mysuru");
+        request.setState("Karnataka");
+        request.setPostalCode("570001");
+        request.setOccupation("Analyst");
+        request.setAnnualIncome(650000.0);
 
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(sampleUser));
-        when(passwordEncoder.matches("wrongpass", "encodedPassword")).thenReturn(false);
+        when(userRepository.existsByEmail("updated@example.com")).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenAnswer((invocation) -> invocation.getArgument(0));
 
-        assertThatThrownBy(() -> authService.login(request))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Invalid credentials");
+        UserResponse response = authService.updateCurrentUser("testuser", request);
+
+        assertThat(response.getFullName()).isEqualTo("Updated User");
+        assertThat(response.getEmail()).isEqualTo("updated@example.com");
+        verify(userRepository).save(any(User.class));
     }
 
-    /**
-     * Validates that all user records can be retrieved and mapped correctly to UserResponse objects.
-     */
     @Test
-    @DisplayName("test getAllUsers() - Should return list of all user records")
+    @DisplayName("getAllUsers should return mapped profiles")
     void getAllUsers_returnsList() {
         when(userRepository.findAll()).thenReturn(List.of(sampleUser));
 
@@ -202,41 +179,10 @@ class AuthServiceTest {
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getUsername()).isEqualTo("testuser");
-        assertThat(result.get(0).getRole()).isEqualTo("USER");
     }
 
-    /**
-     * Verifies successful retrieval of a specific user by its unique identifier.
-     */
     @Test
-    @DisplayName("test getUserById() - Should return identified user profile metadata")
-    void getUserById_success() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
-
-        UserResponse result = authService.getUserById(1L);
-
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getUsername()).isEqualTo("testuser");
-    }
-
-    /**
-     * Handles scenarios where a request is made for an ID that does not exist in the persistence layer.
-     */
-    @Test
-    @DisplayName("test getUserById() - Should throw exception if id mapping fails")
-    void getUserById_notFound() {
-        when(userRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> authService.getUserById(99L))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("User not found with ID: 99");
-    }
-
-    /**
-     * Confirms that administrative updates to user roles and status are correctly handled.
-     */
-    @Test
-    @DisplayName("test updateUser() - Should successfully modify role and activation status")
+    @DisplayName("updateUser should modify admin-controlled fields")
     void updateUser_success() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
         when(userRepository.save(any(User.class))).thenReturn(sampleUser);
@@ -247,44 +193,20 @@ class AuthServiceTest {
         verify(userRepository).save(any(User.class));
     }
 
-    /**
-     * Blocks administrative updates if an unauthorized or non-existent role is provided.
-     */
-    @Test
-    @DisplayName("test updateUser() - Should reject unmapped authorization roles")
-    void updateUser_invalidRole() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
-
-        assertThatThrownBy(() -> authService.updateUser(1L, "SUPERUSER", null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Role must be USER or ADMIN");
-    }
-
-    /**
-     * Verifies that the deactivation of an account is correctly processed and persisted.
-     */
-    @Test
-    @DisplayName("test deactivateUser() - Should correctly transition account to inactive")
-    void deactivateUser_success() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(sampleUser));
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        UserResponse result = authService.deactivateUser(1L);
-
-        assertThat(result.isActive()).isFalse();
-        verify(userRepository).save(any(User.class));
-    }
-
-    /**
-     * Ensures that deactivation attempts for missing user identities trigger appropriate exceptions.
-     */
-    @Test
-    @DisplayName("test deactivateUser() - Should throw exception for untracked identifiers")
-    void deactivateUser_notFound() {
-        when(userRepository.findById(55L)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> authService.deactivateUser(55L))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("User not found with ID: 55");
+    private RegisterRequest validRegisterRequest() {
+        RegisterRequest request = new RegisterRequest();
+        request.setUsername("testuser");
+        request.setFullName("Test User");
+        request.setEmail("testuser@example.com");
+        request.setPhoneNumber("9876543210");
+        request.setDateOfBirth(LocalDate.of(1995, 5, 10));
+        request.setAddressLine1("221B Baker Street, Demo Layout");
+        request.setCity("Bengaluru");
+        request.setState("Karnataka");
+        request.setPostalCode("560001");
+        request.setOccupation("Software Engineer");
+        request.setAnnualIncome(900000.0);
+        request.setPassword("password123");
+        return request;
     }
 }

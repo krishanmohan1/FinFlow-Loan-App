@@ -1,5 +1,11 @@
+FROM maven:3.9.11-eclipse-temurin-17 AS build
+WORKDIR /workspace
+COPY pom.xml .
+COPY src src
+RUN mvn -B clean package -DskipTests
+
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-COPY target/*.jar app.jar
+COPY --from=build /workspace/target/*.jar app.jar
 EXPOSE 9093
 CMD ["java", "-jar", "app.jar"]

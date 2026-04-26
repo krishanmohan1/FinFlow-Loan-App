@@ -18,15 +18,36 @@
   <div class="stat-grid">
     <article><strong>{{ loans().length }}</strong><span>Total loans</span></article>
     <article><strong>{{ pendingLoans() }}</strong><span>Pending loans</span></article>
-    <article><strong>{{ documents().length }}</strong><span>Documents</span></article>
+    <article><strong>{{ verifiedDocuments() }}</strong><span>Verified documents</span></article>
     <article><strong>{{ activeUsers() }}</strong><span>Active users</span></article>
   </div>
+
+  @if (report(); as reportData) {
+    <section class="report-strip">
+      <article>
+        <strong>{{ reportData.approvedLoans.length }}</strong>
+        <span>Approved</span>
+      </article>
+      <article>
+        <strong>{{ reportData.rejectedLoans.length }}</strong>
+        <span>Rejected</span>
+      </article>
+      <article>
+        <strong>{{ reportData.underReviewLoans.length }}</strong>
+        <span>Under review</span>
+      </article>
+      <article>
+        <strong>{{ rejectedDocuments() }}</strong>
+        <span>Rejected docs</span>
+      </article>
+    </section>
+  }
 
   <div class="action-grid">
     <section class="panel accent">
       <div class="panel-heading">
         <h2>Loan decision</h2>
-        <span>POST /admin/loans/{{ decisionForm.controls.loanId.value }}/decision</span>
+        <span>Live approval workspace</span>
       </div>
       <form [formGroup]="decisionForm" (ngSubmit)="decideLoan()">
         <label>Loan ID <input type="number" formControlName="loanId"></label>
@@ -37,20 +58,28 @@
             <option value="REJECTED">Rejected</option>
           </select>
         </label>
-        <label>Remarks <textarea rows="3" formControlName="remarks"></textarea></label>
+        <label>
+          Remarks
+          <textarea rows="3" formControlName="remarks"></textarea>
+          @if (decisionRemarksError()) {
+            <small class="field-error">{{ decisionRemarksError() }}</small>
+          }
+        </label>
         <div class="mini-grid">
           <label>Interest % <input type="number" formControlName="interestRate"></label>
           <label>Tenure <input type="number" formControlName="tenureMonths"></label>
           <label>Sanctioned <input type="number" formControlName="sanctionedAmount"></label>
         </div>
-        <button class="solid-button large" type="submit">Submit decision</button>
+        <button class="solid-button large" type="submit" [disabled]="isActing()">
+          {{ isActing() ? 'Saving...' : 'Submit decision' }}
+        </button>
       </form>
     </section>
 
     <section class="panel">
       <div class="panel-heading">
         <h2>Verify document</h2>
-        <span>PUT /admin/documents/id/verify</span>
+        <span>Risk and document review</span>
       </div>
       <form [formGroup]="documentForm" (ngSubmit)="verifyDocument()">
         <label>Document ID <input type="number" formControlName="documentId"></label>
@@ -61,8 +90,16 @@
             <option value="REJECTED">Rejected</option>
           </select>
         </label>
-        <label>Remarks <textarea rows="3" formControlName="remarks"></textarea></label>
-        <button class="solid-button large" type="submit">Update document</button>
+        <label>
+          Remarks
+          <textarea rows="3" formControlName="remarks"></textarea>
+          @if (documentRemarksError()) {
+            <small class="field-error">{{ documentRemarksError() }}</small>
+          }
+        </label>
+        <button class="solid-button large" type="submit" [disabled]="isActing()">
+          {{ isActing() ? 'Saving...' : 'Update document' }}
+        </button>
       </form>
     </section>
 
@@ -84,7 +121,9 @@
           <input type="checkbox" formControlName="active">
           Active account
         </label>
-        <button class="solid-button large" type="submit">Update user</button>
+        <button class="solid-button large" type="submit" [disabled]="isActing()">
+          {{ isActing() ? 'Saving...' : 'Update user' }}
+        </button>
       </form>
     </section>
   </div>
@@ -92,11 +131,11 @@
   <section class="table-panel">
     <div class="panel-heading">
       <h2>Loan queue</h2>
-      <span>GET /admin/loans</span>
-    </div>
-    <div class="responsive-table">
-      <table>
-        <thead><tr><th>ID</th><th>User</th><th>Type</th><th>Amount</th><th>Status</th><th>Applied</th><th>Action</th></tr></thead>
+        <span>Click a row action to load it into the decision form</span>
+      </div>
+      <div class="responsive-table">
+        <table>
+        <thead><tr><th>ID</th><th>User</th><th>Type</th><th>Amount</th><th>Tenure</th><th>Status</th><th>Applied</th><th>Action</th></tr></thead>
         <tbody>
           @for (loan of loans(); track loan.id) {
             <tr>
@@ -104,12 +143,18 @@
               <td>{{ loan.username }}</td>
               <td>{{ loan.loanType }}</td>
               <td>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</td>
+              <td>{{ loan.tenureMonths }} months</td>
               <td><ff-status-pill [status]="loan.status || 'PENDING'" /></td>
               <td>{{ loan.appliedAt | date:'medium' }}</td>
-              <td><button class="small-button" type="button" (click)="markUnderReview(loan.id)">Review</button></td>
+              <td>
+                <div class="table-actions">
+                  <button class="small-button" type="button" (click)="selectLoan(loan)">Load</button>
+                  <button class="small-button neutral" type="button" (click)="markUnderReview(loan.id)">Review</button>
+                </div>
+              </td>
             </tr>
           } @empty {
-            <tr><td colspan="7">No loans found.</td></tr>
+            <tr><td colspan="8">No loans found.</td></tr>
           }
         </tbody>
       </table>
@@ -119,11 +164,11 @@
   <section class="table-panel">
     <div class="panel-heading">
       <h2>Document audit</h2>
-      <span>GET /admin/documents</span>
+      <span>Load any row into the verification form</span>
     </div>
     <div class="responsive-table">
       <table>
-        <thead><tr><th>ID</th><th>User</th><th>Loan</th><th>Type</th><th>Status</th><th>Remarks</th></tr></thead>
+        <thead><tr><th>ID</th><th>User</th><th>Loan</th><th>Type</th><th>Status</th><th>Remarks</th><th>Action</th></tr></thead>
         <tbody>
           @for (doc of documents(); track doc.id) {
             <tr>
@@ -133,9 +178,10 @@
               <td>{{ doc.documentType }}</td>
               <td><ff-status-pill [status]="doc.verificationStatus" /></td>
               <td>{{ doc.verifiedRemarks || 'No remarks' }}</td>
+              <td><button class="small-button" type="button" (click)="selectDocument(doc)">Load</button></td>
             </tr>
           } @empty {
-            <tr><td colspan="6">No documents found.</td></tr>
+            <tr><td colspan="7">No documents found.</td></tr>
           }
         </tbody>
       </table>
@@ -145,22 +191,25 @@
   <section class="table-panel">
     <div class="panel-heading">
       <h2>Users</h2>
-      <span>GET /admin/users</span>
+      <span>Load any user into the controls form</span>
     </div>
     <div class="responsive-table">
       <table>
-        <thead><tr><th>ID</th><th>Username</th><th>Role</th><th>Active</th><th>Created</th></tr></thead>
+        <thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Active</th><th>Created</th><th>Action</th></tr></thead>
         <tbody>
           @for (user of users(); track user.id) {
             <tr>
               <td>#{{ user.id }}</td>
+              <td>{{ user.fullName }}</td>
               <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
               <td>{{ user.role }}</td>
               <td>{{ user.active ? 'Yes' : 'No' }}</td>
               <td>{{ user.createdAt | date:'medium' }}</td>
+              <td><button class="small-button" type="button" (click)="selectUser(user)">Load</button></td>
             </tr>
           } @empty {
-            <tr><td colspan="5">No users found.</td></tr>
+            <tr><td colspan="8">No users found.</td></tr>
           }
         </tbody>
       </table>
