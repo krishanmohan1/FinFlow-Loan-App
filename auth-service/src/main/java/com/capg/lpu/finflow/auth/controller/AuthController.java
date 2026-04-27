@@ -2,7 +2,9 @@ package com.capg.lpu.finflow.auth.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseCookie;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.capg.lpu.finflow.auth.dto.AuthResponse;
+import com.capg.lpu.finflow.auth.dto.AuthenticatedSession;
 import com.capg.lpu.finflow.auth.dto.LoginRequest;
 import com.capg.lpu.finflow.auth.dto.ProfileUpdateRequest;
 import com.capg.lpu.finflow.auth.dto.RegisterRequest;
@@ -22,6 +25,9 @@ import com.capg.lpu.finflow.auth.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
@@ -41,6 +47,12 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthController {
 
     private final AuthService authService;
+
+    @Value("${security.jwt.refresh-cookie-name}")
+    private String refreshCookieName;
+
+    @Value("${security.jwt.refresh-expiration-ms}")
+    private long refreshExpirationMs;
 
     /**
      * Basic health check endpoint to verify the Auth Service is operational.
@@ -92,9 +104,26 @@ public class AuthController {
     
     @Operation(summary = "Register a new user", description = "Creates a USER role account and returns a JWT token")
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(
+            @Valid @RequestBody RegisterRequest request,
+            HttpServletResponse response) {
         log.info("POST /auth/register - username: {}", request.getUsername());
-        return ResponseEntity.ok(authService.register(request));
+        AuthenticatedSession session = authService.register(request);
+        attachRefreshCookie(response, session.refreshToken());
+        return ResponseEntity.ok(session.response());
+    }
+
+    /**
+     * Registers a new internal staff/admin account from the secured admin workspace.
+     *
+     * @param request The staff onboarding details.
+     * @return The created admin user profile.
+     */
+    @Operation(summary = "Register an internal admin account", description = "Creates an ADMIN role account from the secured admin workspace")
+    @PostMapping("/admin/register")
+    public ResponseEntity<UserResponse> registerAdmin(@Valid @RequestBody RegisterRequest request) {
+        log.info("POST /auth/admin/register - username: {}", request.getUsername());
+        return ResponseEntity.ok(authService.registerAdmin(request));
     }
 
     /**
@@ -106,9 +135,35 @@ public class AuthController {
 
     @Operation(summary = "Login", description = "Validates credentials and returns a JWT token")
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(
+            @Valid @RequestBody LoginRequest request,
+            HttpServletResponse response) {
         log.info("POST /auth/login - username: {}", request.getUsername());
-        return ResponseEntity.ok(authService.login(request));
+        AuthenticatedSession session = authService.login(request);
+        attachRefreshCookie(response, session.refreshToken());
+        return ResponseEntity.ok(session.response());
+    }
+
+    @Operation(summary = "Refresh access token", description = "Uses the HttpOnly refresh-token cookie to rotate the session")
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        log.info("POST /auth/refresh");
+        AuthenticatedSession session = authService.refreshSession(readRefreshToken(request));
+        attachRefreshCookie(response, session.refreshToken());
+        return ResponseEntity.ok(session.response());
+    }
+
+    @Operation(summary = "Logout", description = "Revokes the current refresh token and clears the browser cookie")
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        log.info("POST /auth/logout");
+        authService.logout(readRefreshToken(request));
+        clearRefreshCookie(response);
+        return ResponseEntity.ok("Logout successful");
     }
 
     /**
@@ -216,5 +271,40 @@ public class AuthController {
          * The activation status to be set for the account.
          */
         private Boolean active;
+    }
+
+    private void attachRefreshCookie(HttpServletResponse response, String refreshToken) {
+        ResponseCookie cookie = ResponseCookie.from(refreshCookieName, refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(java.time.Duration.ofMillis(refreshExpirationMs))
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    private void clearRefreshCookie(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from(refreshCookieName, "")
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(java.time.Duration.ZERO)
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    private String readRefreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (refreshCookieName.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }

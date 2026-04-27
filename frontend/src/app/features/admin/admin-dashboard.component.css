@@ -3,10 +3,10 @@
 }
 
 .admin-hero {
-  display: flex;
-  justify-content: space-between;
-  gap: 28px;
-  align-items: flex-end;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 24px;
+  align-items: stretch;
   margin-bottom: 24px;
 }
 
@@ -22,6 +22,36 @@
 
 .admin-hero p:not(.eyebrow) {
   max-width: 760px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.admin-focus-card {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 30px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.07));
+}
+
+.admin-focus-card span {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.admin-focus-card strong {
+  color: var(--surface);
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  line-height: 1.05;
+}
+
+.admin-focus-card small {
   color: var(--muted);
   line-height: 1.7;
 }
@@ -137,6 +167,15 @@ form {
   gap: 14px;
 }
 
+.staff-form {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.staff-form-wide {
+  grid-column: 1 / -1;
+}
+
 .mini-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -241,11 +280,7 @@ th {
 }
 
 @media (max-width: 1120px) {
-  .admin-hero {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
+  .admin-hero,
   .stat-grid,
   .action-grid,
   .report-strip {
@@ -254,10 +289,12 @@ th {
 }
 
 @media (max-width: 720px) {
+  .admin-hero,
   .stat-grid,
   .action-grid,
   .mini-grid,
-  .report-strip {
+  .report-strip,
+  .staff-form {
     grid-template-columns: 1fr;
   }
 

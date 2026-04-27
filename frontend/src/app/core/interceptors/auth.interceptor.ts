@@ -5,7 +5,11 @@ import { AuthService } from '@core/services/auth.service';
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const authService = inject(AuthService);
   const token = authService.token();
-  const isPublicAuthRequest = request.url.includes('/auth/login') || request.url.includes('/auth/register');
+  const isPublicAuthRequest =
+    request.url.includes('/auth/login') ||
+    request.url.includes('/auth/register') ||
+    request.url.includes('/auth/refresh') ||
+    request.url.includes('/auth/logout');
 
   if (!token || isPublicAuthRequest) {
     return next(request);

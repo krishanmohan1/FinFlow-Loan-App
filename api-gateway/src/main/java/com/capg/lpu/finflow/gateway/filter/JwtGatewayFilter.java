@@ -90,7 +90,20 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
                 return exchange.getResponse().setComplete();
             }
 
-            // Role-based Access Control: Ensure only ADMIN role accesses sensitive user management paths in Auth Service
+            // Allow authenticated borrowers to use their own profile endpoint.
+            if (path.startsWith("/auth/users/me")) {
+                return forwardAuthenticatedRequest(exchange, chain, username, role);
+            }
+
+            // Role-based Access Control: Ensure only ADMIN role accesses Auth Service admin endpoints.
+            if (path.startsWith("/auth/admin") && !"ADMIN".equals(role)) {
+                log.warn("Access denied - user: {} (role: {}) tried to access AUTH/ADMIN path: {}",
+                        username, role, path);
+                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                return exchange.getResponse().setComplete();
+            }
+
+            // Role-based Access Control: Ensure only ADMIN role accesses sensitive user management paths in Auth Service.
             if (path.startsWith("/auth/users") && !"ADMIN".equals(role)) {
                 log.warn("Access denied - user: {} (role: {}) tried to access sensitive AUTH/USERS path: {}",
                         username, role, path);
@@ -115,18 +128,25 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
                 return exchange.getResponse().setComplete();
             }
 
-            // Pass the extracted user information to downstream services via HTTP headers
-            ServerHttpRequest mutatedRequest = exchange.getRequest()
-                    .mutate()
-                    .header("X-Auth-Username", username)
-                    .header("X-Auth-Role", role)
-                    .build();
-
-            log.info("Forwarding request to service with headers X-Auth-Username={}, X-Auth-Role={}",
-                    username, role);
-
-            return chain.filter(exchange.mutate().request(mutatedRequest).build());
+            return forwardAuthenticatedRequest(exchange, chain, username, role);
         };
+    }
+
+    private reactor.core.publisher.Mono<Void> forwardAuthenticatedRequest(
+            org.springframework.web.server.ServerWebExchange exchange,
+            org.springframework.cloud.gateway.filter.GatewayFilterChain chain,
+            String username,
+            String role) {
+        ServerHttpRequest mutatedRequest = exchange.getRequest()
+                .mutate()
+                .header("X-Auth-Username", username)
+                .header("X-Auth-Role", role)
+                .build();
+
+        log.info("Forwarding request to service with headers X-Auth-Username={}, X-Auth-Role={}",
+                username, role);
+
+        return chain.filter(exchange.mutate().request(mutatedRequest).build());
     }
 
     /**
@@ -138,6 +158,8 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Object> {
     private boolean isPublicPath(String path) {
         return path.startsWith("/auth/login")
                 || path.startsWith("/auth/register")
+                || path.startsWith("/auth/refresh")
+                || path.startsWith("/auth/logout")
                 || path.startsWith("/auth/test")
                 || path.contains("/actuator")
                 || path.contains("/v3/api-docs")

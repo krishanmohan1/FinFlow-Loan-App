@@ -1,6 +1,7 @@
 package com.capg.lpu.finflow.admin.client;
 
 import com.capg.lpu.finflow.admin.config.FeignConfig;
+import com.capg.lpu.finflow.admin.dto.StaffRegistrationRequest;
 import com.capg.lpu.finflow.admin.dto.UserUpdateRequest;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -29,6 +30,15 @@ public interface AuthClient {
      */
     @GetMapping("/auth/users/{id}")
     Object getUserById(@PathVariable("id") Long id);
+
+    /**
+     * Creates a new internal admin account through the auth service.
+     *
+     * @param request The staff onboarding request.
+     * @return The created staff profile.
+     */
+    @PostMapping("/auth/admin/register")
+    Object registerStaff(@RequestBody StaffRegistrationRequest request);
 
     /**
      * Updates an existing user's profile information.

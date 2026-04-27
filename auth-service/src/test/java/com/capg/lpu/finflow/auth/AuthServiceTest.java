@@ -22,11 +22,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.capg.lpu.finflow.auth.dto.AuthResponse;
+import com.capg.lpu.finflow.auth.dto.AuthenticatedSession;
 import com.capg.lpu.finflow.auth.dto.LoginRequest;
 import com.capg.lpu.finflow.auth.dto.ProfileUpdateRequest;
 import com.capg.lpu.finflow.auth.dto.RegisterRequest;
 import com.capg.lpu.finflow.auth.dto.UserResponse;
+import com.capg.lpu.finflow.auth.entity.RefreshToken;
 import com.capg.lpu.finflow.auth.entity.User;
+import com.capg.lpu.finflow.auth.repository.RefreshTokenRepository;
 import com.capg.lpu.finflow.auth.repository.UserRepository;
 import com.capg.lpu.finflow.auth.security.JwtUtil;
 import com.capg.lpu.finflow.auth.service.AuthService;
@@ -39,6 +42,9 @@ class AuthServiceTest {
 
     @Mock
     private JwtUtil jwtUtil;
+
+    @Mock
+    private RefreshTokenRepository refreshTokenRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -80,12 +86,34 @@ class AuthServiceTest {
         when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(sampleUser);
         when(jwtUtil.generateToken("testuser", "USER")).thenReturn("mock.jwt.token");
+        when(jwtUtil.getAccessTokenExpirationMs()).thenReturn(900000L);
+        when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer((invocation) -> invocation.getArgument(0));
 
-        AuthResponse response = authService.register(request);
+        AuthenticatedSession session = authService.register(request);
+        AuthResponse response = session.response();
 
-        assertThat(response.getToken()).isEqualTo("mock.jwt.token");
+        assertThat(response.getAccessToken()).isEqualTo("mock.jwt.token");
         assertThat(response.getUsername()).isEqualTo("testuser");
         assertThat(response.getRole()).isEqualTo("USER");
+        assertThat(session.refreshToken()).isNotBlank();
+        verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("registerAdmin should persist a new admin account")
+    void registerAdmin_success() {
+        RegisterRequest request = validRegisterRequest();
+        sampleUser.setRole("ADMIN");
+
+        when(userRepository.existsByUsername("testuser")).thenReturn(false);
+        when(userRepository.existsByEmail("testuser@example.com")).thenReturn(false);
+        when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(sampleUser);
+
+        UserResponse response = authService.registerAdmin(request);
+
+        assertThat(response.getRole()).isEqualTo("ADMIN");
+        assertThat(response.getUsername()).isEqualTo("testuser");
         verify(userRepository).save(any(User.class));
     }
 
@@ -126,11 +154,15 @@ class AuthServiceTest {
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(sampleUser));
         when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
         when(jwtUtil.generateToken("testuser", "USER")).thenReturn("mock.jwt.token");
+        when(jwtUtil.getAccessTokenExpirationMs()).thenReturn(900000L);
+        when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer((invocation) -> invocation.getArgument(0));
 
-        AuthResponse response = authService.login(request);
+        AuthenticatedSession session = authService.login(request);
+        AuthResponse response = session.response();
 
         assertThat(response.getMessage()).isEqualTo("Login successful");
-        assertThat(response.getToken()).isEqualTo("mock.jwt.token");
+        assertThat(response.getAccessToken()).isEqualTo("mock.jwt.token");
+        assertThat(session.refreshToken()).isNotBlank();
     }
 
     @Test

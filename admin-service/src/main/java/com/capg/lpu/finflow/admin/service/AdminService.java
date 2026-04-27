@@ -6,7 +6,14 @@ import com.capg.lpu.finflow.admin.client.DocumentClient;
 import com.capg.lpu.finflow.admin.dto.DecisionRequest;
 import com.capg.lpu.finflow.admin.dto.DocumentVerifyRequest;
 import com.capg.lpu.finflow.admin.dto.LoanStatusUpdateRequest;
+import com.capg.lpu.finflow.admin.dto.StaffRegistrationRequest;
 import com.capg.lpu.finflow.admin.dto.UserUpdateRequest;
+import com.capg.lpu.finflow.admin.entity.AdminActionAudit;
+import com.capg.lpu.finflow.admin.entity.ReportSnapshot;
+import com.capg.lpu.finflow.admin.repository.AdminActionAuditRepository;
+import com.capg.lpu.finflow.admin.repository.ReportSnapshotRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +36,9 @@ public class AdminService {
     private final ApplicationClient applicationClient;
     private final DocumentClient documentClient;
     private final AuthClient authClient;
+    private final AdminActionAuditRepository adminActionAuditRepository;
+    private final ReportSnapshotRepository reportSnapshotRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * Retrieves all loan applications from the application microservice.
@@ -85,7 +95,7 @@ public class AdminService {
      * @return The response from the application service update.
      * @throws IllegalArgumentException If an invalid decision is provided.
      */
-    public Object makeDecision(Long id, DecisionRequest request) {
+    public Object makeDecision(Long id, DecisionRequest request, String actorUsername) {
         log.info("Admin making decision on loan ID: {} | decision: {}", id, request.getDecision());
 
         if (!"APPROVED".equals(request.getDecision()) && !"REJECTED".equals(request.getDecision())) {
@@ -100,6 +110,8 @@ public class AdminService {
         );
 
         Object result = applicationClient.updateStatus(id, statusRequest);
+        recordAudit("LOAN_DECISION", "LOAN", String.valueOf(id), actorUsername, "SUCCESS",
+                "Decision=" + request.getDecision() + ", remarks=" + fullRemarks);
         log.info("Decision applied to loan ID: {} | status: {}", id, request.getDecision());
         return result;
     }
@@ -137,10 +149,12 @@ public class AdminService {
      * @param remarks Administrative comments for the approval.
      * @return The updated loan application data.
      */
-    public Object approveLoan(Long id, String remarks) {
+    public Object approveLoan(Long id, String remarks, String actorUsername) {
         log.info("Admin approving loan ID: {}", id);
-        return applicationClient.updateStatus(id,
+        Object result = applicationClient.updateStatus(id,
                 new LoanStatusUpdateRequest("APPROVED", remarks));
+        recordAudit("LOAN_APPROVE", "LOAN", String.valueOf(id), actorUsername, "SUCCESS", remarks);
+        return result;
     }
 
     /**
@@ -150,10 +164,12 @@ public class AdminService {
      * @param remarks The reason for rejection.
      * @return The updated loan application data.
      */
-    public Object rejectLoan(Long id, String remarks) {
+    public Object rejectLoan(Long id, String remarks, String actorUsername) {
         log.info("Admin rejecting loan ID: {}", id);
-        return applicationClient.updateStatus(id,
+        Object result = applicationClient.updateStatus(id,
                 new LoanStatusUpdateRequest("REJECTED", remarks));
+        recordAudit("LOAN_REJECT", "LOAN", String.valueOf(id), actorUsername, "SUCCESS", remarks);
+        return result;
     }
 
     /**
@@ -162,10 +178,12 @@ public class AdminService {
      * @param id The ID of the loan application.
      * @return The updated loan application data.
      */
-    public Object markUnderReview(Long id) {
+    public Object markUnderReview(Long id, String actorUsername) {
         log.info("Admin marking loan ID: {} as UNDER_REVIEW", id);
-        return applicationClient.updateStatus(id,
+        Object result = applicationClient.updateStatus(id,
                 new LoanStatusUpdateRequest("UNDER_REVIEW", "Application is under review"));
+        recordAudit("LOAN_REVIEW", "LOAN", String.valueOf(id), actorUsername, "SUCCESS", "Application is under review");
+        return result;
     }
 
     /**
@@ -174,9 +192,11 @@ public class AdminService {
      * @param id The ID of the loan application to delete.
      * @return A confirmation message from the application service.
      */
-    public String deleteLoan(Long id) {
+    public String deleteLoan(Long id, String actorUsername) {
         log.info("Admin deleting loan ID: {}", id);
-        return applicationClient.delete(id);
+        String result = applicationClient.delete(id);
+        recordAudit("LOAN_DELETE", "LOAN", String.valueOf(id), actorUsername, "SUCCESS", result);
+        return result;
     }
 
     /**
@@ -229,9 +249,12 @@ public class AdminService {
      * @param request The status and remarks for verification.
      * @return The updated document metadata.
      */
-    public Object verifyDocument(Long id, DocumentVerifyRequest request) {
+    public Object verifyDocument(Long id, DocumentVerifyRequest request, String actorUsername) {
         log.info("Admin verifying document ID: {} | status: {}", id, request.getStatus());
-        return documentClient.verifyDocument(id, request);
+        Object result = documentClient.verifyDocument(id, request);
+        recordAudit("DOCUMENT_VERIFY", "DOCUMENT", String.valueOf(id), actorUsername, "SUCCESS",
+                "Status=" + request.getStatus() + ", remarks=" + request.getRemarks());
+        return result;
     }
 
     /**
@@ -240,9 +263,11 @@ public class AdminService {
      * @param id The ID of the document to delete.
      * @return A confirmation message.
      */
-    public String deleteDocument(Long id) {
+    public String deleteDocument(Long id, String actorUsername) {
         log.info("Admin deleting document ID: {}", id);
-        return documentClient.deleteDocument(id);
+        String result = documentClient.deleteDocument(id);
+        recordAudit("DOCUMENT_DELETE", "DOCUMENT", String.valueOf(id), actorUsername, "SUCCESS", result);
+        return result;
     }
 
     /**
@@ -267,16 +292,33 @@ public class AdminService {
     }
 
     /**
+     * Creates a new internal admin account for operations users.
+     *
+     * @param request The staff onboarding request.
+     * @return The created user profile.
+     */
+    public Object registerStaff(StaffRegistrationRequest request, String actorUsername) {
+        log.info("Admin onboarding internal staff username: {}", request.getUsername());
+        Object result = authClient.registerStaff(request);
+        recordAudit("STAFF_REGISTER", "USER", request.getUsername(), actorUsername, "SUCCESS",
+                "Internal admin account created");
+        return result;
+    }
+
+    /**
      * Updates an existing user's profile information.
      *
      * @param id The ID of the user account.
      * @param request Updated profile details and role mapping.
      * @return The updated user profile data.
      */
-    public Object updateUser(Long id, UserUpdateRequest request) {
+    public Object updateUser(Long id, UserUpdateRequest request, String actorUsername) {
         log.info("Admin updating user ID: {} | role: {} | active: {}",
                 id, request.getRole(), request.getActive());
-        return authClient.updateUser(id, request);
+        Object result = authClient.updateUser(id, request);
+        recordAudit("USER_UPDATE", "USER", String.valueOf(id), actorUsername, "SUCCESS",
+                "role=" + request.getRole() + ", active=" + request.getActive());
+        return result;
     }
 
     /**
@@ -285,9 +327,12 @@ public class AdminService {
      * @param id The ID of the user account to deactivate.
      * @return The updated user profile data.
      */
-    public Object deactivateUser(Long id) {
+    public Object deactivateUser(Long id, String actorUsername) {
         log.info("Admin deactivating user ID: {}", id);
-        return authClient.deactivateUser(id);
+        Object result = authClient.deactivateUser(id);
+        recordAudit("USER_DEACTIVATE", "USER", String.valueOf(id), actorUsername, "SUCCESS",
+                "User deactivated");
+        return result;
     }
 
     /**
@@ -296,7 +341,7 @@ public class AdminService {
      *
      * @return A map containing aggregated system statistics.
      */
-    public Object generateReport() {
+    public Object generateReport(String actorUsername) {
         log.info("Admin generating summary report");
 
         Map<String, Object> report = new HashMap<>();
@@ -309,6 +354,9 @@ public class AdminService {
         report.put("allUsers",         authClient.getAllUsers());
         report.put("generatedAt",      java.time.LocalDateTime.now().toString());
 
+        saveReportSnapshot("SUMMARY_REPORT", report);
+        recordAudit("REPORT_GENERATE", "REPORT", "SUMMARY_REPORT", actorUsername, "SUCCESS",
+                "Summary report generated");
         log.info("Report generated successfully");
         return report;
     }
@@ -330,6 +378,16 @@ public class AdminService {
         return counts;
     }
 
+    public java.util.List<AdminActionAudit> getRecentAudits() {
+        log.info("Admin fetching recent audit records");
+        return adminActionAuditRepository.findTop20ByOrderByCreatedAtDesc();
+    }
+
+    public java.util.List<ReportSnapshot> getReportHistory() {
+        log.info("Admin fetching report snapshot history");
+        return reportSnapshotRepository.findTop10ByOrderByGeneratedAtDesc();
+    }
+
     /**
      * Utility method to safely determine the size of a list-like object.
      *
@@ -341,5 +399,28 @@ public class AdminService {
             return ((java.util.List<?>) obj).size();
         }
         return 0;
+    }
+
+    private void recordAudit(String actionType, String targetType, String targetId,
+                             String actorUsername, String outcome, String details) {
+        adminActionAuditRepository.save(AdminActionAudit.builder()
+                .actionType(actionType)
+                .targetType(targetType)
+                .targetId(targetId)
+                .actorUsername(actorUsername)
+                .outcome(outcome)
+                .details(details)
+                .build());
+    }
+
+    private void saveReportSnapshot(String snapshotType, Map<String, Object> payload) {
+        try {
+            reportSnapshotRepository.save(ReportSnapshot.builder()
+                    .snapshotType(snapshotType)
+                    .payloadJson(objectMapper.writeValueAsString(payload))
+                    .build());
+        } catch (JsonProcessingException ex) {
+            throw new IllegalStateException("Failed to serialize report snapshot", ex);
+        }
     }
 }

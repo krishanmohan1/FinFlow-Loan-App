@@ -4,7 +4,7 @@ import { ApiRoutes } from '@core/config/api.config';
 import { DocumentVerificationRequest, LoanDocument } from '@core/models/document.models';
 import { AdminReport } from '@core/models/report.models';
 import { LoanApplication, LoanDecisionRequest, LoanStatusCounts } from '@core/models/loan.models';
-import { UserProfile, UserUpdateRequest } from '@core/models/auth.models';
+import { StaffRegistrationRequest, UserProfile, UserUpdateRequest } from '@core/models/auth.models';
 import { HttpApiService } from './http-api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -21,6 +21,10 @@ export class AdminService {
 
   users(): Observable<UserProfile[]> {
     return this.api.get<UserProfile[]>(ApiRoutes.admin.users);
+  }
+
+  registerStaff(request: StaffRegistrationRequest): Observable<UserProfile> {
+    return this.api.post<UserProfile>(ApiRoutes.admin.staff, request);
   }
 
   report(): Observable<AdminReport> {

@@ -2,7 +2,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize, forkJoin } from 'rxjs';
-import { UserProfile } from '@core/models/auth.models';
+import { StaffRegistrationRequest, UserProfile } from '@core/models/auth.models';
 import { LoanDocument } from '@core/models/document.models';
 import { LoanApplication, LoanDecisionRequest } from '@core/models/loan.models';
 import { AdminReport } from '@core/models/report.models';
@@ -27,6 +27,7 @@ export class AdminDashboardComponent implements OnInit {
   protected readonly report = signal<AdminReport | null>(null);
   protected readonly isLoading = signal(true);
   protected readonly isActing = signal(false);
+  protected readonly isCreatingStaff = signal(false);
   protected readonly message = signal('');
   protected readonly error = signal('');
 
@@ -54,6 +55,21 @@ export class AdminDashboardComponent implements OnInit {
     userId: [1, [Validators.required, Validators.min(1)]],
     role: ['USER' as 'USER' | 'ADMIN', [Validators.required]],
     active: [true]
+  });
+
+  protected readonly staffForm = this.fb.nonNullable.group({
+    fullName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(120)]],
+    phoneNumber: ['', [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)]],
+    dateOfBirth: ['1990-01-01', [Validators.required]],
+    addressLine1: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(120)]],
+    city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
+    state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
+    postalCode: ['', [Validators.required, Validators.pattern(/^[1-9][0-9]{5}$/)]],
+    occupation: ['Credit Operations', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
+    annualIncome: [800000, [Validators.required, Validators.min(0)]],
+    username: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(30), Validators.pattern(/^[A-Za-z][A-Za-z0-9_]{3,29}$/)]],
+    password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(64)]]
   });
 
   ngOnInit(): void {
@@ -187,6 +203,86 @@ export class AdminDashboardComponent implements OnInit {
       this.adminApi.updateUser(userId, request),
       `User #${userId} profile updated.`
     );
+  }
+
+  createStaffAccount(): void {
+    if (this.staffForm.invalid) {
+      this.staffForm.markAllAsTouched();
+      this.error.set('Please complete the internal staff onboarding form before creating the account.');
+      return;
+    }
+
+    this.message.set('');
+    this.error.set('');
+    this.isCreatingStaff.set(true);
+    this.adminApi.registerStaff(this.staffForm.getRawValue() as StaffRegistrationRequest)
+      .pipe(finalize(() => this.isCreatingStaff.set(false)))
+      .subscribe({
+        next: (user) => {
+          this.message.set(`Admin account for ${user.username} is ready. The new staff user can now sign in from the login page.`);
+          this.staffForm.reset({
+            fullName: '',
+            email: '',
+            phoneNumber: '',
+            dateOfBirth: '1990-01-01',
+            addressLine1: '',
+            city: '',
+            state: '',
+            postalCode: '',
+            occupation: 'Credit Operations',
+            annualIncome: 800000,
+            username: '',
+            password: ''
+          });
+          this.loadAdminData();
+        },
+        error: (error) => this.error.set(resolveApiError(error, 'Internal staff onboarding failed.'))
+      });
+  }
+
+  staffFieldError(
+    field:
+      | 'fullName'
+      | 'email'
+      | 'phoneNumber'
+      | 'dateOfBirth'
+      | 'addressLine1'
+      | 'city'
+      | 'state'
+      | 'postalCode'
+      | 'occupation'
+      | 'annualIncome'
+      | 'username'
+      | 'password'
+  ): string {
+    const control = this.staffForm.controls[field];
+    if (!control.touched && !control.dirty) {
+      return '';
+    }
+    if (control.hasError('required')) {
+      return 'This field is required.';
+    }
+    if (control.hasError('email')) {
+      return 'Enter a valid email address.';
+    }
+    if (control.hasError('pattern')) {
+      if (field === 'phoneNumber') {
+        return 'Enter a valid 10-digit Indian mobile number.';
+      }
+      if (field === 'postalCode') {
+        return 'Enter a valid 6-digit PIN code.';
+      }
+      if (field === 'username') {
+        return 'Start with a letter and use only letters, numbers, and underscores.';
+      }
+    }
+    if (control.hasError('minlength') || control.hasError('maxlength')) {
+      return 'Please enter a value within the allowed length.';
+    }
+    if (control.hasError('min')) {
+      return 'Value cannot be negative.';
+    }
+    return '';
   }
 
   private runAction<T>(request$: import('rxjs').Observable<T>, successMessage: string): void {

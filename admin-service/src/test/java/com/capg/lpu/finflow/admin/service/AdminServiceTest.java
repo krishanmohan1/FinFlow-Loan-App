@@ -5,6 +5,11 @@ import com.capg.lpu.finflow.admin.client.AuthClient;
 import com.capg.lpu.finflow.admin.client.DocumentClient;
 import com.capg.lpu.finflow.admin.dto.DecisionRequest;
 import com.capg.lpu.finflow.admin.dto.LoanStatusUpdateRequest;
+import com.capg.lpu.finflow.admin.entity.AdminActionAudit;
+import com.capg.lpu.finflow.admin.entity.ReportSnapshot;
+import com.capg.lpu.finflow.admin.repository.AdminActionAuditRepository;
+import com.capg.lpu.finflow.admin.repository.ReportSnapshotRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +43,15 @@ class AdminServiceTest {
 
     @Mock
     private AuthClient authClient;
+
+    @Mock
+    private AdminActionAuditRepository adminActionAuditRepository;
+
+    @Mock
+    private ReportSnapshotRepository reportSnapshotRepository;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @InjectMocks
     private AdminService adminService;
@@ -74,8 +87,10 @@ class AdminServiceTest {
         Object expectedResponse = "Success";
         when(applicationClient.updateStatus(eq(1L), any(LoanStatusUpdateRequest.class)))
                 .thenReturn(expectedResponse);
+        when(adminActionAuditRepository.save(any(AdminActionAudit.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        Object result = adminService.makeDecision(1L, request);
+        Object result = adminService.makeDecision(1L, request, "admin");
 
         assertThat(result).isEqualTo(expectedResponse);
         
@@ -84,6 +99,7 @@ class AdminServiceTest {
             statusRequest.getRemarks().contains("8.5%") &&
             statusRequest.getRemarks().contains("50000.0")
         ));
+        verify(adminActionAuditRepository).save(any(AdminActionAudit.class));
     }
 
     /**
@@ -95,7 +111,7 @@ class AdminServiceTest {
         DecisionRequest request = new DecisionRequest();
         request.setDecision("MAYBE_APPROVED");
 
-        assertThatThrownBy(() -> adminService.makeDecision(1L, request))
+        assertThatThrownBy(() -> adminService.makeDecision(1L, request, "admin"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("must be APPROVED or REJECTED");
 
@@ -122,5 +138,28 @@ class AdminServiceTest {
         assertThat(counts.get("APPROVED")).isEqualTo(1);
         assertThat(counts.get("REJECTED")).isEqualTo(0);
         assertThat(counts.get("UNDER_REVIEW")).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("test generateReport() - Should save report snapshot")
+    void testGenerateReport_savesSnapshot() throws Exception {
+        when(applicationClient.getAllLoans()).thenReturn(List.of("L1"));
+        when(applicationClient.getLoansByStatus("PENDING")).thenReturn(List.of());
+        when(applicationClient.getLoansByStatus("APPROVED")).thenReturn(List.of());
+        when(applicationClient.getLoansByStatus("REJECTED")).thenReturn(List.of());
+        when(applicationClient.getLoansByStatus("UNDER_REVIEW")).thenReturn(List.of());
+        when(documentClient.getAllDocuments()).thenReturn(List.of("D1"));
+        when(authClient.getAllUsers()).thenReturn(List.of("U1"));
+        when(objectMapper.writeValueAsString(any())).thenReturn("{\"ok\":true}");
+        when(reportSnapshotRepository.save(any(ReportSnapshot.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(adminActionAuditRepository.save(any(AdminActionAudit.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Object result = adminService.generateReport("admin");
+
+        assertThat(result).isInstanceOf(Map.class);
+        verify(reportSnapshotRepository).save(any(ReportSnapshot.class));
+        verify(adminActionAuditRepository).save(any(AdminActionAudit.class));
     }
 }

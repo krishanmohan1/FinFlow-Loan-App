@@ -24,8 +24,7 @@ public class LoanApplication {
      * Unique identifier for the loan application record.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "loan_seq_gen")
-    @SequenceGenerator(name = "loan_seq_gen", sequenceName = "loan_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**

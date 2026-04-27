@@ -6,6 +6,8 @@ export const ApiRoutes = {
   auth: {
     login: '/auth/login',
     register: '/auth/register',
+    refresh: '/auth/refresh',
+    logout: '/auth/logout',
     me: '/auth/users/me',
     users: '/auth/users/all',
     userById: (id: number) => `/auth/users/${id}`,
@@ -28,6 +30,7 @@ export const ApiRoutes = {
   },
   admin: {
     loans: '/admin/loans',
+    staff: '/admin/staff',
     loanById: (id: number) => `/admin/loans/${id}`,
     loansByStatus: (status: string) => `/admin/loans/status/${status}`,
     loansByUser: (username: string) => `/admin/loans/user/${username}`,

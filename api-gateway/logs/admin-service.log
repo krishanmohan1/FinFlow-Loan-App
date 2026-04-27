@@ -1,29 +1,35 @@
-2026-04-26 11:14:45 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
-2026-04-26 11:14:45 [main] INFO  c.c.l.f.g.ApiGatewayApplicationTests - Starting ApiGatewayApplicationTests using Java 17.0.11 with PID 6312 (started by krish in D:\FinFlow\api-gateway)
-2026-04-26 11:14:45 [main] INFO  c.c.l.f.g.ApiGatewayApplicationTests - The following 1 profile is active: "test"
-2026-04-26 11:14:52 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=bf2c3441-33be-3a1e-816a-847bd3ec3192
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [After]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Before]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Between]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Cookie]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Header]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Host]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Method]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Path]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Query]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [ReadBody]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [RemoteAddr]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [XForwardedRemoteAddr]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Weight]
-2026-04-26 11:14:58 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [CloudFoundryRouteService]
-2026-04-26 11:15:00 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoints beneath base path '/actuator'
-2026-04-26 11:15:03 [main] INFO  o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
-2026-04-26 11:15:03 [main] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
-2026-04-26 11:15:04 [main] INFO  c.c.l.f.g.ApiGatewayApplicationTests - Started ApiGatewayApplicationTests in 22.545 seconds (process running for 29.626)
-2026-04-26 11:15:10 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Incoming request - [GET /application/all]
-2026-04-26 11:15:10 [main] WARN  c.c.l.f.g.filter.JwtGatewayFilter - Missing or invalid Authorization header for path: /application/all
-2026-04-26 11:15:11 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Incoming request - [GET /auth/register]
-2026-04-26 11:15:11 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Public path, skipping JWT check - /auth/register
-2026-04-26 11:15:11 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Incoming request - [GET /admin/reports]
-2026-04-26 11:15:11 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Token valid - user: user1, role: USER, path: /admin/reports
-2026-04-26 11:15:11 [main] WARN  c.c.l.f.g.filter.JwtGatewayFilter - Access denied - user: user1 (role: USER) tried to access ADMIN path: /admin/reports
+2026-04-28 00:27:10 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-04-28 00:27:10 [main] INFO  c.c.l.f.g.ApiGatewayApplicationTests - Starting ApiGatewayApplicationTests using Java 17.0.11 with PID 22064 (started by krish in D:\FinFlow\api-gateway)
+2026-04-28 00:27:10 [main] INFO  c.c.l.f.g.ApiGatewayApplicationTests - The following 1 profile is active: "test"
+2026-04-28 00:27:19 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=bf2c3441-33be-3a1e-816a-847bd3ec3192
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [After]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Before]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Between]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Cookie]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Header]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Host]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Method]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Path]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Query]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [ReadBody]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [RemoteAddr]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [XForwardedRemoteAddr]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Weight]
+2026-04-28 00:27:21 [main] INFO  o.s.c.g.r.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [CloudFoundryRouteService]
+2026-04-28 00:27:22 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoints beneath base path '/actuator'
+2026-04-28 00:27:23 [main] INFO  o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-04-28 00:27:23 [main] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-04-28 00:27:23 [main] INFO  c.c.l.f.g.ApiGatewayApplicationTests - Started ApiGatewayApplicationTests in 19.932 seconds (process running for 33.696)
+2026-04-28 00:27:25 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Incoming request - [GET /application/all]
+2026-04-28 00:27:25 [main] WARN  c.c.l.f.g.filter.JwtGatewayFilter - Missing or invalid Authorization header for path: /application/all
+2026-04-28 00:27:26 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Incoming request - [GET /auth/register]
+2026-04-28 00:27:26 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Public path, skipping JWT check - /auth/register
+2026-04-28 00:27:26 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Incoming request - [GET /auth/users/me]
+2026-04-28 00:27:26 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Token valid - user: user1, role: USER, path: /auth/users/me
+2026-04-28 00:27:26 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Forwarding request to service with headers X-Auth-Username=user1, X-Auth-Role=USER
+2026-04-28 00:27:26 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Incoming request - [POST /auth/admin/register]
+2026-04-28 00:27:26 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Token valid - user: user1, role: USER, path: /auth/admin/register
+2026-04-28 00:27:26 [main] WARN  c.c.l.f.g.filter.JwtGatewayFilter - Access denied - user: user1 (role: USER) tried to access AUTH/ADMIN path: /auth/admin/register
+2026-04-28 00:27:26 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Incoming request - [GET /admin/reports]
+2026-04-28 00:27:26 [main] INFO  c.c.l.f.g.filter.JwtGatewayFilter - Token valid - user: user1, role: USER, path: /admin/reports
+2026-04-28 00:27:26 [main] WARN  c.c.l.f.g.filter.JwtGatewayFilter - Access denied - user: user1 (role: USER) tried to access ADMIN path: /admin/reports

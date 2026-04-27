@@ -13,6 +13,10 @@ export class AppComponent {
   protected readonly auth = inject(AuthService);
   protected readonly navOpen = signal(false);
 
+  constructor() {
+    this.auth.bootstrapSession().subscribe();
+  }
+
   protected closeNav(): void {
     this.navOpen.set(false);
   }

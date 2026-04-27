@@ -16,10 +16,11 @@ export interface AuthRequest {
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
   username: string;
   role: UserRole;
   message: string;
+  accessTokenExpiresInMs: number;
 }
 
 export interface UserProfile {
@@ -58,8 +59,10 @@ export interface ProfileUpdateRequest {
   annualIncome: number;
 }
 
+export interface StaffRegistrationRequest extends AuthRequest {}
+
 export interface SessionState {
-  token: string;
+  accessToken: string;
   username: string;
   role: UserRole;
 }

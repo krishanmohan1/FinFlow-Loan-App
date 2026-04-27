@@ -2,6 +2,7 @@ package com.capg.lpu.finflow.admin.controller;
 
 import com.capg.lpu.finflow.admin.dto.DecisionRequest;
 import com.capg.lpu.finflow.admin.dto.DocumentVerifyRequest;
+import com.capg.lpu.finflow.admin.dto.StaffRegistrationRequest;
 import com.capg.lpu.finflow.admin.dto.UserUpdateRequest;
 import com.capg.lpu.finflow.admin.service.AdminService;
 
@@ -97,9 +98,10 @@ public class AdminController {
     @PostMapping("/loans/{id}/decision")
     public ResponseEntity<Object> makeDecision(
             @PathVariable @Positive Long id,
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername,
             @Valid @RequestBody DecisionRequest request) {
         log.info("POST /admin/loans/{}/decision | decision: {}", id, request.getDecision());
-        return ResponseEntity.ok(adminService.makeDecision(id, request));
+        return ResponseEntity.ok(adminService.makeDecision(id, request, actorUsername));
     }
 
     /**
@@ -114,9 +116,10 @@ public class AdminController {
     @PutMapping("/loans/{id}/approve")
     public ResponseEntity<Object> approveLoan(
             @PathVariable @Positive Long id,
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername,
             @RequestParam(defaultValue = "Loan approved by admin") @NotBlank String remarks) {
         log.info("PUT /admin/loans/{}/approve", id);
-        return ResponseEntity.ok(adminService.approveLoan(id, remarks));
+        return ResponseEntity.ok(adminService.approveLoan(id, remarks, actorUsername));
     }
 
     /**
@@ -131,9 +134,10 @@ public class AdminController {
     @PutMapping("/loans/{id}/reject")
     public ResponseEntity<Object> rejectLoan(
             @PathVariable @Positive Long id,
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername,
             @RequestParam(defaultValue = "Loan rejected by admin") @NotBlank String remarks) {
         log.info("PUT /admin/loans/{}/reject", id);
-        return ResponseEntity.ok(adminService.rejectLoan(id, remarks));
+        return ResponseEntity.ok(adminService.rejectLoan(id, remarks, actorUsername));
     }
 
     /**
@@ -145,9 +149,11 @@ public class AdminController {
     @Tag(name = "Loans")
     @Operation(summary = "Mark loan as under review")
     @PutMapping("/loans/{id}/review")
-    public ResponseEntity<Object> markUnderReview(@PathVariable @Positive Long id) {
+    public ResponseEntity<Object> markUnderReview(
+            @PathVariable @Positive Long id,
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername) {
         log.info("PUT /admin/loans/{}/review", id);
-        return ResponseEntity.ok(adminService.markUnderReview(id));
+        return ResponseEntity.ok(adminService.markUnderReview(id, actorUsername));
     }
 
     /**
@@ -159,9 +165,11 @@ public class AdminController {
     @Tag(name = "Loans")
     @Operation(summary = "Delete a loan application permanently")
     @DeleteMapping("/loans/{id}")
-    public ResponseEntity<String> deleteLoan(@PathVariable @Positive Long id) {
+    public ResponseEntity<String> deleteLoan(
+            @PathVariable @Positive Long id,
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername) {
         log.info("DELETE /admin/loans/{}", id);
-        return ResponseEntity.ok(adminService.deleteLoan(id));
+        return ResponseEntity.ok(adminService.deleteLoan(id, actorUsername));
     }
 
     /**
@@ -231,9 +239,10 @@ public class AdminController {
     @PutMapping("/documents/{id}/verify")
     public ResponseEntity<Object> verifyDocument(
             @PathVariable @Positive Long id,
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername,
             @Valid @RequestBody DocumentVerifyRequest request) {
         log.info("PUT /admin/documents/{}/verify | status: {}", id, request.getStatus());
-        return ResponseEntity.ok(adminService.verifyDocument(id, request));
+        return ResponseEntity.ok(adminService.verifyDocument(id, request, actorUsername));
     }
 
     /**
@@ -245,9 +254,11 @@ public class AdminController {
     @Tag(name = "Documents")
     @Operation(summary = "Delete a document permanently")
     @DeleteMapping("/documents/{id}")
-    public ResponseEntity<String> deleteDocument(@PathVariable @Positive Long id) {
+    public ResponseEntity<String> deleteDocument(
+            @PathVariable @Positive Long id,
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername) {
         log.info("DELETE /admin/documents/{}", id);
-        return ResponseEntity.ok(adminService.deleteDocument(id));
+        return ResponseEntity.ok(adminService.deleteDocument(id, actorUsername));
     }
 
     /**
@@ -261,6 +272,22 @@ public class AdminController {
     public ResponseEntity<Object> getAllUsers() {
         log.info("GET /admin/users");
         return ResponseEntity.ok(adminService.getAllUsers());
+    }
+
+    /**
+     * Creates a new internal staff account that can later sign into the admin workspace.
+     *
+     * @param request The staff onboarding profile.
+     * @return The created user profile.
+     */
+    @Tag(name = "Users")
+    @Operation(summary = "Create a new internal admin account")
+    @PostMapping("/staff")
+    public ResponseEntity<Object> registerStaff(
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername,
+            @Valid @RequestBody StaffRegistrationRequest request) {
+        log.info("POST /admin/staff - username: {}", request.getUsername());
+        return ResponseEntity.ok(adminService.registerStaff(request, actorUsername));
     }
 
     /**
@@ -289,9 +316,10 @@ public class AdminController {
     @PutMapping("/users/{id}")
     public ResponseEntity<Object> updateUser(
             @PathVariable @Positive Long id,
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername,
             @Valid @RequestBody UserUpdateRequest request) {
         log.info("PUT /admin/users/{}", id);
-        return ResponseEntity.ok(adminService.updateUser(id, request));
+        return ResponseEntity.ok(adminService.updateUser(id, request, actorUsername));
     }
 
     /**
@@ -303,9 +331,11 @@ public class AdminController {
     @Tag(name = "Users")
     @Operation(summary = "Deactivate a user account")
     @PutMapping("/users/{id}/deactivate")
-    public ResponseEntity<Object> deactivateUser(@PathVariable @Positive Long id) {
+    public ResponseEntity<Object> deactivateUser(
+            @PathVariable @Positive Long id,
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername) {
         log.info("PUT /admin/users/{}/deactivate", id);
-        return ResponseEntity.ok(adminService.deactivateUser(id));
+        return ResponseEntity.ok(adminService.deactivateUser(id, actorUsername));
     }
 
     /**
@@ -316,9 +346,10 @@ public class AdminController {
     @Tag(name = "Reports")
     @Operation(summary = "Generate full summary report", description = "Returns loans + documents + users combined")
     @GetMapping("/reports")
-    public ResponseEntity<Object> generateReport() {
+    public ResponseEntity<Object> generateReport(
+            @RequestHeader(value = "X-Auth-Username", defaultValue = "admin") String actorUsername) {
         log.info("GET /admin/reports");
-        return ResponseEntity.ok(adminService.generateReport());
+        return ResponseEntity.ok(adminService.generateReport(actorUsername));
     }
 
     /**
@@ -332,5 +363,21 @@ public class AdminController {
     public ResponseEntity<Object> getLoanCountByStatus() {
         log.info("GET /admin/reports/counts");
         return ResponseEntity.ok(adminService.getLoanCountByStatus());
+    }
+
+    @Tag(name = "Reports")
+    @Operation(summary = "Get recent admin action audit trail")
+    @GetMapping("/audits")
+    public ResponseEntity<Object> getRecentAudits() {
+        log.info("GET /admin/audits");
+        return ResponseEntity.ok(adminService.getRecentAudits());
+    }
+
+    @Tag(name = "Reports")
+    @Operation(summary = "Get generated report snapshot history")
+    @GetMapping("/reports/history")
+    public ResponseEntity<Object> getReportHistory() {
+        log.info("GET /admin/reports/history");
+        return ResponseEntity.ok(adminService.getReportHistory());
     }
 }

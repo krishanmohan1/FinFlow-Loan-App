@@ -23,8 +23,7 @@ public class Document {
      * Unique identifier for the document record.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doc_seq_gen")
-    @SequenceGenerator(name = "doc_seq_gen", sequenceName = "doc_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**

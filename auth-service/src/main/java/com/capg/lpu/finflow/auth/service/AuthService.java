@@ -1,89 +1,80 @@
 package com.capg.lpu.finflow.auth.service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.HexFormat;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.capg.lpu.finflow.auth.dto.AuthResponse;
+import com.capg.lpu.finflow.auth.dto.AuthenticatedSession;
 import com.capg.lpu.finflow.auth.dto.LoginRequest;
 import com.capg.lpu.finflow.auth.dto.ProfileUpdateRequest;
 import com.capg.lpu.finflow.auth.dto.RegisterRequest;
 import com.capg.lpu.finflow.auth.dto.UserResponse;
+import com.capg.lpu.finflow.auth.entity.RefreshToken;
 import com.capg.lpu.finflow.auth.entity.User;
+import com.capg.lpu.finflow.auth.repository.RefreshTokenRepository;
 import com.capg.lpu.finflow.auth.repository.UserRepository;
 import com.capg.lpu.finflow.auth.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Service class for handling authentication and user management.
- * Coordinates user registration, login, and administrative profile updates.
+ * Service class for handling authentication, rotating refresh tokens, and user management.
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
 
+    private static final java.security.SecureRandom SECURE_RANDOM = new java.security.SecureRandom();
+
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${security.jwt.refresh-expiration-ms}")
+    private long refreshExpirationMs;
+
     /**
-     * Registers a new user and generates an initial authentication token.
-     *
-     * @param request The registration details (username, password).
-     * @return An AuthResponse containing the JWT token and user details.
+     * Registers a new borrower and opens a session.
      */
-    public AuthResponse register(RegisterRequest request) {
+    @Transactional
+    public AuthenticatedSession register(RegisterRequest request) {
         log.info("Register attempt for username: {}", request.getUsername());
-
-        if (userRepository.existsByUsername(request.getUsername())) {
-            log.warn("Username already exists: {}", request.getUsername());
-            throw new RuntimeException("Username already taken: " + request.getUsername());
-        }
-
-        if (userRepository.existsByEmail(request.getEmail())) {
-            log.warn("Email already exists: {}", request.getEmail());
-            throw new RuntimeException("Email already registered: " + request.getEmail());
-        }
-
-        User user = User.builder()
-                .username(request.getUsername())
-                .fullName(request.getFullName())
-                .email(request.getEmail())
-                .phoneNumber(request.getPhoneNumber())
-                .dateOfBirth(request.getDateOfBirth())
-                .addressLine1(request.getAddressLine1())
-                .city(request.getCity())
-                .state(request.getState())
-                .postalCode(request.getPostalCode())
-                .occupation(request.getOccupation())
-                .annualIncome(request.getAnnualIncome())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role("USER")
-                .createdAt(LocalDateTime.now())
-                .active(true)
-                .build();
-
-        userRepository.save(user);
+        User user = createUser(request, "USER");
         log.info("User registered successfully: {}", user.getUsername());
-
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-        return new AuthResponse(token, user.getUsername(), user.getRole(),
-                "Registration successful");
+        return openSession(user, "Registration successful");
     }
 
     /**
-     * Authenticates a user and issues a JWT token if credentials are valid.
-     * Checks if the account is active before allowing access.
-     *
-     * @param request The login credentials (username, password).
-     * @return An AuthResponse containing the JWT token.
+     * Creates an internal admin account from the admin workspace flow.
      */
-    public AuthResponse login(LoginRequest request) {
+    @Transactional
+    public UserResponse registerAdmin(RegisterRequest request) {
+        log.info("Admin onboarding attempt for username: {}", request.getUsername());
+        User user = createUser(request, "ADMIN");
+        log.info("Admin account created successfully: {}", user.getUsername());
+        return UserResponse.from(user);
+    }
+
+    /**
+     * Authenticates a user and opens a fresh rotating session.
+     */
+    @Transactional
+    public AuthenticatedSession login(LoginRequest request) {
         log.info("Login attempt for username: {}", request.getUsername());
 
         User user = userRepository.findByUsername(request.getUsername())
@@ -102,17 +93,55 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
         log.info("Login successful for user: {}, role: {}", user.getUsername(), user.getRole());
-
-        return new AuthResponse(token, user.getUsername(), user.getRole(), "Login successful");
+        return openSession(user, "Login successful");
     }
 
     /**
-     * Retrieves a list of all users from the database.
-     *
-     * @return A list of UserResponse objects.
+     * Uses a valid refresh token to rotate the session and mint a new access token.
      */
+    @Transactional
+    public AuthenticatedSession refreshSession(String rawRefreshToken) {
+        RefreshToken persistedToken = findActiveRefreshToken(rawRefreshToken)
+                .orElseThrow(() -> new RuntimeException("Refresh token is invalid or expired"));
+
+        if (persistedToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            persistedToken.setRevoked(true);
+            refreshTokenRepository.save(persistedToken);
+            throw new RuntimeException("Refresh token has expired");
+        }
+
+        User user = persistedToken.getUser();
+        if (!user.isActive()) {
+            persistedToken.setRevoked(true);
+            refreshTokenRepository.save(persistedToken);
+            throw new RuntimeException("Account is inactive. Please contact admin.");
+        }
+
+        persistedToken.setRevoked(true);
+        persistedToken.setLastUsedAt(LocalDateTime.now());
+        refreshTokenRepository.save(persistedToken);
+
+        return openSession(user, "Session refreshed");
+    }
+
+    /**
+     * Revokes the supplied refresh token if it exists.
+     */
+    @Transactional
+    public void logout(String rawRefreshToken) {
+        if (rawRefreshToken == null || rawRefreshToken.isBlank()) {
+            return;
+        }
+
+        findActiveRefreshToken(rawRefreshToken).ifPresent(token -> {
+            token.setRevoked(true);
+            token.setLastUsedAt(LocalDateTime.now());
+            refreshTokenRepository.save(token);
+            log.info("Refresh token revoked for user: {}", token.getUser().getUsername());
+        });
+    }
+
     public List<UserResponse> getAllUsers() {
         log.info("Fetching all users");
         return userRepository.findAll()
@@ -121,12 +150,6 @@ public class AuthService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Retrieves a specific user profile by its ID.
-     *
-     * @param id The unique identifier of the user account.
-     * @return The UserResponse object if found.
-     */
     public UserResponse getUserById(Long id) {
         log.info("Fetching user by ID: {}", id);
         User user = userRepository.findById(id)
@@ -137,12 +160,6 @@ public class AuthService {
         return UserResponse.from(user);
     }
 
-    /**
-     * Retrieves the profile for the authenticated user.
-     *
-     * @param username The authenticated username.
-     * @return The mapped profile response.
-     */
     public UserResponse getCurrentUser(String username) {
         log.info("Fetching current user by username: {}", username);
         User user = userRepository.findByUsername(username)
@@ -150,13 +167,7 @@ public class AuthService {
         return UserResponse.from(user);
     }
 
-    /**
-     * Updates the authenticated user's borrower profile.
-     *
-     * @param username The authenticated username.
-     * @param request The updated profile details.
-     * @return The updated profile response.
-     */
+    @Transactional
     public UserResponse updateCurrentUser(String username, ProfileUpdateRequest request) {
         log.info("Updating current user profile for username: {}", username);
 
@@ -182,14 +193,7 @@ public class AuthService {
         return UserResponse.from(userRepository.save(user));
     }
 
-    /**
-     * Updates an existing user's role and/or activation status.
-     *
-     * @param id     The ID of the user to update.
-     * @param role   The new role to assign (USER or ADMIN).
-     * @param active The new activation status.
-     * @return The updated UserResponse object.
-     */
+    @Transactional
     public UserResponse updateUser(Long id, String role, Boolean active) {
         log.info("Updating user ID: {} - role: {} - active: {}", id, role, active);
 
@@ -205,6 +209,9 @@ public class AuthService {
 
         if (active != null) {
             user.setActive(active);
+            if (!active) {
+                revokeAllActiveTokens(user);
+            }
         }
 
         User updated = userRepository.save(user);
@@ -212,12 +219,7 @@ public class AuthService {
         return UserResponse.from(updated);
     }
 
-    /**
-     * Deactivates a specific user account by setting its active status to false.
-     *
-     * @param id The ID of the user account to deactivate.
-     * @return The updated UserResponse object.
-     */
+    @Transactional
     public UserResponse deactivateUser(Long id) {
         log.info("Deactivating user ID: {}", id);
 
@@ -225,8 +227,97 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
 
         user.setActive(false);
+        revokeAllActiveTokens(user);
         User updated = userRepository.save(user);
         log.info("User ID: {} deactivated", id);
         return UserResponse.from(updated);
+    }
+
+    private AuthenticatedSession openSession(User user, String message) {
+        refreshTokenRepository.deleteByExpiresAtBefore(LocalDateTime.now());
+
+        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole());
+        String rawRefreshToken = generateRefreshTokenValue();
+
+        RefreshToken refreshToken = RefreshToken.builder()
+                .user(user)
+                .tokenHash(hashToken(rawRefreshToken))
+                .expiresAt(LocalDateTime.now().plus(java.time.Duration.ofMillis(refreshExpirationMs)))
+                .revoked(false)
+                .build();
+        refreshTokenRepository.save(refreshToken);
+
+        AuthResponse response = new AuthResponse(
+                accessToken,
+                user.getUsername(),
+                user.getRole(),
+                message,
+                jwtUtil.getAccessTokenExpirationMs()
+        );
+        return new AuthenticatedSession(response, rawRefreshToken);
+    }
+
+    private User createUser(RegisterRequest request, String role) {
+        ensureUniqueIdentity(request.getUsername(), request.getEmail());
+
+        User user = User.builder()
+                .username(request.getUsername())
+                .fullName(request.getFullName())
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .dateOfBirth(request.getDateOfBirth())
+                .addressLine1(request.getAddressLine1())
+                .city(request.getCity())
+                .state(request.getState())
+                .postalCode(request.getPostalCode())
+                .occupation(request.getOccupation())
+                .annualIncome(request.getAnnualIncome())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(role)
+                .createdAt(LocalDateTime.now())
+                .active(true)
+                .build();
+
+        return userRepository.save(user);
+    }
+
+    private void ensureUniqueIdentity(String username, String email) {
+        if (userRepository.existsByUsername(username)) {
+            log.warn("Username already exists: {}", username);
+            throw new RuntimeException("Username already taken: " + username);
+        }
+
+        if (userRepository.existsByEmail(email)) {
+            log.warn("Email already exists: {}", email);
+            throw new RuntimeException("Email already registered: " + email);
+        }
+    }
+
+    private Optional<RefreshToken> findActiveRefreshToken(String rawRefreshToken) {
+        return refreshTokenRepository.findByTokenHashAndRevokedFalse(hashToken(rawRefreshToken));
+    }
+
+    private void revokeAllActiveTokens(User user) {
+        refreshTokenRepository.findByUserAndRevokedFalse(user).forEach(token -> {
+            token.setRevoked(true);
+            token.setLastUsedAt(LocalDateTime.now());
+            refreshTokenRepository.save(token);
+        });
+    }
+
+    private String generateRefreshTokenValue() {
+        byte[] bytes = new byte[48];
+        SECURE_RANDOM.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    private String hashToken(String rawToken) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(rawToken.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalStateException("SHA-256 algorithm is unavailable", ex);
+        }
     }
 }

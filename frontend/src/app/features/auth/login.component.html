@@ -1,45 +1,76 @@
 <section class="auth-page">
-  <div class="auth-card">
-    <p class="eyebrow">Welcome back</p>
-    <h1>Sign in to FinFlow</h1>
-    <p class="hint">Choose your workspace below. Applicants continue their loan journey, while FinFlow staff enter the admin command center.</p>
+  <div class="auth-layout">
+    <aside class="auth-showcase">
+      <p class="eyebrow">FinFlow Access</p>
+      <h1>Enter the lending experience built for borrowers and operations teams.</h1>
+      <p class="showcase-copy">
+        Sign in to continue an active application, upload proof, track final decisions, or step into the internal
+        command center that powers review, verification, and approval operations.
+      </p>
 
-    <div class="mode-toggle" role="tablist" aria-label="Sign in mode">
-      <button class="mode-button" type="button" [class.active]="mode() === 'USER'" (click)="useApplicantMode()">Applicant</button>
-      <button class="mode-button" type="button" [class.active]="mode() === 'ADMIN'" (click)="useAdminMode()">Admin</button>
-    </div>
+      <div class="showcase-grid">
+        <article>
+          <strong>Applicant workspace</strong>
+          <span>Profile management, loan applications, document upload, and live status tracking.</span>
+        </article>
+        <article>
+          <strong>Operations command</strong>
+          <span>Loan decisioning, document verification, user controls, and team onboarding.</span>
+        </article>
+      </div>
 
-    @if (mode() === 'ADMIN') {
-      <p class="mode-note">Pre-filled with the seeded admin credentials so you can review loans, documents, users, and reports immediately.</p>
-    } @else {
-      <p class="mode-note">Use the account you created during registration to continue your application and upload documents.</p>
-    }
+      <div class="credential-note">
+        <span>Admin quick start</span>
+        <strong>Use the seeded admin account for internal testing.</strong>
+        <small>`admin` / `admin123`</small>
+      </div>
+    </aside>
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <label>
-        Username
-        <input formControlName="username" autocomplete="username" placeholder="admin or user1">
-        @if (usernameError()) {
-          <small class="field-error">{{ usernameError() }}</small>
-        }
-      </label>
-      <label>
-        Password
-        <input formControlName="password" type="password" autocomplete="current-password" placeholder="Your password">
-        @if (passwordError()) {
-          <small class="field-error">{{ passwordError() }}</small>
-        }
-      </label>
+    <div class="auth-card">
+      <p class="eyebrow">Welcome back</p>
+      <h2>Sign in to FinFlow</h2>
+      <p class="hint">Choose your workspace below. Applicants continue their loan journey, while FinFlow staff enter the admin command center.</p>
 
-      @if (error()) {
-        <p class="form-error">{{ error() }}</p>
+      <div class="mode-toggle" role="tablist" aria-label="Sign in mode">
+        <button class="mode-button" type="button" [class.active]="mode() === 'USER'" (click)="useApplicantMode()">Applicant</button>
+        <button class="mode-button" type="button" [class.active]="mode() === 'ADMIN'" (click)="useAdminMode()">Admin</button>
+      </div>
+
+      @if (mode() === 'ADMIN') {
+        <p class="mode-note">Pre-filled with the seeded admin credentials so you can review loans, documents, users, staff, and reports immediately.</p>
+      } @else {
+        <p class="mode-note">Use the borrower account you created during registration to continue your application and upload supporting documents.</p>
       }
 
-      <button class="solid-button large full" type="submit" [disabled]="isSubmitting()">
-        {{ isSubmitting() ? 'Signing in...' : mode() === 'ADMIN' ? 'Enter admin command center' : 'Continue to my workspace' }}
-      </button>
-    </form>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <label>
+          Username
+          <input formControlName="username" autocomplete="username" placeholder="admin or your applicant username">
+          @if (usernameError()) {
+            <small class="field-error">{{ usernameError() }}</small>
+          }
+        </label>
+        <label>
+          Password
+          <input formControlName="password" type="password" autocomplete="current-password" placeholder="Enter your password">
+          @if (passwordError()) {
+            <small class="field-error">{{ passwordError() }}</small>
+          }
+        </label>
 
-    <p class="switch-text">New applicant? <a routerLink="/register">Create an account</a></p>
+        @if (error()) {
+          <p class="form-error">{{ error() }}</p>
+        }
+
+        <button class="solid-button large full" type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Signing in...' : mode() === 'ADMIN' ? 'Open admin command center' : 'Open my applicant workspace' }}
+        </button>
+      </form>
+
+      <div class="auth-footnote">
+        <p class="switch-text">New borrower? <a routerLink="/register">Create your FinFlow profile</a></p>
+        <p class="micro-note">Your session uses short-lived access tokens with secure refresh handling behind the scenes.</p>
+      </div>
+    </div>
   </div>
 </section>

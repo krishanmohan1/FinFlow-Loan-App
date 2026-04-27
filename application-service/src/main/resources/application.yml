@@ -6,10 +6,10 @@ spring:
     name: APPLICATION-SERVICE
 
   datasource:
-    url: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
-    username: system
-    password: oracle
-    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:finflow_application}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Kolkata
+    username: ${DB_USERNAME:finflow_application_user}
+    password: ${DB_PASSWORD:FinflowApplication@2026!}
+    driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       initializationFailTimeout: -1
       connectionTimeout: 60000
@@ -25,9 +25,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.OracleDialect
-        temp:
-          use_jdbc_metadata_defaults: false
+        dialect: org.hibernate.dialect.MySQLDialect
 
   rabbitmq:
     host: rabbitmq

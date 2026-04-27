@@ -58,6 +58,10 @@ public class JwtUtil {
                 .compact();
     }
 
+    public long getAccessTokenExpirationMs() {
+        return expirationMs;
+    }
+
     /**
      * Parses the JWT token and extracts all contained claims.
      *

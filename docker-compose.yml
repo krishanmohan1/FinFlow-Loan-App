@@ -1,24 +1,24 @@
 services:
 
-  # ---------------- ORACLE DB ----------------
-  oracle-db:
-    image: gvenzl/oracle-xe:21-slim
-    container_name: oracle-db
+  # ---------------- MYSQL ----------------
+  mysql-db:
+    image: mysql:8.4
+    container_name: mysql-db
     restart: always
-    mem_limit: 3g
-    shm_size: 1g
-    ports:
-      - "1521:1521"
+    mem_limit: 768m
     environment:
-      ORACLE_PASSWORD: oracle
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-@Chegg1266}
+    ports:
+      - "3307:3306"
     volumes:
-      - oracle-data:/opt/oracle/oradata
+      - finflow-mysql-data:/var/lib/mysql
+      - ./mysql-service-setup.sql:/docker-entrypoint-initdb.d/01-finflow-init.sql:ro
     healthcheck:
-      test: [ "CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s system/oracle@localhost:1521/XEPDB1 | grep -q 1 || exit 1" ]
-      interval: 30s
-      timeout: 30s
-      retries: 20
-      start_period: 300s
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent" ]
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
     networks:
       - finflow-network
 
@@ -73,14 +73,18 @@ services:
       - "9091"
     command: [ "sh", "-c", "sleep 30 && java -Xmx384m -jar app.jar" ]
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
-      SPRING_DATASOURCE_USERNAME: system
-      SPRING_DATASOURCE_PASSWORD: oracle
+      DB_HOST: mysql-db
+      DB_PORT: 3306
+      DB_NAME: finflow_auth
+      DB_USERNAME: finflow_auth_user
+      DB_PASSWORD: "FinflowAuth@2026!"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       JWT_SECRET: mysecretkeymysecretkeymysecretkey12
       JWT_ISSUER: finflow-auth
+      JWT_EXPIRATION_MS: 900000
+      JWT_REFRESH_EXPIRATION_MS: 604800000
     depends_on:
-      oracle-db:
+      mysql-db:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
@@ -98,9 +102,11 @@ services:
       - "9092"
     command: [ "sh", "-c", "sleep 45 && java -Xmx384m -jar app.jar" ]
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
-      SPRING_DATASOURCE_USERNAME: system
-      SPRING_DATASOURCE_PASSWORD: oracle
+      DB_HOST: mysql-db
+      DB_PORT: 3306
+      DB_NAME: finflow_application
+      DB_USERNAME: finflow_application_user
+      DB_PASSWORD: "FinflowApplication@2026!"
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
@@ -109,7 +115,7 @@ services:
       JWT_SECRET: mysecretkeymysecretkeymysecretkey12
       JWT_ISSUER: finflow-auth
     depends_on:
-      oracle-db:
+      mysql-db:
         condition: service_healthy
       rabbitmq:
         condition: service_started
@@ -129,9 +135,11 @@ services:
       - "9093"
     command: [ "sh", "-c", "sleep 60 && java -Xmx384m -jar app.jar" ]
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XEPDB1
-      SPRING_DATASOURCE_USERNAME: system
-      SPRING_DATASOURCE_PASSWORD: oracle
+      DB_HOST: mysql-db
+      DB_PORT: 3306
+      DB_NAME: finflow_document
+      DB_USERNAME: finflow_document_user
+      DB_PASSWORD: "FinflowDocument@2026!"
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
@@ -142,7 +150,7 @@ services:
     volumes:
       - finflow-uploads:/root/finflow-uploads
     depends_on:
-      oracle-db:
+      mysql-db:
         condition: service_healthy
       rabbitmq:
         condition: service_started
@@ -162,10 +170,17 @@ services:
       - "9094"
     command: [ "sh", "-c", "sleep 75 && java -Xmx384m -jar app.jar" ]
     environment:
+      DB_HOST: mysql-db
+      DB_PORT: 3306
+      DB_NAME: finflow_admin
+      DB_USERNAME: finflow_admin_user
+      DB_PASSWORD: "FinflowAdmin@2026!"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       JWT_SECRET: mysecretkeymysecretkeymysecretkey12
       JWT_ISSUER: finflow-auth
     depends_on:
+      mysql-db:
+        condition: service_healthy
       eureka-server:
         condition: service_healthy
     networks:
@@ -209,5 +224,5 @@ networks:
     driver: bridge
 
 volumes:
-  oracle-data:
   finflow-uploads:
+  finflow-mysql-data:

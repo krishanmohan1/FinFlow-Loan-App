@@ -11,9 +11,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class AuthResponse {
     /**
-     * The generated JWT token for subsequent authenticated requests.
+     * The short-lived access token for authenticated API requests.
      */
-    private String token;
+    private String accessToken;
 
     /**
      * The username of the authenticated user.
@@ -29,4 +29,9 @@ public class AuthResponse {
      * A descriptive message regarding the authentication result.
      */
     private String message;
+
+    /**
+     * Access-token lifetime in milliseconds.
+     */
+    private long accessTokenExpiresInMs;
 }
