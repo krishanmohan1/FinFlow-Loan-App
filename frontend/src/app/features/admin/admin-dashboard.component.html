@@ -1,25 +1,66 @@
 <section class="admin-page">
-  <div class="admin-hero">
-    <div>
-      <p class="eyebrow">Admin command center</p>
-      <h1>Control tower for lending operations, decisions, compliance, and service quality.</h1>
+  <header class="admin-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Operations command center</p>
+      <h1>Review each borrower case with a clean step-by-step admin workflow.</h1>
       <p>
-        Review applications, verify uploaded proofs, manage users, onboard internal staff, and monitor the health of your
-        entire credit workflow from one secure FinFlow operations workspace.
+        Work through the queue in order: read the current loan pipeline, verify supporting documents, record the loan
+        decision, manage users, and onboard internal staff from one organized workspace.
       </p>
+
+      <div class="hero-actions">
+        <a class="ghost-button" href="#queue-step">Step 1: Queue</a>
+        <a class="ghost-button" href="#document-step">Step 2: Docs</a>
+        <a class="ghost-button" href="#decision-step">Step 3: Decision</a>
+        <a class="solid-button" href="#control-step">Step 4: Controls</a>
+      </div>
     </div>
-    <aside class="admin-focus-card">
-      <span>Operations pulse</span>
+
+    <aside class="hero-summary">
+      <span class="summary-label">Operations pulse</span>
       <strong>
         {{
-          pendingLoans() > 0 ? pendingLoans() + ' loans are waiting for action'
-          : 'The current queue is under control'
+          pendingLoans() > 0 ? pendingLoans() + ' borrower cases are waiting for action'
+          : 'The loan queue is currently under control'
         }}
       </strong>
-      <small>Use the panels below to load a case, record a decision, and keep the borrower journey moving without delay.</small>
+      <small>
+        FinFlow keeps loan, document, user, and report operations aligned so each case can be handled without jumping
+        between disconnected tools.
+      </small>
       <button class="solid-button large" type="button" (click)="loadAdminData()">Refresh live data</button>
     </aside>
-  </div>
+  </header>
+
+  <section class="process-strip">
+    <article class="process-card">
+      <span class="process-index">01</span>
+      <h2>Review queue</h2>
+      <p>Load an application from the active loan pipeline and check its current stage.</p>
+    </article>
+    <article class="process-card">
+      <span class="process-index">02</span>
+      <h2>Verify proof</h2>
+      <p>Inspect uploaded documents and confirm or reject them with clear remarks.</p>
+    </article>
+    <article class="process-card">
+      <span class="process-index">03</span>
+      <h2>Record decision</h2>
+      <p>Approve, reject, or mark the case under review with sanction details when needed.</p>
+    </article>
+    <article class="process-card">
+      <span class="process-index">04</span>
+      <h2>Control platform</h2>
+      <p>Update users, onboard staff, and track performance with reports and live operational totals.</p>
+    </article>
+  </section>
+
+  <section class="metrics-grid">
+    <article><span>Total loans</span><strong>{{ loans().length }}</strong></article>
+    <article><span>Pending loans</span><strong>{{ pendingLoans() }}</strong></article>
+    <article><span>Verified documents</span><strong>{{ verifiedDocuments() }}</strong></article>
+    <article><span>Active users</span><strong>{{ activeUsers() }}</strong></article>
+  </section>
 
   @if (message()) {
     <p class="notice success">{{ message() }}</p>
@@ -27,13 +68,6 @@
   @if (error()) {
     <p class="notice danger">{{ error() }}</p>
   }
-
-  <div class="stat-grid">
-    <article><strong>{{ loans().length }}</strong><span>Total loans</span></article>
-    <article><strong>{{ pendingLoans() }}</strong><span>Pending loans</span></article>
-    <article><strong>{{ verifiedDocuments() }}</strong><span>Verified documents</span></article>
-    <article><strong>{{ activeUsers() }}</strong><span>Active users</span></article>
-  </div>
 
   @if (report(); as reportData) {
     <section class="report-strip">
@@ -56,276 +90,360 @@
     </section>
   }
 
-  <div class="action-grid">
-    <section class="panel accent">
-      <div class="panel-heading">
-        <h2>Loan decision workspace</h2>
-        <span>Approval, rejection, and sanction inputs</span>
-      </div>
-      <form [formGroup]="decisionForm" (ngSubmit)="decideLoan()">
-        <label>Loan ID <input type="number" formControlName="loanId"></label>
-        <label>
-          Decision
-          <select formControlName="decision">
-            <option value="APPROVED">Approved</option>
-            <option value="REJECTED">Rejected</option>
-          </select>
-        </label>
-        <label>
-          Remarks
-          <textarea rows="3" formControlName="remarks"></textarea>
-          @if (decisionRemarksError()) {
-            <small class="field-error">{{ decisionRemarksError() }}</small>
-          }
-        </label>
-        <div class="mini-grid">
-          <label>Interest % <input type="number" formControlName="interestRate"></label>
-          <label>Tenure <input type="number" formControlName="tenureMonths"></label>
-          <label>Sanctioned <input type="number" formControlName="sanctionedAmount"></label>
+  <div class="admin-layout">
+    <aside class="workflow-sidebar">
+      <section class="side-panel">
+        <div class="side-heading">
+          <h2>Admin sequence</h2>
+          <span>Recommended flow</span>
         </div>
-        <button class="solid-button large" type="submit" [disabled]="isActing()">
-          {{ isActing() ? 'Saving...' : 'Submit decision' }}
-        </button>
-      </form>
-    </section>
+        <ol class="action-list">
+          <li>Start from the loan queue and load the borrower case you want to handle.</li>
+          <li>Inspect the linked documents and record verification remarks.</li>
+          <li>Approve, reject, or move the case under review with proper loan remarks.</li>
+          <li>Update user access, onboard staff, and check reporting totals.</li>
+        </ol>
+      </section>
 
-    <section class="panel">
-      <div class="panel-heading">
-        <h2>Document verification</h2>
-        <span>Compliance and KYC review</span>
-      </div>
-      <form [formGroup]="documentForm" (ngSubmit)="verifyDocument()">
-        <label>Document ID <input type="number" formControlName="documentId"></label>
-        <label>
-          Status
-          <select formControlName="status">
-            <option value="VERIFIED">Verified</option>
-            <option value="REJECTED">Rejected</option>
-          </select>
-        </label>
-        <label>
-          Remarks
-          <textarea rows="3" formControlName="remarks"></textarea>
-          @if (documentRemarksError()) {
-            <small class="field-error">{{ documentRemarksError() }}</small>
-          }
-        </label>
-        <button class="solid-button large" type="submit" [disabled]="isActing()">
-          {{ isActing() ? 'Saving...' : 'Update document' }}
-        </button>
-      </form>
-    </section>
+      <section class="side-panel">
+        <div class="side-heading">
+          <h2>Quick admin health</h2>
+          <span>What to watch now</span>
+        </div>
+        <div class="checklist-list">
+          <article>{{ pendingLoans() }} applications are waiting in the queue</article>
+          <article>{{ rejectedDocuments() }} documents currently need follow-up</article>
+          <article>{{ activeUsers() }} active platform users are on record</article>
+        </div>
+      </section>
+    </aside>
 
-    <section class="panel">
-      <div class="panel-heading">
-        <h2>User controls</h2>
-        <span>Role and activation management</span>
-      </div>
-      <form [formGroup]="userForm" (ngSubmit)="updateUser()">
-        <label>User ID <input type="number" formControlName="userId"></label>
-        <label>
-          Role
-          <select formControlName="role">
-            <option value="USER">User</option>
-            <option value="ADMIN">Admin</option>
-          </select>
-        </label>
-        <label class="check-row">
-          <input type="checkbox" formControlName="active">
-          Active account
-        </label>
-        <button class="solid-button large" type="submit" [disabled]="isActing()">
-          {{ isActing() ? 'Saving...' : 'Update user' }}
-        </button>
-      </form>
-    </section>
+    <div class="admin-content">
+      <section id="queue-step" class="step-panel">
+        <div class="step-header">
+          <div>
+            <span class="step-tag">Step 1</span>
+            <h2>Review the live loan queue</h2>
+          </div>
+          <p>Select a case and load it directly into the decision workspace so the review path stays structured.</p>
+        </div>
+
+        <section class="table-panel embedded-table">
+          <div class="panel-heading">
+            <h3>Loan queue</h3>
+            <span>Load any case into the decision form</span>
+          </div>
+          <div class="responsive-table">
+            <table>
+              <thead><tr><th>ID</th><th>User</th><th>Type</th><th>Amount</th><th>Tenure</th><th>Status</th><th>Applied</th><th>Action</th></tr></thead>
+              <tbody>
+                @for (loan of loans(); track loan.id) {
+                  <tr>
+                    <td>#{{ loan.id }}</td>
+                    <td>{{ loan.username }}</td>
+                    <td>{{ loan.loanType }}</td>
+                    <td>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</td>
+                    <td>{{ loan.tenureMonths }} months</td>
+                    <td><ff-status-pill [status]="loan.status || 'PENDING'" /></td>
+                    <td>{{ loan.appliedAt | date:'medium' }}</td>
+                    <td>
+                      <div class="table-actions">
+                        <button class="small-button" type="button" (click)="selectLoan(loan)">Load</button>
+                        <button class="small-button neutral" type="button" (click)="markUnderReview(loan.id)">Review</button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr><td colspan="8">No loans found.</td></tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="document-step" class="step-panel">
+        <div class="step-header">
+          <div>
+            <span class="step-tag">Step 2</span>
+            <h2>Verify borrower documents</h2>
+          </div>
+          <p>Load the document, validate it, and save a clear review remark that flows back to the borrower journey.</p>
+        </div>
+
+        <div class="stage-grid">
+          <section class="mini-panel">
+            <div class="mini-heading">
+              <h3>Document verification form</h3>
+              <span>Set the verification outcome</span>
+            </div>
+            <form [formGroup]="documentForm" (ngSubmit)="verifyDocument()">
+              <label>Document ID <input type="number" formControlName="documentId"></label>
+              <label>
+                Status
+                <select formControlName="status">
+                  <option value="VERIFIED">Verified</option>
+                  <option value="REJECTED">Rejected</option>
+                </select>
+              </label>
+              <label class="form-wide">
+                Remarks
+                <textarea rows="3" formControlName="remarks"></textarea>
+                @if (documentRemarksError()) {
+                  <small class="field-error">{{ documentRemarksError() }}</small>
+                }
+              </label>
+              <div class="form-action-row form-wide">
+                <button class="solid-button large" type="submit" [disabled]="isActing()">
+                  {{ isActing() ? 'Saving...' : 'Update document' }}
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="table-panel embedded-table">
+            <div class="panel-heading">
+              <h3>Document audit</h3>
+              <span>Load any document into the form</span>
+            </div>
+            <div class="responsive-table">
+              <table>
+                <thead><tr><th>ID</th><th>User</th><th>Loan</th><th>Type</th><th>Status</th><th>Remarks</th><th>Action</th></tr></thead>
+                <tbody>
+                  @for (doc of documents(); track doc.id) {
+                    <tr>
+                      <td>#{{ doc.id }}</td>
+                      <td>{{ doc.username }}</td>
+                      <td>{{ doc.loanId }}</td>
+                      <td>{{ doc.documentType }}</td>
+                      <td><ff-status-pill [status]="doc.verificationStatus" /></td>
+                      <td>{{ doc.verifiedRemarks || 'No remarks' }}</td>
+                      <td><button class="small-button" type="button" (click)="selectDocument(doc)">Load</button></td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="7">No documents found.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="decision-step" class="step-panel">
+        <div class="step-header">
+          <div>
+            <span class="step-tag">Step 3</span>
+            <h2>Record the loan decision</h2>
+          </div>
+          <p>Capture approval, rejection, or sanction details after you have reviewed the borrower case and the required proof.</p>
+        </div>
+
+        <section class="mini-panel">
+          <div class="mini-heading">
+            <h3>Decision workspace</h3>
+            <span>Approval and sanction details</span>
+          </div>
+          <form class="decision-form" [formGroup]="decisionForm" (ngSubmit)="decideLoan()">
+            <label>Loan ID <input type="number" formControlName="loanId"></label>
+            <label>
+              Decision
+              <select formControlName="decision">
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+            </label>
+            <label>
+              Interest %
+              <input type="number" formControlName="interestRate">
+            </label>
+            <label>
+              Tenure
+              <input type="number" formControlName="tenureMonths">
+            </label>
+            <label>
+              Sanctioned amount
+              <input type="number" formControlName="sanctionedAmount">
+            </label>
+            <label class="form-wide">
+              Remarks
+              <textarea rows="3" formControlName="remarks"></textarea>
+              @if (decisionRemarksError()) {
+                <small class="field-error">{{ decisionRemarksError() }}</small>
+              }
+            </label>
+            <div class="form-action-row form-wide">
+              <button class="solid-button large" type="submit" [disabled]="isActing()">
+                {{ isActing() ? 'Saving...' : 'Submit decision' }}
+              </button>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <section id="control-step" class="step-panel">
+        <div class="step-header">
+          <div>
+            <span class="step-tag">Step 4</span>
+            <h2>Manage users and internal staff</h2>
+          </div>
+          <p>Update access controls, onboard internal admin accounts, and keep the operations platform healthy.</p>
+        </div>
+
+        <div class="stage-grid">
+          <section class="mini-panel">
+            <div class="mini-heading">
+              <h3>User controls</h3>
+              <span>Role and activation management</span>
+            </div>
+            <form [formGroup]="userForm" (ngSubmit)="updateUser()">
+              <label>User ID <input type="number" formControlName="userId"></label>
+              <label>
+                Role
+                <select formControlName="role">
+                  <option value="USER">User</option>
+                  <option value="ADMIN">Admin</option>
+                </select>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" formControlName="active">
+                Active account
+              </label>
+              <div class="form-action-row">
+                <button class="solid-button large" type="submit" [disabled]="isActing()">
+                  {{ isActing() ? 'Saving...' : 'Update user' }}
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="table-panel embedded-table">
+            <div class="panel-heading">
+              <h3>User directory</h3>
+              <span>Load any user into the controls form</span>
+            </div>
+            <div class="responsive-table">
+              <table>
+                <thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Active</th><th>Created</th><th>Action</th></tr></thead>
+                <tbody>
+                  @for (user of users(); track user.id) {
+                    <tr>
+                      <td>#{{ user.id }}</td>
+                      <td>{{ user.fullName }}</td>
+                      <td>{{ user.username }}</td>
+                      <td>{{ user.email }}</td>
+                      <td>{{ user.role }}</td>
+                      <td>{{ user.active ? 'Yes' : 'No' }}</td>
+                      <td>{{ user.createdAt | date:'medium' }}</td>
+                      <td><button class="small-button" type="button" (click)="selectUser(user)">Load</button></td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="8">No users found.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <section class="mini-panel onboarding-panel">
+          <div class="mini-heading">
+            <h3>Internal staff onboarding</h3>
+            <span>Create the next admin account that can sign in to the command center</span>
+          </div>
+          <form class="staff-form" [formGroup]="staffForm" (ngSubmit)="createStaffAccount()">
+            <label>
+              Full name
+              <input formControlName="fullName" autocomplete="name">
+              @if (staffFieldError('fullName')) {
+                <small class="field-error">{{ staffFieldError('fullName') }}</small>
+              }
+            </label>
+            <label>
+              Email
+              <input formControlName="email" autocomplete="email">
+              @if (staffFieldError('email')) {
+                <small class="field-error">{{ staffFieldError('email') }}</small>
+              }
+            </label>
+            <label>
+              Mobile number
+              <input formControlName="phoneNumber" autocomplete="tel">
+              @if (staffFieldError('phoneNumber')) {
+                <small class="field-error">{{ staffFieldError('phoneNumber') }}</small>
+              }
+            </label>
+            <label>
+              Date of birth
+              <input formControlName="dateOfBirth" type="date">
+              @if (staffFieldError('dateOfBirth')) {
+                <small class="field-error">{{ staffFieldError('dateOfBirth') }}</small>
+              }
+            </label>
+            <label class="form-wide">
+              Address line
+              <input formControlName="addressLine1" autocomplete="street-address">
+              @if (staffFieldError('addressLine1')) {
+                <small class="field-error">{{ staffFieldError('addressLine1') }}</small>
+              }
+            </label>
+            <label>
+              City
+              <input formControlName="city" autocomplete="address-level2">
+              @if (staffFieldError('city')) {
+                <small class="field-error">{{ staffFieldError('city') }}</small>
+              }
+            </label>
+            <label>
+              State
+              <input formControlName="state" autocomplete="address-level1">
+              @if (staffFieldError('state')) {
+                <small class="field-error">{{ staffFieldError('state') }}</small>
+              }
+            </label>
+            <label>
+              PIN code
+              <input formControlName="postalCode" autocomplete="postal-code">
+              @if (staffFieldError('postalCode')) {
+                <small class="field-error">{{ staffFieldError('postalCode') }}</small>
+              }
+            </label>
+            <label>
+              Occupation
+              <input formControlName="occupation">
+              @if (staffFieldError('occupation')) {
+                <small class="field-error">{{ staffFieldError('occupation') }}</small>
+              }
+            </label>
+            <label>
+              Annual income
+              <input formControlName="annualIncome" type="number">
+              @if (staffFieldError('annualIncome')) {
+                <small class="field-error">{{ staffFieldError('annualIncome') }}</small>
+              }
+            </label>
+            <label>
+              Username
+              <input formControlName="username" autocomplete="username">
+              @if (staffFieldError('username')) {
+                <small class="field-error">{{ staffFieldError('username') }}</small>
+              }
+            </label>
+            <label>
+              Temporary password
+              <input formControlName="password" type="password" autocomplete="new-password">
+              @if (staffFieldError('password')) {
+                <small class="field-error">{{ staffFieldError('password') }}</small>
+              }
+            </label>
+            <div class="form-action-row form-wide">
+              <button class="solid-button large" type="submit" [disabled]="isCreatingStaff()">
+                {{ isCreatingStaff() ? 'Creating admin account...' : 'Create admin account' }}
+              </button>
+            </div>
+          </form>
+        </section>
+      </section>
+    </div>
   </div>
-
-  <section class="table-panel">
-    <div class="panel-heading">
-      <div>
-        <h2>Internal staff onboarding</h2>
-        <span>Create the next admin account that can sign in to the FinFlow command center</span>
-      </div>
-    </div>
-    <form class="staff-form" [formGroup]="staffForm" (ngSubmit)="createStaffAccount()">
-      <label>
-        Full name
-        <input formControlName="fullName" autocomplete="name">
-        @if (staffFieldError('fullName')) {
-          <small class="field-error">{{ staffFieldError('fullName') }}</small>
-        }
-      </label>
-      <label>
-        Email
-        <input formControlName="email" autocomplete="email">
-        @if (staffFieldError('email')) {
-          <small class="field-error">{{ staffFieldError('email') }}</small>
-        }
-      </label>
-      <label>
-        Mobile number
-        <input formControlName="phoneNumber" autocomplete="tel">
-        @if (staffFieldError('phoneNumber')) {
-          <small class="field-error">{{ staffFieldError('phoneNumber') }}</small>
-        }
-      </label>
-      <label>
-        Date of birth
-        <input formControlName="dateOfBirth" type="date">
-        @if (staffFieldError('dateOfBirth')) {
-          <small class="field-error">{{ staffFieldError('dateOfBirth') }}</small>
-        }
-      </label>
-      <label class="staff-form-wide">
-        Address line
-        <input formControlName="addressLine1" autocomplete="street-address">
-        @if (staffFieldError('addressLine1')) {
-          <small class="field-error">{{ staffFieldError('addressLine1') }}</small>
-        }
-      </label>
-      <label>
-        City
-        <input formControlName="city" autocomplete="address-level2">
-        @if (staffFieldError('city')) {
-          <small class="field-error">{{ staffFieldError('city') }}</small>
-        }
-      </label>
-      <label>
-        State
-        <input formControlName="state" autocomplete="address-level1">
-        @if (staffFieldError('state')) {
-          <small class="field-error">{{ staffFieldError('state') }}</small>
-        }
-      </label>
-      <label>
-        PIN code
-        <input formControlName="postalCode" autocomplete="postal-code">
-        @if (staffFieldError('postalCode')) {
-          <small class="field-error">{{ staffFieldError('postalCode') }}</small>
-        }
-      </label>
-      <label>
-        Occupation
-        <input formControlName="occupation">
-        @if (staffFieldError('occupation')) {
-          <small class="field-error">{{ staffFieldError('occupation') }}</small>
-        }
-      </label>
-      <label>
-        Annual income
-        <input formControlName="annualIncome" type="number">
-        @if (staffFieldError('annualIncome')) {
-          <small class="field-error">{{ staffFieldError('annualIncome') }}</small>
-        }
-      </label>
-      <label>
-        Username
-        <input formControlName="username" autocomplete="username">
-        @if (staffFieldError('username')) {
-          <small class="field-error">{{ staffFieldError('username') }}</small>
-        }
-      </label>
-      <label>
-        Temporary password
-        <input formControlName="password" type="password" autocomplete="new-password">
-        @if (staffFieldError('password')) {
-          <small class="field-error">{{ staffFieldError('password') }}</small>
-        }
-      </label>
-      <div class="staff-form-wide">
-        <button class="solid-button large" type="submit" [disabled]="isCreatingStaff()">
-          {{ isCreatingStaff() ? 'Creating admin account...' : 'Create admin account' }}
-        </button>
-      </div>
-    </form>
-  </section>
-
-  <section class="table-panel">
-    <div class="panel-heading">
-      <h2>Loan queue</h2>
-      <span>Load any case into the decision workspace</span>
-    </div>
-    <div class="responsive-table">
-      <table>
-        <thead><tr><th>ID</th><th>User</th><th>Type</th><th>Amount</th><th>Tenure</th><th>Status</th><th>Applied</th><th>Action</th></tr></thead>
-        <tbody>
-          @for (loan of loans(); track loan.id) {
-            <tr>
-              <td>#{{ loan.id }}</td>
-              <td>{{ loan.username }}</td>
-              <td>{{ loan.loanType }}</td>
-              <td>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</td>
-              <td>{{ loan.tenureMonths }} months</td>
-              <td><ff-status-pill [status]="loan.status || 'PENDING'" /></td>
-              <td>{{ loan.appliedAt | date:'medium' }}</td>
-              <td>
-                <div class="table-actions">
-                  <button class="small-button" type="button" (click)="selectLoan(loan)">Load</button>
-                  <button class="small-button neutral" type="button" (click)="markUnderReview(loan.id)">Review</button>
-                </div>
-              </td>
-            </tr>
-          } @empty {
-            <tr><td colspan="8">No loans found.</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="table-panel">
-    <div class="panel-heading">
-      <h2>Document audit</h2>
-      <span>Load any row into the verification form</span>
-    </div>
-    <div class="responsive-table">
-      <table>
-        <thead><tr><th>ID</th><th>User</th><th>Loan</th><th>Type</th><th>Status</th><th>Remarks</th><th>Action</th></tr></thead>
-        <tbody>
-          @for (doc of documents(); track doc.id) {
-            <tr>
-              <td>#{{ doc.id }}</td>
-              <td>{{ doc.username }}</td>
-              <td>{{ doc.loanId }}</td>
-              <td>{{ doc.documentType }}</td>
-              <td><ff-status-pill [status]="doc.verificationStatus" /></td>
-              <td>{{ doc.verifiedRemarks || 'No remarks' }}</td>
-              <td><button class="small-button" type="button" (click)="selectDocument(doc)">Load</button></td>
-            </tr>
-          } @empty {
-            <tr><td colspan="7">No documents found.</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="table-panel">
-    <div class="panel-heading">
-      <h2>User directory</h2>
-      <span>Load any user into the controls form</span>
-    </div>
-    <div class="responsive-table">
-      <table>
-        <thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Active</th><th>Created</th><th>Action</th></tr></thead>
-        <tbody>
-          @for (user of users(); track user.id) {
-            <tr>
-              <td>#{{ user.id }}</td>
-              <td>{{ user.fullName }}</td>
-              <td>{{ user.username }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.role }}</td>
-              <td>{{ user.active ? 'Yes' : 'No' }}</td>
-              <td>{{ user.createdAt | date:'medium' }}</td>
-              <td><button class="small-button" type="button" (click)="selectUser(user)">Load</button></td>
-            </tr>
-          } @empty {
-            <tr><td colspan="8">No users found.</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
 </section>
