@@ -21,6 +21,8 @@ import { Component, Input } from '@angular/core';
     .approved, .verified { color: #064d34; background: #c8f8de; }
     .rejected { color: #7b1621; background: #ffd1d6; }
     .review { color: #193c83; background: #dbe8ff; }
+    .offer { color: #7a5300; background: #ffe6aa; }
+    .active-loan { color: #0d4f66; background: #d7f3ff; }
     .default { color: #344054; background: #edf1f5; }
   `
 })
@@ -38,6 +40,9 @@ export class StatusPillComponent {
     if (value === 'VERIFIED') return 'verified';
     if (value === 'REJECTED') return 'rejected';
     if (value === 'UNDER_REVIEW') return 'review';
+    if (value === 'OFFER_MADE') return 'offer';
+    if (value === 'ACTIVE') return 'active-loan';
+    if (value === 'OFFER_DECLINED') return 'rejected';
     return 'default';
   }
 }

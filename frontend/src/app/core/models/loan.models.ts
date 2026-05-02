@@ -1,4 +1,14 @@
-export type LoanStatus = 'PENDING' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | string;
+export type LoanStatus =
+  | 'PENDING'
+  | 'UNDER_REVIEW'
+  | 'OFFER_MADE'
+  | 'ACTIVE'
+  | 'REJECTED'
+  | 'WITHDRAWN'
+  | 'OFFER_DECLINED'
+  | string;
+
+export type BorrowerDecision = 'PENDING' | 'ACCEPTED' | 'DECLINED' | string;
 
 export interface LoanApplication {
   id?: number;
@@ -10,6 +20,14 @@ export interface LoanApplication {
   purpose: string;
   appliedAt?: string;
   remarks?: string;
+  sanctionedAmount?: number;
+  interestRate?: number;
+  processingFee?: number;
+  gstAmount?: number;
+  monthlyEmi?: number;
+  firstEmiDate?: string;
+  borrowerDecision?: BorrowerDecision;
+  borrowerDecisionAt?: string;
 }
 
 export interface LoanDecisionRequest {
@@ -30,5 +48,14 @@ export interface LoanStatusCounts {
   APPROVED?: number;
   REJECTED?: number;
   UNDER_REVIEW?: number;
+  OFFER_MADE?: number;
+  ACTIVE?: number;
+  OFFER_DECLINED?: number;
+  WITHDRAWN?: number;
   [key: string]: number | undefined;
+}
+
+export interface LoanOfferResponseRequest {
+  borrowerDecision: 'ACCEPTED' | 'DECLINED';
+  borrowerRemarks?: string;
 }

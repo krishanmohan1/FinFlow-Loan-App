@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Entity class representing a loan application in the system.
@@ -47,8 +48,8 @@ public class LoanApplication {
      */
     @NotBlank(message = "Status is required")
     @Pattern(
-            regexp = "^(PENDING|APPROVED|REJECTED|UNDER_REVIEW|WITHDRAWN)$",
-            message = "Status must be PENDING, APPROVED, REJECTED, UNDER_REVIEW, or WITHDRAWN"
+            regexp = "^(PENDING|UNDER_REVIEW|OFFER_MADE|ACTIVE|REJECTED|WITHDRAWN|OFFER_DECLINED)$",
+            message = "Status must be PENDING, UNDER_REVIEW, OFFER_MADE, ACTIVE, REJECTED, WITHDRAWN, or OFFER_DECLINED"
     )
     @Column(nullable = false, length = 20)
     private String status;
@@ -94,6 +95,58 @@ public class LoanApplication {
     private String remarks;
 
     /**
+     * Final sanctioned principal offered by the credit team.
+     */
+    @Column(name = "sanctioned_amount")
+    private Double sanctionedAmount;
+
+    /**
+     * Final offered interest rate.
+     */
+    @Column(name = "interest_rate")
+    private Double interestRate;
+
+    /**
+     * Processing fee applied on the sanctioned offer.
+     */
+    @Column(name = "processing_fee")
+    private Double processingFee;
+
+    /**
+     * GST amount derived from the processing fee.
+     */
+    @Column(name = "gst_amount")
+    private Double gstAmount;
+
+    /**
+     * Computed monthly EMI for the sanctioned offer.
+     */
+    @Column(name = "monthly_emi")
+    private Double monthlyEmi;
+
+    /**
+     * First EMI due date offered to the borrower.
+     */
+    @Column(name = "first_emi_date")
+    private LocalDate firstEmiDate;
+
+    /**
+     * Borrower response to the current loan offer.
+     */
+    @Pattern(
+            regexp = "^(PENDING|ACCEPTED|DECLINED)$",
+            message = "Borrower decision must be PENDING, ACCEPTED, or DECLINED"
+    )
+    @Column(name = "borrower_decision", length = 20)
+    private String borrowerDecision;
+
+    /**
+     * Timestamp for the borrower response.
+     */
+    @Column(name = "borrower_decision_at")
+    private LocalDateTime borrowerDecisionAt;
+
+    /**
      * Lifecycle callback to initialize default values before persistence.
      * Sets the application timestamp and defaults the status to PENDING if not specified.
      */
@@ -104,6 +157,9 @@ public class LoanApplication {
         }
         if (this.status == null) {
             this.status = "PENDING";
+        }
+        if (this.borrowerDecision == null) {
+            this.borrowerDecision = "PENDING";
         }
     }
 }

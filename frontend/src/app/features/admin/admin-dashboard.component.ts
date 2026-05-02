@@ -1,7 +1,7 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize, forkJoin } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { StaffRegistrationRequest, UserProfile } from '@core/models/auth.models';
 import { LoanDocument } from '@core/models/document.models';
 import { LoanApplication, LoanDecisionRequest } from '@core/models/loan.models';
@@ -30,11 +30,43 @@ export class AdminDashboardComponent implements OnInit {
   protected readonly isCreatingStaff = signal(false);
   protected readonly message = signal('');
   protected readonly error = signal('');
+  protected readonly activeStage = signal<'queue' | 'documents' | 'decision' | 'controls'>('queue');
+  protected readonly loanFilter = signal<'ALL' | 'PENDING' | 'UNDER_REVIEW' | 'OFFER_MADE' | 'ACTIVE' | 'REJECTED'>('PENDING');
+  protected readonly documentFilter = signal<'ALL' | 'PENDING' | 'VERIFIED' | 'REJECTED'>('PENDING');
+  protected readonly selectedLoan = signal<LoanApplication | null>(null);
+  protected readonly selectedDocument = signal<LoanDocument | null>(null);
+  protected readonly selectedUser = signal<UserProfile | null>(null);
 
   protected readonly pendingLoans = computed(() => this.loans().filter((loan) => loan.status === 'PENDING').length);
   protected readonly verifiedDocuments = computed(() => this.documents().filter((doc) => doc.verificationStatus === 'VERIFIED').length);
   protected readonly activeUsers = computed(() => this.users().filter((user) => user.active).length);
   protected readonly rejectedDocuments = computed(() => this.documents().filter((doc) => doc.verificationStatus === 'REJECTED').length);
+  protected readonly filteredLoans = computed(() => {
+    const filter = this.loanFilter();
+    return filter === 'ALL' ? this.loans() : this.loans().filter((loan) => loan.status === filter);
+  });
+  protected readonly filteredDocuments = computed(() => {
+    const filter = this.documentFilter();
+    return filter === 'ALL'
+      ? this.documents()
+      : this.documents().filter((document) => document.verificationStatus === filter);
+  });
+  protected readonly selectedLoanDocuments = computed(() => {
+    const loan = this.selectedLoan();
+    if (!loan?.id) {
+      return [];
+    }
+    return this.documents().filter((document) => document.loanId === String(loan.id));
+  });
+  protected readonly selectedBorrower = computed(() => {
+    const loanUser = this.selectedLoan()?.username;
+    const documentUser = this.selectedDocument()?.username;
+    const username = loanUser || documentUser || this.selectedUser()?.username;
+    if (!username) {
+      return null;
+    }
+    return this.users().find((user) => user.username === username) ?? null;
+  });
 
   protected readonly decisionForm = this.fb.nonNullable.group({
     loanId: [1, [Validators.required, Validators.min(1)]],
@@ -79,10 +111,10 @@ export class AdminDashboardComponent implements OnInit {
   loadAdminData(): void {
     this.isLoading.set(true);
     forkJoin({
-      loans: this.adminApi.loans(),
-      documents: this.adminApi.documents(),
-      users: this.adminApi.users(),
-      report: this.adminApi.report()
+      loans: this.adminApi.loans().pipe(catchError(() => of([]))),
+      documents: this.adminApi.documents().pipe(catchError(() => of([]))),
+      users: this.adminApi.users().pipe(catchError(() => of([]))),
+      report: this.adminApi.report().pipe(catchError(() => of(null)))
     })
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
@@ -91,12 +123,42 @@ export class AdminDashboardComponent implements OnInit {
           this.documents.set(documents);
           this.users.set(users);
           this.report.set(report);
+          if (!this.selectedLoan() && loans.length > 0) {
+            this.selectedLoan.set(loans[0]);
+          }
+          if (report === null) {
+            this.message.set('Core admin queues loaded. Summary report is temporarily unavailable, but you can continue working on cases.');
+          }
         },
         error: (error) => this.error.set(resolveApiError(error, 'Admin data failed to load.'))
       });
   }
 
+  setActiveStage(stage: 'queue' | 'documents' | 'decision' | 'controls'): void {
+    this.activeStage.set(stage);
+    this.message.set('');
+    this.error.set('');
+  }
+
+  setLoanFilter(filter: 'ALL' | 'PENDING' | 'UNDER_REVIEW' | 'OFFER_MADE' | 'ACTIVE' | 'REJECTED'): void {
+    this.loanFilter.set(filter);
+  }
+
+  setDocumentFilter(filter: 'ALL' | 'PENDING' | 'VERIFIED' | 'REJECTED'): void {
+    this.documentFilter.set(filter);
+  }
+
+  loadNextPendingCase(): void {
+    const nextPending = this.loans().find((loan) => loan.status === 'PENDING') ?? this.loans()[0];
+    if (!nextPending) {
+      this.error.set('There are no loan applications available to load right now.');
+      return;
+    }
+    this.selectLoan(nextPending);
+  }
+
   selectLoan(loan: LoanApplication): void {
+    this.selectedLoan.set(loan);
     if (!loan.id) {
       return;
     }
@@ -104,30 +166,39 @@ export class AdminDashboardComponent implements OnInit {
       loanId: loan.id,
       decision: loan.status === 'REJECTED' ? 'REJECTED' : 'APPROVED',
       remarks: loan.remarks || 'Approved after verification and financial review.',
-      sanctionedAmount: loan.amount,
-      interestRate: 8.5,
-      tenureMonths: 60
+      sanctionedAmount: loan.sanctionedAmount || loan.amount,
+      interestRate: loan.interestRate || 8.5,
+      tenureMonths: loan.tenureMonths || 60
     });
+    this.activeStage.set('decision');
     this.message.set(`Loan #${loan.id} loaded into the decision workspace.`);
     this.error.set('');
   }
 
   selectDocument(document: LoanDocument): void {
+    this.selectedDocument.set(document);
+    const linkedLoan = this.loans().find((loan) => String(loan.id) === document.loanId);
+    if (linkedLoan) {
+      this.selectedLoan.set(linkedLoan);
+    }
     this.documentForm.patchValue({
       documentId: document.id,
       status: document.verificationStatus === 'REJECTED' ? 'REJECTED' : 'VERIFIED',
       remarks: document.verifiedRemarks || 'Document looks valid and matches applicant details.'
     });
+    this.activeStage.set('documents');
     this.message.set(`Document #${document.id} loaded into the verification workspace.`);
     this.error.set('');
   }
 
   selectUser(user: UserProfile): void {
+    this.selectedUser.set(user);
     this.userForm.patchValue({
       userId: user.id,
       role: user.role,
       active: user.active
     });
+    this.activeStage.set('controls');
     this.message.set(`User #${user.id} loaded into the user controls workspace.`);
     this.error.set('');
   }
@@ -170,7 +241,9 @@ export class AdminDashboardComponent implements OnInit {
     };
     this.runAction(
       this.adminApi.decideLoan(loanId, payload),
-      `Loan #${loanId} decision submitted.`
+      request.decision === 'APPROVED'
+        ? `Loan #${loanId} offer created and sent to the borrower for acceptance.`
+        : `Loan #${loanId} was rejected and the borrower can now see the decision.`
     );
   }
 

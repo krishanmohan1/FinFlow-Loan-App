@@ -82,11 +82,14 @@ public class LoanConsumer {
         log.info("Status Update -> ID: {} | User: {} | Status: {} | Remarks: {}",
                 message.getLoanId(), message.getUsername(), message.getStatus(), message.getRemarks());
 
-        if ("APPROVED".equals(message.getStatus())) {
-            log.info("Loan [{}] APPROVED - documents can now be marked as final", message.getLoanId());
+        if ("ACTIVE".equals(message.getStatus())) {
+            log.info("Loan [{}] ACTIVE - documents can now be marked as final", message.getLoanId());
 
             documentRepository.findByLoanId(String.valueOf(message.getLoanId()))
                     .forEach(document -> markDocumentComplete(document));
+
+        } else if ("OFFER_MADE".equals(message.getStatus())) {
+            log.info("Loan [{}] OFFER_MADE - borrower offer is awaiting acceptance", message.getLoanId());
 
         } else if ("REJECTED".equals(message.getStatus())) {
             log.warn("Loan [{}] REJECTED - Reason: {}", message.getLoanId(), message.getRemarks());

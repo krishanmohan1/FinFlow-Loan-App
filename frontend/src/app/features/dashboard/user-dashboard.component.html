@@ -2,17 +2,17 @@
   <header class="workspace-hero">
     <div class="hero-copy">
       <p class="eyebrow">Borrower workspace</p>
-      <h1>{{ profile()?.fullName || username() }}, your loan journey is fully guided.</h1>
+      <h1>{{ profile()?.fullName || username() }}, your loan journey is now guided step by step.</h1>
       <p>
-        Move through each stage in order: confirm your profile, submit the right loan, upload the supporting proofs,
-        and track the final decision from one clean workspace.
+        FinFlow keeps profile details, loan requests, documents, and final decisions in one product flow so you always
+        know what comes next and what is already complete.
       </p>
 
       <div class="hero-actions">
-        <a class="ghost-button" href="#profile-step">Step 1: Profile</a>
-        <a class="ghost-button" href="#apply-step">Step 2: Apply</a>
-        <a class="ghost-button" href="#document-step">Step 3: Upload docs</a>
-        <a class="solid-button" href="#tracking-step">Step 4: Track status</a>
+        <button class="ghost-button" type="button" (click)="setActiveStep(1)">Profile</button>
+        <button class="ghost-button" type="button" (click)="setActiveStep(2)">Apply</button>
+        <button class="ghost-button" type="button" (click)="setActiveStep(3)">Documents</button>
+        <button class="solid-button" type="button" (click)="setActiveStep(4)">Track outcome</button>
       </div>
     </div>
 
@@ -20,14 +20,15 @@
       <span class="summary-label">Current focus</span>
       <strong>
         {{
-          currentStage() === 1 ? 'Prepare your first application'
-          : currentStage() === 2 ? 'Attach the documents your case needs'
-          : currentStage() === 3 ? 'Watch review remarks and loan progress'
-          : 'Review the final outcome and next actions'
+          activeStep() === 1 ? 'Confirm your borrower record'
+          : activeStep() === 2 ? 'Submit the right loan request'
+          : activeStep() === 3 ? 'Attach the correct supporting proofs'
+          : 'Monitor remarks, status, and decisions'
         }}
       </strong>
       <small>
-        FinFlow keeps every stage connected, so your profile, loan records, and uploaded proofs stay synchronized.
+        Recommended next step: {{ flowSteps[nextRecommendedStep() - 1].title }}. You can move back and forth anytime
+        without losing the overall picture.
       </small>
       <div class="summary-mini-grid">
         <article>
@@ -44,11 +45,17 @@
 
   <section class="process-strip">
     @for (step of flowSteps; track step.id) {
-      <article class="process-card" [class.complete]="isStepComplete(step.id)" [class.active]="isStepActive(step.id)">
+      <button
+        class="process-card"
+        type="button"
+        [class.complete]="isStepComplete(step.id)"
+        [class.active]="activeStep() === step.id"
+        (click)="setActiveStep(step.id)"
+      >
         <span class="process-index">0{{ step.id }}</span>
         <h2>{{ step.title }}</h2>
         <p>{{ step.detail }}</p>
-      </article>
+      </button>
     }
   </section>
 
@@ -62,8 +69,8 @@
       <strong>{{ pendingLoans() }}</strong>
     </article>
     <article>
-      <span>Approved</span>
-      <strong>{{ approvedLoans() }}</strong>
+      <span>Active loans</span>
+      <strong>{{ activeLoans() }}</strong>
     </article>
     <article>
       <span>Docs pending</span>
@@ -82,349 +89,445 @@
     <aside class="journey-sidebar">
       <section class="side-panel">
         <div class="side-heading">
-          <h2>Next actions</h2>
-          <span>Recommended route</span>
+          <h2>Journey navigator</h2>
+          <span>Move through the workflow</span>
         </div>
-        <ol class="action-list">
-          <li>Review your borrower profile and correct any outdated information.</li>
-          <li>Choose a loan product, amount, tenure, and purpose.</li>
-          <li>Upload the proof required for the selected loan type.</li>
-          <li>Track remarks, status changes, and final admin decisions.</li>
-        </ol>
+        <div class="step-rail">
+          @for (step of flowSteps; track step.id) {
+            <button
+              class="step-rail-item"
+              type="button"
+              [class.complete]="isStepComplete(step.id)"
+              [class.active]="activeStep() === step.id"
+              (click)="setActiveStep(step.id)"
+            >
+              <strong>0{{ step.id }}</strong>
+              <span>{{ step.title }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <section class="side-panel">
+        <div class="side-heading">
+          <h2>Live timeline</h2>
+          <span>What has happened so far</span>
+        </div>
+        <div class="timeline-list">
+          @for (item of timelineEntries(); track item.title) {
+            <article class="timeline-item" [class.done]="item.state === 'done'" [class.active]="item.state === 'active'">
+              <strong>{{ item.title }}</strong>
+              <p>{{ item.detail }}</p>
+            </article>
+          }
+        </div>
       </section>
 
       <section class="side-panel">
         <div class="side-heading">
           <h2>Required proof checklist</h2>
-          <span>Aligned to loan type</span>
+          <span>Aligned to your selected loan type</span>
         </div>
         <div class="checklist-list">
-          @for (item of requiredDocuments(); track item) {
-            <article>{{ item }}</article>
+          @for (item of documentProgress(); track item.label) {
+            <article [class.done]="item.done">
+              <strong>{{ item.done ? 'Done' : 'Need' }}</strong>
+              <span>{{ item.label }}</span>
+            </article>
           }
         </div>
       </section>
     </aside>
 
     <div class="workspace-content">
-      <section id="profile-step" class="step-panel">
+      <section class="step-panel">
         <div class="step-header">
           <div>
-            <span class="step-tag">Step 1</span>
-            <h2>Confirm your borrower profile</h2>
+            <span class="step-tag">Current stage</span>
+            <h2>{{ flowSteps[activeStep() - 1].title }}</h2>
           </div>
-          <p>This record flows into loan review, document verification, and the final admin decision.</p>
+          <p>{{ flowSteps[activeStep() - 1].detail }}</p>
         </div>
 
-        <div class="profile-overview-grid">
-          <section class="mini-panel">
-            <div class="mini-heading">
-              <h3>Profile snapshot</h3>
-              <span>Live account summary</span>
-            </div>
-            <div class="profile-list">
-              @for (field of profileFields(); track field.label) {
-                <article>
-                  <span>{{ field.label }}</span>
-                  <strong>{{ field.value }}</strong>
-                </article>
-              }
-            </div>
-          </section>
+        @if (activeStep() === 1) {
+          <div class="profile-overview-grid">
+            <section class="mini-panel">
+              <div class="mini-heading">
+                <h3>Profile snapshot</h3>
+                <span>Live borrower summary</span>
+              </div>
+              <div class="profile-list">
+                @for (field of profileFields(); track field.label) {
+                  <article>
+                    <span>{{ field.label }}</span>
+                    <strong>{{ field.value }}</strong>
+                  </article>
+                }
+              </div>
+            </section>
 
-          <section class="mini-panel">
-            <div class="mini-heading">
-              <h3>Borrower record</h3>
-              <span>Edit and save</span>
-            </div>
-            <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+            <section class="mini-panel">
+              <div class="mini-heading">
+                <h3>Borrower record</h3>
+                <span>Edit and save before you apply</span>
+              </div>
+              <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+                <label>
+                  Full name
+                  <input formControlName="fullName" autocomplete="name">
+                  @if (profileFieldError('fullName')) {
+                    <small class="field-error">{{ profileFieldError('fullName') }}</small>
+                  }
+                </label>
+                <label>
+                  Email
+                  <input formControlName="email" autocomplete="email">
+                  @if (profileFieldError('email')) {
+                    <small class="field-error">{{ profileFieldError('email') }}</small>
+                  }
+                </label>
+                <label>
+                  Mobile number
+                  <input formControlName="phoneNumber" autocomplete="tel">
+                  @if (profileFieldError('phoneNumber')) {
+                    <small class="field-error">{{ profileFieldError('phoneNumber') }}</small>
+                  }
+                </label>
+                <label>
+                  Date of birth
+                  <input formControlName="dateOfBirth" type="date">
+                  @if (profileFieldError('dateOfBirth')) {
+                    <small class="field-error">{{ profileFieldError('dateOfBirth') }}</small>
+                  }
+                </label>
+                <label>
+                  Occupation
+                  <input formControlName="occupation">
+                  @if (profileFieldError('occupation')) {
+                    <small class="field-error">{{ profileFieldError('occupation') }}</small>
+                  }
+                </label>
+                <label>
+                  Annual income (INR)
+                  <input formControlName="annualIncome" type="number">
+                  @if (profileFieldError('annualIncome')) {
+                    <small class="field-error">{{ profileFieldError('annualIncome') }}</small>
+                  }
+                </label>
+                <label class="profile-form-wide">
+                  Address line
+                  <input formControlName="addressLine1" autocomplete="street-address">
+                  @if (profileFieldError('addressLine1')) {
+                    <small class="field-error">{{ profileFieldError('addressLine1') }}</small>
+                  }
+                </label>
+                <label>
+                  City
+                  <input formControlName="city" autocomplete="address-level2">
+                  @if (profileFieldError('city')) {
+                    <small class="field-error">{{ profileFieldError('city') }}</small>
+                  }
+                </label>
+                <label>
+                  State
+                  <input formControlName="state" autocomplete="address-level1">
+                  @if (profileFieldError('state')) {
+                    <small class="field-error">{{ profileFieldError('state') }}</small>
+                  }
+                </label>
+                <label>
+                  Postal code
+                  <input formControlName="postalCode" autocomplete="postal-code">
+                  @if (profileFieldError('postalCode')) {
+                    <small class="field-error">{{ profileFieldError('postalCode') }}</small>
+                  }
+                </label>
+                <div class="form-action-row profile-form-wide">
+                  <button class="ghost-button large" type="button" (click)="goToNextStep()">Continue to loan form</button>
+                  <button class="solid-button large" type="submit" [disabled]="isSavingProfile()">
+                    {{ isSavingProfile() ? 'Saving profile...' : 'Save borrower profile' }}
+                  </button>
+                </div>
+              </form>
+            </section>
+          </div>
+        }
+
+        @if (activeStep() === 2) {
+          <div class="stage-detail-grid">
+            <form class="step-form" [formGroup]="loanForm" (ngSubmit)="submitLoan()">
               <label>
-                Full name
-                <input formControlName="fullName" autocomplete="name">
-                @if (profileFieldError('fullName')) {
-                  <small class="field-error">{{ profileFieldError('fullName') }}</small>
+                Amount
+                <input type="number" formControlName="amount">
+                @if (amountError()) {
+                  <small class="field-error">{{ amountError() }}</small>
                 }
               </label>
               <label>
-                Email
-                <input formControlName="email" autocomplete="email">
-                @if (profileFieldError('email')) {
-                  <small class="field-error">{{ profileFieldError('email') }}</small>
-                }
+                Loan type
+                <select formControlName="loanType">
+                  @for (option of loanTypeOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
               </label>
               <label>
-                Mobile number
-                <input formControlName="phoneNumber" autocomplete="tel">
-                @if (profileFieldError('phoneNumber')) {
-                  <small class="field-error">{{ profileFieldError('phoneNumber') }}</small>
+                Tenure (months)
+                <input type="number" formControlName="tenureMonths">
+                @if (tenureError()) {
+                  <small class="field-error">{{ tenureError() }}</small>
                 }
               </label>
-              <label>
-                Date of birth
-                <input formControlName="dateOfBirth" type="date">
-                @if (profileFieldError('dateOfBirth')) {
-                  <small class="field-error">{{ profileFieldError('dateOfBirth') }}</small>
+              <label class="form-wide">
+                Purpose
+                <textarea formControlName="purpose" rows="4"></textarea>
+                @if (purposeError()) {
+                  <small class="field-error">{{ purposeError() }}</small>
                 }
               </label>
-              <label>
-                Occupation
-                <input formControlName="occupation">
-                @if (profileFieldError('occupation')) {
-                  <small class="field-error">{{ profileFieldError('occupation') }}</small>
-                }
-              </label>
-              <label>
-                Annual income (INR)
-                <input formControlName="annualIncome" type="number">
-                @if (profileFieldError('annualIncome')) {
-                  <small class="field-error">{{ profileFieldError('annualIncome') }}</small>
-                }
-              </label>
-              <label class="profile-form-wide">
-                Address line
-                <input formControlName="addressLine1" autocomplete="street-address">
-                @if (profileFieldError('addressLine1')) {
-                  <small class="field-error">{{ profileFieldError('addressLine1') }}</small>
-                }
-              </label>
-              <label>
-                City
-                <input formControlName="city" autocomplete="address-level2">
-                @if (profileFieldError('city')) {
-                  <small class="field-error">{{ profileFieldError('city') }}</small>
-                }
-              </label>
-              <label>
-                State
-                <input formControlName="state" autocomplete="address-level1">
-                @if (profileFieldError('state')) {
-                  <small class="field-error">{{ profileFieldError('state') }}</small>
-                }
-              </label>
-              <label>
-                Postal code
-                <input formControlName="postalCode" autocomplete="postal-code">
-                @if (profileFieldError('postalCode')) {
-                  <small class="field-error">{{ profileFieldError('postalCode') }}</small>
-                }
-              </label>
-              <div class="form-action-row profile-form-wide">
-                <button class="solid-button large" type="submit" [disabled]="isSavingProfile()">
-                  {{ isSavingProfile() ? 'Saving profile...' : 'Save borrower profile' }}
+              <div class="info-banner form-wide">
+                <strong>Selected product guidance</strong>
+                <span>{{ selectedLoanTypeHint() }}</span>
+              </div>
+              <div class="form-action-row form-wide">
+                <button class="ghost-button large" type="button" (click)="goToPreviousStep()">Back to profile</button>
+                <button class="solid-button large" type="submit" [disabled]="isSubmittingLoan()">
+                  {{ isSubmittingLoan() ? 'Submitting...' : 'Submit application' }}
                 </button>
               </div>
             </form>
-          </section>
-        </div>
-      </section>
 
-      <section id="apply-step" class="step-panel">
-        <div class="step-header">
-          <div>
-            <span class="step-tag">Step 2</span>
-            <h2>Submit a loan application</h2>
-          </div>
-          <p>Choose the right product, requested amount, repayment window, and purpose of borrowing.</p>
-        </div>
-
-        <form class="step-form" [formGroup]="loanForm" (ngSubmit)="submitLoan()">
-          <label>
-            Amount
-            <input type="number" formControlName="amount">
-            @if (amountError()) {
-              <small class="field-error">{{ amountError() }}</small>
-            }
-          </label>
-          <label>
-            Loan type
-            <select formControlName="loanType">
-              @for (option of loanTypeOptions; track option.value) {
-                <option [value]="option.value">{{ option.label }}</option>
-              }
-            </select>
-          </label>
-          <label>
-            Tenure (months)
-            <input type="number" formControlName="tenureMonths">
-            @if (tenureError()) {
-              <small class="field-error">{{ tenureError() }}</small>
-            }
-          </label>
-          <label class="form-wide">
-            Purpose
-            <textarea formControlName="purpose" rows="4"></textarea>
-            @if (purposeError()) {
-              <small class="field-error">{{ purposeError() }}</small>
-            }
-          </label>
-          <div class="info-banner form-wide">
-            <strong>Selected product guidance</strong>
-            <span>{{ selectedLoanTypeHint() }}</span>
-          </div>
-          <div class="form-action-row form-wide">
-            <button class="solid-button large" type="submit" [disabled]="isSubmittingLoan()">
-              {{ isSubmittingLoan() ? 'Submitting...' : 'Submit application' }}
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <section id="document-step" class="step-panel">
-        <div class="step-header">
-          <div>
-            <span class="step-tag">Step 3</span>
-            <h2>Upload supporting documents</h2>
-          </div>
-          <p>Attach each file to the right loan so the admin team can review it without confusion.</p>
-        </div>
-
-        <div class="document-grid">
-          <form class="step-form" [formGroup]="documentForm" (ngSubmit)="uploadDocument()">
-            <label>
-              Loan ID
-              <input formControlName="loanId" placeholder="Example: 1">
-              @if (loanIdError()) {
-                <small class="field-error">{{ loanIdError() }}</small>
-              }
-            </label>
-            <label>
-              Document type
-              <select formControlName="documentType">
-                @for (option of documentTypeOptions; track option.value) {
-                  <option [value]="option.value">{{ option.label }}</option>
-                }
-              </select>
-            </label>
-            <label class="form-wide">
-              File
-              <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)">
-            </label>
-            @if (selectedFile()) {
-              <p class="file-meta form-wide">Selected: <strong>{{ selectedFile()?.name }}</strong></p>
-            }
-            <div class="form-action-row form-wide">
-              <button class="solid-button large" type="submit" [disabled]="isUploadingDocument()">
-                {{ isUploadingDocument() ? 'Uploading...' : 'Upload document' }}
-              </button>
-            </div>
-          </form>
-
-          <section class="mini-panel loan-selector-panel">
-            <div class="mini-heading">
-              <h3>Pick an active loan quickly</h3>
-              <span>Load loan IDs directly</span>
-            </div>
-            @if (availableLoanIds().length) {
-              <div class="loan-chip-list">
-                @for (loan of availableLoanIds(); track loan.id) {
-                  <button class="chip-button" type="button" (click)="documentForm.controls.loanId.setValue(loan.id)">
-                    {{ loan.label }}
-                  </button>
-                }
+            <section class="mini-panel">
+              <div class="mini-heading">
+                <h3>Before you submit</h3>
+                <span>Checklist for a strong application</span>
               </div>
-            } @else {
-              <p class="empty-copy">Create a loan application first, then FinFlow will list it here for document upload.</p>
-            }
-          </section>
-        </div>
-      </section>
-
-      <section id="tracking-step" class="step-panel">
-        <div class="step-header">
-          <div>
-            <span class="step-tag">Step 4</span>
-            <h2>Track applications and document review</h2>
-          </div>
-          <p>See statuses, remarks, and locked states in one place without jumping across screens.</p>
-        </div>
-
-        @if (recentLoans().length) {
-          <section class="mini-panel">
-            <div class="mini-heading">
-              <h3>Recommended next actions</h3>
-              <span>Move the latest cases forward</span>
-            </div>
-            <div class="action-card-grid">
-              @for (loan of recentLoans(); track loan.id) {
-                <article class="action-card">
-                  <div>
-                    <p class="action-title">Loan #{{ loan.id }}</p>
-                    <strong>{{ loan.loanType }}</strong>
-                    <span>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</span>
-                  </div>
-                  <ff-status-pill [status]="loan.status || 'PENDING'" />
-                  <button class="ghost-button" type="button" (click)="selectLoanForDocument(loan)">
-                    Use this loan for document upload
-                  </button>
+              <div class="profile-list compact">
+                <article>
+                  <span>Selected loan</span>
+                  <strong>{{ loanForm.controls.loanType.value }}</strong>
                 </article>
-              }
-            </div>
-          </section>
+                <article>
+                  <span>Requested tenure</span>
+                  <strong>{{ loanForm.controls.tenureMonths.value }} months</strong>
+                </article>
+                <article>
+                  <span>Profile readiness</span>
+                  <strong>{{ profile() ? 'Borrower profile saved' : 'Review your profile first' }}</strong>
+                </article>
+              </div>
+            </section>
+          </div>
         }
 
-        <section class="table-panel embedded-table">
-          <div class="panel-heading">
-            <h3>My loan applications</h3>
-            <button class="ghost-button" type="button" (click)="loadWorkspace()">Refresh</button>
-          </div>
-          <div class="responsive-table">
-            <table>
-              <thead>
-                <tr><th>ID</th><th>Type</th><th>Amount</th><th>Tenure</th><th>Status</th><th>Applied</th><th>Remarks</th><th>Action</th></tr>
-              </thead>
-              <tbody>
-                @for (loan of loans(); track loan.id) {
-                  <tr>
-                    <td>#{{ loan.id }}</td>
-                    <td>{{ loan.loanType }}</td>
-                    <td>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</td>
-                    <td>{{ loan.tenureMonths }} months</td>
-                    <td><ff-status-pill [status]="loan.status || 'PENDING'" /></td>
-                    <td>{{ loan.appliedAt | date:'medium' }}</td>
-                    <td>{{ loan.remarks || 'No remarks yet' }}</td>
-                    <td>
-                      @if (loan.status === 'PENDING' || loan.status === 'UNDER_REVIEW') {
-                        <button class="small-button" type="button" (click)="withdrawLoan(loan)">Withdraw</button>
-                      } @else {
-                        <span class="action-disabled">Locked</span>
-                      }
-                    </td>
-                  </tr>
-                } @empty {
-                  <tr><td colspan="8">No loans yet. Submit your first application above.</td></tr>
+        @if (activeStep() === 3) {
+          <div class="document-grid">
+            <form class="step-form" [formGroup]="documentForm" (ngSubmit)="uploadDocument()">
+              <label>
+                Loan ID
+                <input formControlName="loanId" placeholder="Auto-filled from your latest application">
+                @if (loanIdError()) {
+                  <small class="field-error">{{ loanIdError() }}</small>
                 }
-              </tbody>
-            </table>
-          </div>
-        </section>
+              </label>
+              <label>
+                Document type
+                <select formControlName="documentType">
+                  @for (option of documentTypeOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </label>
+              <label class="form-wide">
+                File
+                <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)">
+              </label>
+              @if (selectedFile()) {
+                <p class="file-meta form-wide">Selected: <strong>{{ selectedFile()?.name }}</strong></p>
+              }
+              <div class="form-action-row form-wide">
+                <button class="ghost-button large" type="button" (click)="goToPreviousStep()">Back to loan</button>
+                <button class="solid-button large" type="submit" [disabled]="isUploadingDocument()">
+                  {{ isUploadingDocument() ? 'Uploading...' : 'Upload document' }}
+                </button>
+              </div>
+            </form>
 
-        <section class="table-panel embedded-table">
-          <div class="panel-heading">
-            <h3>My documents</h3>
-            <span>Verification trail</span>
+            <section class="mini-panel loan-selector-panel">
+              <div class="mini-heading">
+                <h3>Use the right application automatically</h3>
+                <span>Your latest submitted loan is loaded for you</span>
+              </div>
+              @if (availableLoanIds().length) {
+                <div class="loan-chip-list">
+                  @for (loan of availableLoanIds(); track loan.id) {
+                    <button class="chip-button" type="button" (click)="documentForm.controls.loanId.setValue(loan.id)">
+                      {{ loan.label }}
+                    </button>
+                  }
+                </div>
+              } @else {
+                <p class="empty-copy">Create a loan application first, then FinFlow will list it here for document upload.</p>
+              }
+            </section>
           </div>
-          <div class="responsive-table">
-            <table>
-              <thead>
-                <tr><th>ID</th><th>Loan</th><th>Type</th><th>File</th><th>Status</th><th>Remarks</th></tr>
-              </thead>
-              <tbody>
-                @for (doc of documents(); track doc.id) {
-                  <tr>
-                    <td>#{{ doc.id }}</td>
-                    <td>{{ doc.loanId }}</td>
-                    <td>{{ doc.documentType }}</td>
-                    <td>{{ doc.fileName }}</td>
-                    <td><ff-status-pill [status]="doc.verificationStatus" /></td>
-                    <td>{{ doc.verifiedRemarks || 'Awaiting admin review' }}</td>
-                  </tr>
-                } @empty {
-                  <tr><td colspan="6">No documents uploaded yet.</td></tr>
-                }
-              </tbody>
-            </table>
+        }
+
+        @if (activeStep() === 4) {
+          <div class="tracking-stack">
+            @if (offeredLoans().length) {
+              <section class="mini-panel offer-panel">
+                <div class="mini-heading">
+                  <h3>Loan offer waiting for your confirmation</h3>
+                  <span>Review EMI, charges, and the first due date before accepting</span>
+                </div>
+                <div class="offer-card-grid">
+                  @for (loan of offeredLoans(); track loan.id) {
+                    <article class="offer-card">
+                      <div class="offer-head">
+                        <div>
+                          <p class="action-title">Offer for loan #{{ loan.id }}</p>
+                          <strong>{{ loan.loanType }} loan</strong>
+                        </div>
+                        <ff-status-pill [status]="loan.status || 'OFFER_MADE'" />
+                      </div>
+                      <div class="offer-metrics">
+                        <article>
+                          <span>Sanctioned</span>
+                          <strong>{{ (loan.sanctionedAmount || loan.amount) | currency:'INR':'symbol':'1.0-0' }}</strong>
+                        </article>
+                        <article>
+                          <span>Interest rate</span>
+                          <strong>{{ loan.interestRate || 0 }}%</strong>
+                        </article>
+                        <article>
+                          <span>Monthly EMI</span>
+                          <strong>{{ (loan.monthlyEmi || 0) | currency:'INR':'symbol':'1.0-0' }}</strong>
+                        </article>
+                        <article>
+                          <span>GST</span>
+                          <strong>{{ (loan.gstAmount || 0) | currency:'INR':'symbol':'1.0-0' }}</strong>
+                        </article>
+                        <article>
+                          <span>Processing fee</span>
+                          <strong>{{ (loan.processingFee || 0) | currency:'INR':'symbol':'1.0-0' }}</strong>
+                        </article>
+                        <article>
+                          <span>First EMI date</span>
+                          <strong>{{ loan.firstEmiDate || 'Will be shared' }}</strong>
+                        </article>
+                      </div>
+                      <p class="offer-copy">
+                        {{ loan.remarks || 'The credit team has prepared a sanctioned offer for your confirmation.' }}
+                      </p>
+                      <div class="form-action-row">
+                        <button class="ghost-button" type="button" [disabled]="isRespondingToOffer()" (click)="respondToOffer(loan, 'DECLINED')">
+                          Decline offer
+                        </button>
+                        <button class="solid-button" type="button" [disabled]="isRespondingToOffer()" (click)="respondToOffer(loan, 'ACCEPTED')">
+                          {{ isRespondingToOffer() ? 'Submitting...' : 'Accept and activate loan' }}
+                        </button>
+                      </div>
+                    </article>
+                  }
+                </div>
+              </section>
+            }
+
+            @if (recentLoans().length) {
+              <section class="mini-panel">
+                <div class="mini-heading">
+                  <h3>Recommended next actions</h3>
+                  <span>Move the latest cases forward</span>
+                </div>
+                <div class="action-card-grid">
+                  @for (loan of recentLoans(); track loan.id) {
+                    <article class="action-card">
+                      <div>
+                        <p class="action-title">Loan #{{ loan.id }}</p>
+                        <strong>{{ loan.loanType }}</strong>
+                        <span>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</span>
+                      </div>
+                      <ff-status-pill [status]="loan.status || 'PENDING'" />
+                      <button class="ghost-button" type="button" (click)="selectLoanForDocument(loan)">
+                        Use this loan for document upload
+                      </button>
+                    </article>
+                  }
+                </div>
+              </section>
+            }
+
+            <section class="table-panel embedded-table">
+              <div class="panel-heading">
+                <h3>My loan applications</h3>
+                <button class="ghost-button" type="button" (click)="loadWorkspace()">Refresh</button>
+              </div>
+              <div class="responsive-table">
+                <table>
+                  <thead>
+                    <tr><th>ID</th><th>Type</th><th>Amount</th><th>Tenure</th><th>Status</th><th>Applied</th><th>Remarks</th><th>Action</th></tr>
+                  </thead>
+                  <tbody>
+                    @for (loan of loans(); track loan.id) {
+                      <tr>
+                        <td>#{{ loan.id }}</td>
+                        <td>{{ loan.loanType }}</td>
+                        <td>{{ loan.amount | currency:'INR':'symbol':'1.0-0' }}</td>
+                        <td>{{ loan.tenureMonths }} months</td>
+                        <td><ff-status-pill [status]="loan.status || 'PENDING'" /></td>
+                        <td>{{ loan.appliedAt | date:'medium' }}</td>
+                        <td>{{ loan.remarks || 'No remarks yet' }}</td>
+                        <td>
+                          @if (loan.status === 'PENDING' || loan.status === 'UNDER_REVIEW') {
+                            <button class="small-button" type="button" (click)="withdrawLoan(loan)">Withdraw</button>
+                          } @else {
+                            <span class="action-disabled">Locked</span>
+                          }
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr><td colspan="8">No loans yet. Submit your first application above.</td></tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="table-panel embedded-table">
+              <div class="panel-heading">
+                <h3>My documents</h3>
+                <span>Verification trail</span>
+              </div>
+              <div class="responsive-table">
+                <table>
+                  <thead>
+                    <tr><th>ID</th><th>Loan</th><th>Type</th><th>File</th><th>Status</th><th>Remarks</th></tr>
+                  </thead>
+                  <tbody>
+                    @for (doc of documents(); track doc.id) {
+                      <tr>
+                        <td>#{{ doc.id }}</td>
+                        <td>{{ doc.loanId }}</td>
+                        <td>{{ doc.documentType }}</td>
+                        <td>{{ doc.fileName }}</td>
+                        <td><ff-status-pill [status]="doc.verificationStatus" /></td>
+                        <td>{{ doc.verifiedRemarks || 'Awaiting admin review' }}</td>
+                      </tr>
+                    } @empty {
+                      <tr><td colspan="6">No documents uploaded yet.</td></tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </section>
           </div>
-        </section>
+        }
+
+        <div class="stage-footer">
+          <button class="ghost-button" type="button" [disabled]="activeStep() === 1" (click)="goToPreviousStep()">Back</button>
+          <button class="solid-button" type="button" [disabled]="activeStep() === 4" (click)="goToNextStep()">Next step</button>
+        </div>
       </section>
     </div>
   </div>

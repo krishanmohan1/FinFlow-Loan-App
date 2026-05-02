@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { finalize, forkJoin } from "rxjs";
 import { ProfileUpdateRequest, UserProfile } from "@core/models/auth.models";
 import { LoanDocument } from "@core/models/document.models";
-import { LoanApplication } from "@core/models/loan.models";
+import { LoanApplication, LoanOfferResponseRequest } from "@core/models/loan.models";
 import { LoanApplicationRequest } from "@core/models/loan-form.models";
 import { SelectOption } from "@core/models/ui.models";
 import { AuthService } from "@core/services/auth.service";
@@ -75,15 +75,17 @@ export class UserDashboardComponent implements OnInit {
   protected readonly isSavingProfile = signal(false);
   protected readonly isSubmittingLoan = signal(false);
   protected readonly isUploadingDocument = signal(false);
+  protected readonly isRespondingToOffer = signal(false);
   protected readonly message = signal("");
   protected readonly error = signal("");
   protected readonly selectedFile = signal<File | null>(null);
+  protected readonly activeStep = signal<1 | 2 | 3 | 4>(1);
 
   protected readonly pendingLoans = computed(
     () => this.loans().filter((loan) => loan.status === "PENDING").length,
   );
-  protected readonly approvedLoans = computed(
-    () => this.loans().filter((loan) => loan.status === "APPROVED").length,
+  protected readonly activeLoans = computed(
+    () => this.loans().filter((loan) => loan.status === "ACTIVE").length,
   );
   protected readonly documentsPending = computed(
     () =>
@@ -97,10 +99,10 @@ export class UserDashboardComponent implements OnInit {
     if (this.documents().length === 0) {
       return 2;
     }
-    const hasApprovedLoan = this.loans().some(
-      (loan) => loan.status === "APPROVED",
+    const hasOfferOrActiveLoan = this.loans().some(
+      (loan) => loan.status === "OFFER_MADE" || loan.status === "ACTIVE",
     );
-    if (hasApprovedLoan) {
+    if (hasOfferOrActiveLoan) {
       return 4;
     }
     return 3;
@@ -125,7 +127,7 @@ export class UserDashboardComponent implements OnInit {
       id: 4,
       title: "Decision available",
       detail:
-        "Track approved, rejected, or under-review outcomes with remarks.",
+        "Track offers, active loans, rejected cases, and admin remarks.",
     },
   ] as const;
   protected readonly availableLoanIds = computed(() =>
@@ -137,6 +139,15 @@ export class UserDashboardComponent implements OnInit {
       })),
   );
   protected readonly recentLoans = computed(() => this.loans().slice(0, 5));
+  protected readonly nextRecommendedStep = computed<1 | 2 | 3 | 4>(() => {
+    if (this.loans().length === 0) {
+      return 2;
+    }
+    if (this.documents().length === 0) {
+      return 3;
+    }
+    return 4;
+  });
   protected readonly profileFields = computed(() => {
     const profile = this.profile();
     return [
@@ -180,6 +191,89 @@ export class UserDashboardComponent implements OnInit {
         (option) => option.value === this.loanForm.controls.loanType.value,
       )?.hint ?? "",
   );
+  protected readonly documentProgress = computed(() => {
+    const uploaded = new Set(
+      this.documents().map((document) => document.documentType.toUpperCase()),
+    );
+    return this.requiredDocuments().map((item) => {
+      const normalized = this.normalizeDocumentChecklistItem(item);
+      return {
+        label: item,
+        done: uploaded.has(normalized),
+      };
+    });
+  });
+  protected readonly latestLoan = computed(() => this.loans()[0] ?? null);
+  protected readonly offeredLoans = computed(() =>
+    this.loans().filter((loan) => loan.status === "OFFER_MADE"),
+  );
+  protected readonly timelineEntries = computed(() => {
+    const entries: Array<{
+      title: string;
+      detail: string;
+      state: "done" | "active" | "upcoming";
+    }> = [];
+    const profile = this.profile();
+    if (profile) {
+      entries.push({
+        title: "Borrower profile confirmed",
+        detail: `${profile.fullName} is ready for application review.`,
+        state: "done",
+      });
+    }
+    const loan = this.latestLoan();
+    if (loan) {
+      entries.push({
+        title: `Loan #${loan.id} submitted`,
+        detail: `${loan.loanType} request for INR ${loan.amount.toLocaleString("en-IN")} is ${loan.status?.toLowerCase().replace(/_/g, " ") ?? "pending"}.`,
+        state: "done",
+      });
+    } else {
+      entries.push({
+        title: "Loan application pending",
+        detail: "Choose a product, amount, and tenure to create your first request.",
+        state: "active",
+      });
+    }
+
+    if (this.documents().length > 0) {
+      entries.push({
+        title: "Supporting documents uploaded",
+        detail: `${this.documents().length} document(s) are available for admin verification.`,
+        state: "done",
+      });
+    } else {
+      entries.push({
+        title: "Document upload pending",
+        detail: "Upload borrower proofs against the selected loan to keep the case moving.",
+        state: loan ? "active" : "upcoming",
+      });
+    }
+
+    const offered = this.loans().find((item) => item.status === "OFFER_MADE");
+    const activeLoan = this.loans().find((item) => item.status === "ACTIVE");
+    if (activeLoan) {
+      entries.push({
+        title: "Decision published",
+        detail: `Loan #${activeLoan.id} is now active. Review EMI, due date, and repayment details below.`,
+        state: "done",
+      });
+    } else if (offered) {
+      entries.push({
+        title: "Offer ready for your approval",
+        detail: `Loan #${offered.id} has a sanctioned offer waiting for your response.`,
+        state: "active",
+      });
+    } else {
+      entries.push({
+        title: "Decision in progress",
+        detail: "Track admin remarks and status updates once review starts.",
+        state: this.documents().length > 0 ? "active" : "upcoming",
+      });
+    }
+
+    return entries;
+  });
 
   protected readonly loanForm = this.fb.nonNullable.group({
     amount: [50000, [Validators.required, Validators.min(1000)]],
@@ -273,12 +367,27 @@ export class UserDashboardComponent implements OnInit {
           });
           this.loans.set(loans);
           this.documents.set(documents);
+          this.syncActiveStepWithWorkspace(loans, documents);
         },
         error: (error) =>
           this.error.set(
             resolveApiError(error, "Could not load your workspace."),
           ),
       });
+  }
+
+  setActiveStep(step: 1 | 2 | 3 | 4): void {
+    this.activeStep.set(step);
+    this.message.set("");
+    this.error.set("");
+  }
+
+  goToNextStep(): void {
+    this.activeStep.update((current) => (current < 4 ? ((current + 1) as 1 | 2 | 3 | 4) : current));
+  }
+
+  goToPreviousStep(): void {
+    this.activeStep.update((current) => (current > 1 ? ((current - 1) as 1 | 2 | 3 | 4) : current));
   }
 
   submitLoan(): void {
@@ -298,12 +407,16 @@ export class UserDashboardComponent implements OnInit {
           this.message.set(
             `Loan #${loan.id} submitted and routed through RabbitMQ.`,
           );
+          if (loan.id) {
+            this.documentForm.controls.loanId.setValue(String(loan.id));
+          }
           this.loanForm.reset({
             amount: 50000,
             loanType: "HOME",
             tenureMonths: 120,
             purpose: "Buying my first home near work and family support.",
           });
+          this.activeStep.set(3);
           this.loadWorkspace();
         },
         error: (error) =>
@@ -321,6 +434,7 @@ export class UserDashboardComponent implements OnInit {
       return;
     }
     this.documentForm.controls.loanId.setValue(String(loan.id));
+    this.activeStep.set(3);
     this.message.set(
       `Loan #${loan.id} selected for your next document upload.`,
     );
@@ -445,10 +559,14 @@ export class UserDashboardComponent implements OnInit {
       .subscribe({
         next: (document) => {
           this.message.set(
-            `Document #${document.id} uploaded for loan ${document.loanId}.`,
+            `Document #${document.id} uploaded for loan ${document.loanId}. Your application is now in the review pipeline and you can track the status in the next step.`,
           );
-          this.documentForm.reset({ loanId: "", documentType: "AADHAAR" });
+          this.documentForm.reset({
+            loanId: this.documentForm.controls.loanId.value,
+            documentType: "AADHAAR",
+          });
           this.selectedFile.set(null);
+          this.activeStep.set(4);
           this.loadWorkspace();
         },
         error: (error) =>
@@ -499,5 +617,79 @@ export class UserDashboardComponent implements OnInit {
       error: (error) =>
         this.error.set(resolveApiError(error, "Loan withdrawal failed.")),
     });
+  }
+
+  respondToOffer(loan: LoanApplication, borrowerDecision: "ACCEPTED" | "DECLINED"): void {
+    if (!loan.id) {
+      return;
+    }
+    const request: LoanOfferResponseRequest = {
+      borrowerDecision,
+      borrowerRemarks:
+        borrowerDecision === "ACCEPTED"
+          ? "Borrower accepted the offer from the workspace."
+          : "Borrower declined the offer from the workspace.",
+    };
+
+    this.message.set("");
+    this.error.set("");
+    this.isRespondingToOffer.set(true);
+    this.loansApi.respondToOffer(loan.id, request)
+      .pipe(finalize(() => this.isRespondingToOffer.set(false)))
+      .subscribe({
+        next: (updatedLoan) => {
+          this.message.set(
+            borrowerDecision === "ACCEPTED"
+              ? `Loan #${updatedLoan.id} accepted successfully. Your repayment plan is now active.`
+              : `Loan #${updatedLoan.id} was declined from your side and marked accordingly.`,
+          );
+          this.loadWorkspace();
+        },
+        error: (error) =>
+          this.error.set(resolveApiError(error, "Unable to submit your loan offer response.")),
+      });
+  }
+
+  private syncActiveStepWithWorkspace(
+    loans: LoanApplication[],
+    documents: LoanDocument[],
+  ): void {
+    const current = this.activeStep();
+    if (current === 1 && loans.length === 0) {
+      return;
+    }
+    if (loans.length === 0) {
+      this.activeStep.set(2);
+      return;
+    }
+    if (documents.length === 0) {
+      this.activeStep.set(3);
+      return;
+    }
+    if (loans.some((loan) => loan.status === "OFFER_MADE" || loan.status === "ACTIVE")) {
+      this.activeStep.set(4);
+      return;
+    }
+    this.activeStep.set(4);
+  }
+
+  private normalizeDocumentChecklistItem(label: string): string {
+    const normalized = label.toUpperCase();
+    if (normalized.includes("AADHAAR")) {
+      return "AADHAAR";
+    }
+    if (normalized.includes("PAN")) {
+      return "PAN";
+    }
+    if (normalized.includes("SALARY")) {
+      return "SALARY_SLIP";
+    }
+    if (normalized.includes("BANK")) {
+      return "BANK_STATEMENT";
+    }
+    if (normalized.includes("PROPERTY")) {
+      return "PROPERTY_PROOF";
+    }
+    return normalized.replace(/[^A-Z]/g, "_");
   }
 }

@@ -61,11 +61,11 @@ public class AdminController {
     /**
      * Retrieves loan applications filtered by their current status.
      *
-     * @param status The status to filter by (e.g., PENDING, APPROVED, REJECTED).
+     * @param status The status to filter by (e.g., PENDING, OFFER_MADE, ACTIVE, REJECTED).
      * @return A response entity containing matching loan applications.
      */
     @Tag(name = "Loans")
-    @Operation(summary = "Get loans by status", description = "Status: PENDING, APPROVED, REJECTED, UNDER_REVIEW")
+    @Operation(summary = "Get loans by status", description = "Status: PENDING, UNDER_REVIEW, OFFER_MADE, ACTIVE, REJECTED, WITHDRAWN, OFFER_DECLINED")
     @GetMapping("/loans/status/{status}")
     public ResponseEntity<Object> getLoansByStatus(@PathVariable String status) {
         log.info("GET /admin/loans/status/{}", status);
@@ -105,14 +105,14 @@ public class AdminController {
     }
 
     /**
-     * Quickly approves a loan application with standard defaults and optional remarks.
+     * Quickly approves a loan application with standard offer defaults and optional remarks.
      *
      * @param id The ID of the loan application to approve.
      * @param remarks Administrative comments for the approval.
      * @return A response entity reflecting the approved loan application.
      */
     @Tag(name = "Loans")
-    @Operation(summary = "Quick approve a loan")
+    @Operation(summary = "Quick approve a loan", description = "Creates a standard borrower offer with default financial terms")
     @PutMapping("/loans/{id}/approve")
     public ResponseEntity<Object> approveLoan(
             @PathVariable @Positive Long id,

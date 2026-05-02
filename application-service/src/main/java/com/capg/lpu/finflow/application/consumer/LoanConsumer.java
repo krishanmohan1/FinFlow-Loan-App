@@ -54,7 +54,7 @@ public class LoanConsumer {
                     event.getRemarks() == null || event.getRemarks().isBlank() ? "" : " - " + event.getRemarks().trim()
             );
 
-            if ("REJECTED".equals(event.getStatus()) && !"APPROVED".equals(loan.getStatus())) {
+            if ("REJECTED".equals(event.getStatus()) && !isFinalizedStatus(loan.getStatus())) {
                 loan.setStatus("UNDER_REVIEW");
             }
 
@@ -64,5 +64,12 @@ public class LoanConsumer {
         } catch (NumberFormatException ex) {
             log.warn("Invalid loanId [{}] in document event", event.getLoanId());
         }
+    }
+
+    private boolean isFinalizedStatus(String status) {
+        return "ACTIVE".equals(status)
+                || "REJECTED".equals(status)
+                || "WITHDRAWN".equals(status)
+                || "OFFER_DECLINED".equals(status);
     }
 }

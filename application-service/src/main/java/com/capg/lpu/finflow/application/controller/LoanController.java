@@ -1,6 +1,7 @@
 package com.capg.lpu.finflow.application.controller;
 
 import com.capg.lpu.finflow.application.dto.LoanApplicationRequest;
+import com.capg.lpu.finflow.application.dto.LoanOfferResponseRequest;
 import com.capg.lpu.finflow.application.dto.LoanStatusUpdateRequest;
 import com.capg.lpu.finflow.application.entity.LoanApplication;
 import com.capg.lpu.finflow.application.service.LoanService;
@@ -128,7 +129,7 @@ public class LoanController {
      * Filters loan applications based on their operational status.
      * ADMIN users receive all matches across the system, while standard users see matches within their own records.
      *
-     * @param status The target status for filtering (e.g., PENDING, APPROVED).
+     * @param status The target status for filtering (e.g., PENDING, OFFER_MADE, ACTIVE).
      * @param authUsername The authenticated user's name for filtering.
      * @param authRole The requester's security role.
      * @return A filtered list of loan applications.
@@ -157,7 +158,7 @@ public class LoanController {
      * @return The updated loan application entity.
      * @throws SecurityException if the requester does not have ADMIN privileges.
      */
-    @Operation(summary = "Update loan status", description = "ADMIN only - approve or reject a loan")
+    @Operation(summary = "Update loan status", description = "ADMIN only - move a loan through review, offer, active, rejection, or withdrawal states")
     @PutMapping("/status/{id}")
     public ResponseEntity<LoanApplication> updateStatus(
             @PathVariable @Positive Long id,
@@ -213,5 +214,30 @@ public class LoanController {
             throw new SecurityException("Admin cannot withdraw applications on behalf of borrowers from this endpoint");
         }
         return ResponseEntity.ok(loanService.withdraw(id, authUsername));
+    }
+
+    /**
+     * Allows the borrower to accept or decline an admin-issued sanctioned offer.
+     *
+     * @param id The loan identifier.
+     * @param authUsername The borrower username.
+     * @param authRole The caller role.
+     * @param request The borrower decision payload.
+     * @return The updated loan application.
+     */
+    @Operation(summary = "Respond to a sanctioned offer", description = "USER accepts or declines a loan offer after admin review")
+    @PutMapping("/{id}/offer-response")
+    public ResponseEntity<LoanApplication> respondToOffer(
+            @PathVariable @Positive Long id,
+            @RequestHeader("X-Auth-Username") @NotBlank String authUsername,
+            @RequestHeader("X-Auth-Role") @NotBlank String authRole,
+            @Valid @RequestBody LoanOfferResponseRequest request) {
+
+        log.info("PUT /application/{}/offer-response - user: {}, role: {}, decision: {}",
+                id, authUsername, authRole, request.getBorrowerDecision());
+        if ("ADMIN".equals(authRole)) {
+            throw new SecurityException("Admin cannot respond to borrower loan offers");
+        }
+        return ResponseEntity.ok(loanService.respondToOffer(id, authUsername, request));
     }
 }

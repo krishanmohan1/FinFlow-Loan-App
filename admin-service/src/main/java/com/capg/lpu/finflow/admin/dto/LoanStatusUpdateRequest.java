@@ -1,5 +1,7 @@
 package com.capg.lpu.finflow.admin.dto;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,4 +24,20 @@ public class LoanStatusUpdateRequest {
      * Administrative remarks explaining the status change.
      */
     private String remarks;
+
+    private Double interestRate;
+
+    private Integer tenureMonths;
+
+    private Double sanctionedAmount;
+
+    private Double processingFee;
+
+    private Double gstAmount;
+
+    private Double monthlyEmi;
+
+    private LocalDate firstEmiDate;
+
+    private String borrowerDecision;
 }

@@ -1,242 +1,315 @@
-<section class="hero-section">
-  <div class="hero-copy">
-    <p class="eyebrow">FinFlow Financial Services</p>
-    <h1>Borrow smarter. Review faster. Run lending operations with confidence.</h1>
-    <p class="hero-text">
-      FinFlow is a digital loan management experience for applicants and lending teams. Customers discover products,
-      create a complete borrower profile, apply in guided steps, upload documents, and track decisions. Branch and
-      operations teams review the same journey from a secure admin command center.
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="eyebrow">FinFlow — Digital Lending Platform</p>
+    <h1 class="hero-title">
+      Apply for a loan.<br>
+      Track every step.<br>
+      <span class="gradient-text">Get a decision fast.</span>
+    </h1>
+    <p class="hero-sub">
+      FinFlow connects borrowers and lending teams on one platform.
+      Apply online, upload documents, and follow your case from submission to final approval — no branch visits needed.
     </p>
-    <div class="hero-actions">
+    <div class="hero-cta">
       @if (auth.isAuthenticated()) {
-        <a class="solid-button large" routerLink="/dashboard">Open applicant workspace</a>
+        <a class="solid-button large" routerLink="/dashboard">Go to my dashboard</a>
         @if (auth.isAdmin()) {
-          <a class="ghost-button large" routerLink="/admin">Open admin command center</a>
+          <a class="ghost-button large" routerLink="/admin">Admin panel</a>
         }
       } @else {
         <a class="solid-button large" routerLink="/register">Start your application</a>
         <a class="ghost-button large" routerLink="/login">Sign in</a>
       }
     </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <strong>6</strong>
+        <span>Loan products</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <strong>100%</strong>
+        <span>Digital process</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <strong>24/7</strong>
+        <span>Track your status</span>
+      </div>
+    </div>
   </div>
 
-  <div class="hero-card">
-    <div class="card-header">
-      <span>Customer Journey</span>
-      <strong>Borrower to final decision</strong>
+  <div class="hero-visual">
+    <div class="status-card">
+      <div class="status-card-header">
+        <span class="status-card-label">Loan Application</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="status-card-body">
+        <div class="status-row">
+          <span class="status-dot done"></span>
+          <span>Profile verified</span>
+        </div>
+        <div class="status-row">
+          <span class="status-dot done"></span>
+          <span>Application submitted</span>
+        </div>
+        <div class="status-row">
+          <span class="status-dot done"></span>
+          <span>Documents uploaded</span>
+        </div>
+        <div class="status-row">
+          <span class="status-dot pulse"></span>
+          <span>Under admin review</span>
+        </div>
+        <div class="status-row muted">
+          <span class="status-dot"></span>
+          <span>Decision pending</span>
+        </div>
+      </div>
+      <div class="status-card-footer">
+        <span>Home Loan · ₹25,00,000</span>
+        <span>120 months</span>
+      </div>
     </div>
-    <div class="flow-line">
-      <span>Create your borrower profile</span>
-      <span>Choose a product, amount, tenure, and purpose</span>
-      <span>Upload supporting documents against the right loan</span>
-      <span>Track admin review, remarks, and the final outcome</span>
+
+    <div class="floating-pill pill-1">
+      <span class="pill-dot green"></span>
+      Document verified
     </div>
-    <div class="metric-grid">
-      <article>
-        <strong>24/7</strong>
-        <span>digital access</span>
-      </article>
-      <article>
-        <strong>360</strong>
-        <span>loan visibility</span>
-      </article>
-      <article>
-        <strong>100%</strong>
-        <span>guided process</span>
-      </article>
+    <div class="floating-pill pill-2">
+      <span class="pill-dot gold"></span>
+      Offer ready
     </div>
   </div>
 </section>
 
-<section class="health-section">
-  <div>
-    <p class="eyebrow">Live backend connection</p>
-    <h2>Frontend service readiness</h2>
-    <p>These checks confirm whether Angular can reach the running FinFlow backend services.</p>
-  </div>
-  <div class="health-grid">
+<!-- ── Service health ─────────────────────────────────────────────────────── -->
+<section class="health-bar">
+  <span class="health-label">System status</span>
+  <div class="health-chips">
     @for (check of healthChecks; track check.name) {
-      <article [class.ok]="check.ok">
-        <span>{{ check.ok ? 'Online' : 'Check' }}</span>
-        <strong>{{ check.name }}</strong>
-        <small>{{ check.detail }}</small>
-      </article>
+      <div class="health-chip" [class.ok]="check.ok">
+        <span class="chip-dot"></span>
+        <span>{{ check.name }}</span>
+      </div>
     }
   </div>
 </section>
 
-<section id="services" class="services-section">
-  <div class="section-heading">
-    <p class="eyebrow">What FinFlow offers</p>
-    <h2>Loan products and operational support shaped around real customer journeys.</h2>
+<!-- ── Loan products ──────────────────────────────────────────────────────── -->
+<section id="products" class="section">
+  <div class="section-header">
+    <p class="eyebrow">Loan products</p>
+    <h2 class="section-title">Find the right loan for your goal</h2>
+    <p class="section-sub">Six loan types, one application platform. Choose your product and apply in minutes.</p>
   </div>
-  <div class="feature-grid">
-    <article>
-      <span class="feature-icon">Home</span>
-      <h2>Home Loans</h2>
-      <p>Move from property planning to repayment visibility with a clear digital intake and status-led review flow.</p>
+
+  <div class="products-grid">
+    <article class="product-card">
+      <div class="product-icon home-icon">🏠</div>
+      <h3>Home Loan</h3>
+      <p>Buy, build, or renovate your home with competitive rates and flexible tenures up to 30 years.</p>
+      <div class="product-tag">Up to ₹2 Cr</div>
     </article>
-    <article>
-      <span class="feature-icon">Personal</span>
-      <h2>Personal Loans</h2>
-      <p>Request funds for important life priorities through a clean application, document, and approval journey.</p>
+    <article class="product-card">
+      <div class="product-icon personal-icon">💳</div>
+      <h3>Personal Loan</h3>
+      <p>Cover medical bills, travel, weddings, or any personal need with quick approval and no collateral.</p>
+      <div class="product-tag">Up to ₹25 L</div>
     </article>
-    <article>
-      <span class="feature-icon">Business</span>
-      <h2>Business Loans</h2>
-      <p>Support working capital, inventory, and expansion with structured review and transparent admin decisions.</p>
+    <article class="product-card">
+      <div class="product-icon business-icon">🏢</div>
+      <h3>Business Loan</h3>
+      <p>Fund working capital, equipment, or expansion with structured repayment and transparent terms.</p>
+      <div class="product-tag">Up to ₹50 L</div>
     </article>
-    <article>
-      <span class="feature-icon">Education</span>
-      <h2>Education Finance</h2>
-      <p>Apply for tuition and study support with document guidance and stage-by-stage visibility.</p>
+    <article class="product-card">
+      <div class="product-icon edu-icon">🎓</div>
+      <h3>Education Loan</h3>
+      <p>Finance tuition, accommodation, and study materials for domestic and international courses.</p>
+      <div class="product-tag">Up to ₹20 L</div>
     </article>
-    <article>
-      <span class="feature-icon">Vehicle</span>
-      <h2>Vehicle Loans</h2>
-      <p>Choose the product, share repayment intent, and keep every document and status update in one place.</p>
+    <article class="product-card">
+      <div class="product-icon auto-icon">🚗</div>
+      <h3>Auto Loan</h3>
+      <p>Drive home your new car, bike, or commercial vehicle with easy EMIs and fast processing.</p>
+      <div class="product-tag">Up to ₹15 L</div>
     </article>
-    <article>
-      <span class="feature-icon">Support</span>
-      <h2>Document Advisory</h2>
-      <p>Know what to upload, what is pending, and what the verification team expects before the loan can move forward.</p>
+    <article class="product-card">
+      <div class="product-icon gold-icon">✨</div>
+      <h3>Gold Loan</h3>
+      <p>Get instant funds against your gold jewellery with minimal paperwork and same-day disbursal.</p>
+      <div class="product-tag">Up to ₹10 L</div>
     </article>
   </div>
 </section>
 
-<section class="journey-section">
-  <div class="section-heading">
-    <p class="eyebrow">Applicant flow</p>
-    <h2>Exactly how a customer moves through FinFlow.</h2>
-  </div>
-  <div class="journey-grid">
-    <article>
-      <strong>01</strong>
-      <h3>Create account</h3>
-      <p>Register with your full borrower profile, contact details, residential address, income, username, and password.</p>
-    </article>
-    <article>
-      <strong>02</strong>
-      <h3>Enter your workspace</h3>
-      <p>See your profile summary, recommended next actions, current applications, and document progress in one dashboard.</p>
-    </article>
-    <article>
-      <strong>03</strong>
-      <h3>Apply in guided steps</h3>
-      <p>Choose the loan product, requested amount, preferred tenure, and purpose so the review team gets a complete intake.</p>
-    </article>
-    <article>
-      <strong>04</strong>
-      <h3>Upload supporting files</h3>
-      <p>Attach Aadhaar, PAN, salary slips, bank statements, or property proof against the exact loan record.</p>
-    </article>
-    <article>
-      <strong>05</strong>
-      <h3>Track and manage status</h3>
-      <p>See whether your loan is pending, under review, approved, rejected, or withdrawn without guessing what happened.</p>
-    </article>
-    <article>
-      <strong>06</strong>
-      <h3>Receive the decision</h3>
-      <p>Admins record remarks and sanction details so the borrower sees a complete, traceable final outcome.</p>
-    </article>
-  </div>
-</section>
-
-<section class="document-section">
-  <div class="section-heading">
-    <p class="eyebrow">What we ask for</p>
-    <h2>The information and documents FinFlow uses to process a real lending journey.</h2>
-  </div>
-  <div class="document-grid">
-    <article>
-      <h3>Borrower profile</h3>
-      <ul>
-        <li>Full name, email, and mobile number</li>
-        <li>Date of birth and occupation</li>
-        <li>Annual income</li>
-        <li>Residential address, city, state, and PIN code</li>
-        <li>Username and password</li>
-      </ul>
-      <p>FinFlow captures the borrower profile upfront so the workspace, admin review, and reporting stay aligned.</p>
-    </article>
-    <article>
-      <h3>Loan request</h3>
-      <ul>
-        <li>Loan type</li>
-        <li>Requested amount</li>
-        <li>Preferred tenure in months</li>
-        <li>Purpose of borrowing</li>
-      </ul>
-      <p>The application form reflects the real backend contract and supports a complete digital intake instead of a placeholder demo form.</p>
-    </article>
-    <article>
-      <h3>Supporting documents</h3>
-      <ul>
-        <li>Linked loan ID</li>
-        <li>Document type such as Aadhaar, PAN, salary slip, bank statement, or property proof</li>
-        <li>Secure file upload</li>
-      </ul>
-      <p>Applicants attach files against the selected loan, and the verification team can review them with status and remarks.</p>
-    </article>
-  </div>
-</section>
-
-<section id="process" class="process-section">
-  <div class="section-heading">
+<!-- ── How it works ───────────────────────────────────────────────────────── -->
+<section id="how-it-works" class="section">
+  <div class="section-header">
     <p class="eyebrow">How it works</p>
-    <h2>A premium product flow for applicants, branch teams, and lending operations.</h2>
+    <h2 class="section-title">From application to approval in 4 steps</h2>
+    <p class="section-sub">A clear, guided process so you always know where your loan stands.</p>
   </div>
-  <div class="timeline">
-    <article><strong>01</strong><h3>Borrower onboarding</h3><p>Create an account, complete the profile, and enter a workspace that explains what to do next.</p></article>
-    <article><strong>02</strong><h3>Application intake</h3><p>Submit the loan request with amount, tenure, and purpose so the case enters the lending pipeline.</p></article>
-    <article><strong>03</strong><h3>Document verification</h3><p>Attach supporting files and let operations teams verify or reject each document with remarks.</p></article>
-    <article><strong>04</strong><h3>Decision operations</h3><p>Admins approve, reject, or move loans under review while preserving sanction details and audit remarks.</p></article>
+
+  <div class="steps-grid">
+    <article class="step-card">
+      <div class="step-number">01</div>
+      <h3>Create your profile</h3>
+      <p>Register with your personal details, address, income, and contact information. Takes about 3 minutes.</p>
+    </article>
+    <div class="step-arrow">→</div>
+    <article class="step-card">
+      <div class="step-number">02</div>
+      <h3>Submit your application</h3>
+      <p>Choose a loan product, enter the amount, tenure, and purpose. Your case enters the review queue instantly.</p>
+    </article>
+    <div class="step-arrow">→</div>
+    <article class="step-card">
+      <div class="step-number">03</div>
+      <h3>Upload documents</h3>
+      <p>Attach Aadhaar, PAN, salary slips, or bank statements directly against your loan application.</p>
+    </article>
+    <div class="step-arrow">→</div>
+    <article class="step-card">
+      <div class="step-number">04</div>
+      <h3>Get your decision</h3>
+      <p>Track admin review, receive a sanctioned offer, and accept or decline — all from your dashboard.</p>
+    </article>
   </div>
 </section>
 
-<section class="admin-section">
-  <div>
-    <p class="eyebrow">Admin workflow</p>
-    <h2>Where the FinFlow operations team works.</h2>
+<!-- ── Documents needed ───────────────────────────────────────────────────── -->
+<section class="section docs-section">
+  <div class="section-header">
+    <p class="eyebrow">What you need</p>
+    <h2 class="section-title">Documents we ask for</h2>
+  </div>
+  <div class="docs-grid">
+    <article class="doc-card">
+      <h4>Identity proof</h4>
+      <ul>
+        <li>Aadhaar card</li>
+        <li>PAN card</li>
+        <li>Passport (optional)</li>
+      </ul>
+    </article>
+    <article class="doc-card">
+      <h4>Income proof</h4>
+      <ul>
+        <li>Last 3 salary slips</li>
+        <li>Bank statement (6 months)</li>
+        <li>Income tax return</li>
+      </ul>
+    </article>
+    <article class="doc-card">
+      <h4>Address proof</h4>
+      <ul>
+        <li>Utility bill</li>
+        <li>Rental agreement</li>
+        <li>Aadhaar (if address matches)</li>
+      </ul>
+    </article>
+    <article class="doc-card">
+      <h4>Loan-specific</h4>
+      <ul>
+        <li>Property papers (Home loan)</li>
+        <li>Admission letter (Education)</li>
+        <li>Vehicle quotation (Auto)</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- ── Admin section ──────────────────────────────────────────────────────── -->
+<section class="section admin-promo">
+  <div class="admin-promo-content">
+    <p class="eyebrow">For lending teams</p>
+    <h2>A complete operations panel for your team</h2>
     <p>
-      Admin users sign in to a dedicated command center for loans, documents, users, staff onboarding, and reports.
-      The same platform that serves applicants also gives credit teams a secure place to manage real lending work.
+      Admins get a dedicated command center to review loan queues, verify documents,
+      record decisions with sanction details, manage users, and generate reports — all in one place.
     </p>
+    <div class="admin-features">
+      <div class="admin-feature">
+        <span class="feature-check">✓</span>
+        <span>Review and filter the live loan queue</span>
+      </div>
+      <div class="admin-feature">
+        <span class="feature-check">✓</span>
+        <span>Verify or reject uploaded documents with remarks</span>
+      </div>
+      <div class="admin-feature">
+        <span class="feature-check">✓</span>
+        <span>Approve loans with interest rate, EMI, and sanction details</span>
+      </div>
+      <div class="admin-feature">
+        <span class="feature-check">✓</span>
+        <span>Manage users, onboard staff, and view audit logs</span>
+      </div>
+    </div>
+    @if (!auth.isAuthenticated()) {
+      <a class="solid-button large" routerLink="/login">Sign in as admin</a>
+    } @else if (auth.isAdmin()) {
+      <a class="solid-button large" routerLink="/admin">Open admin panel</a>
+    }
   </div>
-  <div class="admin-points">
-    <article><strong>Loan decisions</strong><span>Load a case, record an approval or rejection, attach remarks, and save sanction details.</span></article>
-    <article><strong>Document checks</strong><span>Verify or reject borrower uploads with comments that feed back into the borrower journey.</span></article>
-    <article><strong>Staff controls</strong><span>Review users, onboard internal admin accounts, and manage role or active status in one secure workspace.</span></article>
+  <div class="admin-promo-visual">
+    <div class="mini-dashboard">
+      <div class="mini-row header-row">
+        <span>Loan queue</span>
+        <span class="badge-count">12 pending</span>
+      </div>
+      <div class="mini-row">
+        <span>#1042 · Home Loan</span>
+        <span class="status-tag pending">Pending</span>
+      </div>
+      <div class="mini-row">
+        <span>#1041 · Personal</span>
+        <span class="status-tag review">Under review</span>
+      </div>
+      <div class="mini-row">
+        <span>#1040 · Business</span>
+        <span class="status-tag offer">Offer made</span>
+      </div>
+      <div class="mini-row">
+        <span>#1039 · Education</span>
+        <span class="status-tag active">Active</span>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="trust-section">
-  <div>
-    <p class="eyebrow">Why FinFlow works</p>
-    <h2>Built for customers, branch staff, and lending leadership together.</h2>
+<!-- ── Trust bar ──────────────────────────────────────────────────────────── -->
+<section class="trust-bar">
+  <div class="trust-item">
+    <strong>Secure</strong>
+    <span>JWT authentication with token rotation and role-based access</span>
   </div>
-  <div class="trust-grid">
-    <article><strong>Transparent</strong><span>Status-first loan tracking without hidden workflow confusion or vague next steps.</span></article>
-    <article><strong>Responsive</strong><span>Designed for phone, tablet, and laptop so borrowers and staff can work anywhere.</span></article>
-    <article><strong>Secure</strong><span>JWT-backed access, safe logout, and role-based workspaces keep customer and admin journeys separated.</span></article>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <strong>Transparent</strong>
+    <span>Every status change is visible to the borrower in real time</span>
+  </div>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <strong>Reliable</strong>
+    <span>Microservices architecture with independent scaling per service</span>
   </div>
 </section>
 
-<section class="feature-grid legacy-grid">
-  <article>
-    <span class="feature-icon">01</span>
-    <h2>For Applicants</h2>
-    <p>A guided product flow for registering, applying, uploading documents, tracking status, and managing applications.</p>
-  </article>
-  <article>
-    <span class="feature-icon">02</span>
-    <h2>For FinFlow Teams</h2>
-    <p>A command center for review, verification, user controls, staff onboarding, and report-led lending operations.</p>
-  </article>
-  <article>
-    <span class="feature-icon">03</span>
-    <h2>For Trust</h2>
-    <p>Every important action maps to the real backend endpoints instead of a fake frontend-only experience.</p>
-  </article>
+<!-- ── CTA ────────────────────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <h2>Ready to apply?</h2>
+  <p>Create your borrower profile in 3 minutes and submit your first loan application today.</p>
+  <div class="cta-actions">
+    @if (auth.isAuthenticated()) {
+      <a class="solid-button large" routerLink="/dashboard">Go to my dashboard</a>
+    } @else {
+      <a class="solid-button large" routerLink="/register">Create free account</a>
+      <a class="ghost-button large" routerLink="/login">Already have an account</a>
+    }
+  </div>
 </section>

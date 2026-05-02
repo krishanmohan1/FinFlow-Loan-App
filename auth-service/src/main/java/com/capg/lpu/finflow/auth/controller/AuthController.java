@@ -54,6 +54,9 @@ public class AuthController {
     @Value("${security.jwt.refresh-expiration-ms}")
     private long refreshExpirationMs;
 
+    @Value("${security.jwt.refresh-cookie-secure:false}")
+    private boolean refreshCookieSecure;
+
     /**
      * Basic health check endpoint to verify the Auth Service is operational.
      *
@@ -276,7 +279,7 @@ public class AuthController {
     private void attachRefreshCookie(HttpServletResponse response, String refreshToken) {
         ResponseCookie cookie = ResponseCookie.from(refreshCookieName, refreshToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(refreshCookieSecure)
                 .sameSite("Lax")
                 .path("/")
                 .maxAge(java.time.Duration.ofMillis(refreshExpirationMs))
@@ -287,7 +290,7 @@ public class AuthController {
     private void clearRefreshCookie(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from(refreshCookieName, "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(refreshCookieSecure)
                 .sameSite("Lax")
                 .path("/")
                 .maxAge(java.time.Duration.ZERO)

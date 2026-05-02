@@ -1,87 +1,78 @@
 <section class="auth-page">
   <div class="auth-layout">
+
+    <!-- Left: showcase panel -->
     <aside class="auth-showcase">
-      <p class="eyebrow">Borrower Onboarding</p>
-      <h1>Create one strong FinFlow profile and use it across the full lending journey.</h1>
+      <p class="eyebrow">New account</p>
+      <h1>Create your borrower profile and start applying</h1>
       <p class="showcase-copy">
-        This onboarding flow captures the same borrower details that follow you into loan applications, document
-        verification, admin review, and final decision tracking. It is designed to feel like a real digital lending product,
-        not a one-screen demo form.
+        Your profile is used across all loan applications, document uploads, and admin reviews.
+        Fill it in once and use it for every loan you apply for.
       </p>
 
       <div class="showcase-grid">
         <article>
-          <strong>What you will add</strong>
-          <span>Identity details, address, occupation, annual income, and secure sign-in credentials.</span>
+          <strong>What you'll provide</strong>
+          <span>Personal details, address, occupation, annual income, and login credentials.</span>
         </article>
         <article>
           <strong>What happens next</strong>
-          <span>Apply for a loan, upload required proofs, and monitor decisions directly from your workspace.</span>
+          <span>You're signed in automatically and taken to your dashboard to apply for a loan.</span>
         </article>
       </div>
 
       <div class="credential-note">
-        <span>Why this matters</span>
-        <strong>Admins review the same borrower record you create here.</strong>
-        <small>That keeps customer data, documents, and decisions synchronized.</small>
+        <span>Good to know</span>
+        <strong>Admins see the same profile you create here</strong>
+        <small>Your details, documents, and loan status stay in sync across the platform.</small>
       </div>
     </aside>
 
+    <!-- Right: form card -->
     <div class="auth-card auth-card-wide">
-      <p class="eyebrow">Join FinFlow</p>
-      <h2>Create your applicant profile</h2>
-      <p class="hint">Start like a real borrower: share your identity, contact, and address details once, then use the same profile across applications, documents, and status tracking.</p>
+      <p class="eyebrow">Create account</p>
+      <h2>Your borrower profile</h2>
+      <p class="hint">Complete all three steps. Your information is used for loan review and document verification.</p>
 
-      <div class="mode-toggle steps" role="tablist" aria-label="Registration progress">
-        <button class="mode-button" type="button" [class.active]="step() === 1">1. Identity</button>
-        <button class="mode-button" type="button" [class.active]="step() === 2">2. Address</button>
-        <button class="mode-button" type="button" [class.active]="step() === 3">3. Access</button>
+      <div class="mode-toggle steps" role="tablist" aria-label="Registration steps">
+        <button class="mode-button" type="button" [class.active]="step() === 1">1 · Personal</button>
+        <button class="mode-button" type="button" [class.active]="step() === 2">2 · Address</button>
+        <button class="mode-button" type="button" [class.active]="step() === 3">3 · Login</button>
       </div>
 
       <form [formGroup]="form" (ngSubmit)="submit()">
+
         @if (step() === 1) {
           <div class="auth-form-grid">
             <label>
               Full name
               <input formControlName="fullName" autocomplete="name" placeholder="Aarav Sharma">
-              @if (fieldError('fullName')) {
-                <small class="field-error">{{ fieldError('fullName') }}</small>
-              }
+              @if (fieldError('fullName')) { <small class="field-error">{{ fieldError('fullName') }}</small> }
             </label>
             <label>
-              Email
+              Email address
               <input formControlName="email" autocomplete="email" placeholder="aarav@example.com">
-              @if (fieldError('email')) {
-                <small class="field-error">{{ fieldError('email') }}</small>
-              }
+              @if (fieldError('email')) { <small class="field-error">{{ fieldError('email') }}</small> }
             </label>
             <label>
               Mobile number
               <input formControlName="phoneNumber" autocomplete="tel" placeholder="9876543210">
-              @if (fieldError('phoneNumber')) {
-                <small class="field-error">{{ fieldError('phoneNumber') }}</small>
-              }
+              @if (fieldError('phoneNumber')) { <small class="field-error">{{ fieldError('phoneNumber') }}</small> }
             </label>
             <label>
               Date of birth
               <input formControlName="dateOfBirth" type="date">
-              @if (fieldError('dateOfBirth')) {
-                <small class="field-error">{{ fieldError('dateOfBirth') }}</small>
-              }
+              @if (fieldError('dateOfBirth')) { <small class="field-error">{{ fieldError('dateOfBirth') }}</small> }
             </label>
             <label>
               Occupation
-              <input formControlName="occupation" placeholder="Software engineer">
-              @if (fieldError('occupation')) {
-                <small class="field-error">{{ fieldError('occupation') }}</small>
-              }
+              <input formControlName="occupation" placeholder="Software Engineer">
+              @if (fieldError('occupation')) { <small class="field-error">{{ fieldError('occupation') }}</small> }
             </label>
             <label>
-              Annual income (INR)
+              Annual income (₹)
               <input formControlName="annualIncome" type="number" placeholder="600000">
-              @if (fieldError('annualIncome')) {
-                <small class="field-error">{{ fieldError('annualIncome') }}</small>
-              }
+              @if (fieldError('annualIncome')) { <small class="field-error">{{ fieldError('annualIncome') }}</small> }
             </label>
           </div>
         }
@@ -90,31 +81,23 @@
           <div class="auth-form-grid">
             <label class="auth-field-wide">
               Address line
-              <input formControlName="addressLine1" autocomplete="street-address" placeholder="Flat 203, Lake View Residency">
-              @if (fieldError('addressLine1')) {
-                <small class="field-error">{{ fieldError('addressLine1') }}</small>
-              }
+              <input formControlName="addressLine1" autocomplete="street-address" placeholder="Flat 203, Lake View Residency, MG Road">
+              @if (fieldError('addressLine1')) { <small class="field-error">{{ fieldError('addressLine1') }}</small> }
             </label>
             <label>
               City
               <input formControlName="city" autocomplete="address-level2" placeholder="Bengaluru">
-              @if (fieldError('city')) {
-                <small class="field-error">{{ fieldError('city') }}</small>
-              }
+              @if (fieldError('city')) { <small class="field-error">{{ fieldError('city') }}</small> }
             </label>
             <label>
               State
               <input formControlName="state" autocomplete="address-level1" placeholder="Karnataka">
-              @if (fieldError('state')) {
-                <small class="field-error">{{ fieldError('state') }}</small>
-              }
+              @if (fieldError('state')) { <small class="field-error">{{ fieldError('state') }}</small> }
             </label>
             <label>
-              Postal code
+              PIN code
               <input formControlName="postalCode" autocomplete="postal-code" placeholder="560001">
-              @if (fieldError('postalCode')) {
-                <small class="field-error">{{ fieldError('postalCode') }}</small>
-              }
+              @if (fieldError('postalCode')) { <small class="field-error">{{ fieldError('postalCode') }}</small> }
             </label>
           </div>
         }
@@ -123,21 +106,17 @@
           <div class="auth-form-grid">
             <label>
               Username
-              <input formControlName="username" autocomplete="username" placeholder="user1">
-              @if (usernameError()) {
-                <small class="field-error">{{ usernameError() }}</small>
-              }
+              <input formControlName="username" autocomplete="username" placeholder="Choose a username">
+              @if (usernameError()) { <small class="field-error">{{ usernameError() }}</small> }
             </label>
             <div class="credential-box">
-              <span>Need help choosing?</span>
-              <button class="helper-button" type="button" (click)="useFreshUsername()">Suggest username</button>
+              <span>Need a suggestion?</span>
+              <button class="helper-button" type="button" (click)="useFreshUsername()">Generate username</button>
             </div>
             <label class="auth-field-wide">
               Password
-              <input formControlName="password" type="password" autocomplete="new-password" placeholder="8 to 64 characters">
-              @if (passwordError()) {
-                <small class="field-error">{{ passwordError() }}</small>
-              }
+              <input formControlName="password" type="password" autocomplete="new-password" placeholder="Minimum 8 characters">
+              @if (passwordError()) { <small class="field-error">{{ passwordError() }}</small> }
             </label>
           </div>
         }
@@ -157,16 +136,18 @@
             <button class="solid-button large full" type="button" (click)="nextStep()">Continue</button>
           } @else {
             <button class="solid-button large full" type="submit" [disabled]="isSubmitting()">
-              {{ isSubmitting() ? 'Creating account...' : 'Create account and open workspace' }}
+              {{ isSubmitting() ? 'Creating account...' : 'Create account' }}
             </button>
           }
         </div>
+
       </form>
 
       <div class="auth-footnote">
-        <p class="switch-text">Already registered? <a routerLink="/login">Sign in</a></p>
-        <p class="micro-note">Once your account is created, FinFlow signs you in and takes you directly to your borrower workspace.</p>
+        <p class="switch-text">Already have an account? <a routerLink="/login">Sign in</a></p>
+        <p class="micro-note">After registration you'll be signed in and taken directly to your dashboard.</p>
       </div>
     </div>
+
   </div>
 </section>

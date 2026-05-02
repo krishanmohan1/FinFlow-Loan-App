@@ -1,5 +1,6 @@
 package com.capg.lpu.finflow.application.service;
 
+import com.capg.lpu.finflow.application.dto.LoanOfferResponseRequest;
 import com.capg.lpu.finflow.application.dto.LoanStatusUpdateRequest;
 import com.capg.lpu.finflow.application.entity.LoanApplication;
 import com.capg.lpu.finflow.application.exception.ResourceNotFoundException;
@@ -94,8 +95,12 @@ class LoanServiceTest {
     @DisplayName("test updateStatus() - Should update status, add remarks, and notify via RabbitMQ")
     void testUpdateStatus() {
         LoanStatusUpdateRequest request = new LoanStatusUpdateRequest();
-        request.setStatus("APPROVED");
-        request.setRemarks("All documents verified ok.");
+        request.setStatus("OFFER_MADE");
+        request.setRemarks("Offer created after all documents were verified.");
+        request.setInterestRate(8.5);
+        request.setTenureMonths(120);
+        request.setSanctionedAmount(48000.0);
+        request.setBorrowerDecision("PENDING");
 
         when(loanRepository.findById(101L)).thenReturn(Optional.of(sampleLoan));
         
@@ -104,15 +109,18 @@ class LoanServiceTest {
         updatedMock.setUsername("testuser");
         updatedMock.setTenureMonths(120);
         updatedMock.setPurpose("Buying a family home in Bengaluru.");
-        updatedMock.setStatus("APPROVED");
-        updatedMock.setRemarks("All documents verified ok.");
+        updatedMock.setStatus("OFFER_MADE");
+        updatedMock.setRemarks("Offer created after all documents were verified.");
+        updatedMock.setInterestRate(8.5);
+        updatedMock.setSanctionedAmount(48000.0);
+        updatedMock.setBorrowerDecision("PENDING");
         
         when(loanRepository.save(any(LoanApplication.class))).thenReturn(updatedMock);
 
         LoanApplication result = loanService.updateStatus(101L, request);
 
-        assertThat(result.getStatus()).isEqualTo("APPROVED");
-        assertThat(result.getRemarks()).isEqualTo("All documents verified ok.");
+        assertThat(result.getStatus()).isEqualTo("OFFER_MADE");
+        assertThat(result.getRemarks()).isEqualTo("Offer created after all documents were verified.");
 
         verify(loanRepository, times(1)).save(sampleLoan);
         verify(loanProducer, times(1)).sendLoanStatusUpdated(any());
@@ -142,6 +150,26 @@ class LoanServiceTest {
         LoanApplication result = loanService.withdraw(101L, "testuser");
 
         assertThat(result.getStatus()).isEqualTo("WITHDRAWN");
+        verify(loanProducer).sendLoanStatusUpdated(any());
+    }
+
+    @Test
+    @DisplayName("test respondToOffer() - Should activate a loan when borrower accepts an offer")
+    void testRespondToOffer_acceptsOffer() {
+        sampleLoan.setStatus("OFFER_MADE");
+
+        LoanOfferResponseRequest request = new LoanOfferResponseRequest();
+        request.setBorrowerDecision("ACCEPTED");
+        request.setBorrowerRemarks("The EMI plan works for me.");
+
+        when(loanRepository.findById(101L)).thenReturn(Optional.of(sampleLoan));
+        when(loanRepository.save(any(LoanApplication.class))).thenAnswer((invocation) -> invocation.getArgument(0));
+
+        LoanApplication result = loanService.respondToOffer(101L, "testuser", request);
+
+        assertThat(result.getStatus()).isEqualTo("ACTIVE");
+        assertThat(result.getBorrowerDecision()).isEqualTo("ACCEPTED");
+        assertThat(result.getFirstEmiDate()).isNotNull();
         verify(loanProducer).sendLoanStatusUpdated(any());
     }
 }

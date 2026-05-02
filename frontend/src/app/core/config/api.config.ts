@@ -18,7 +18,8 @@ export const ApiRoutes = {
     all: '/application/all',
     byId: (id: number) => `/application/${id}`,
     byStatus: (status: string) => `/application/status/${status}`,
-    withdraw: (id: number) => `/application/${id}/withdraw`
+    withdraw: (id: number) => `/application/${id}/withdraw`,
+    offerResponse: (id: number) => `/application/${id}/offer-response`
   },
   documents: {
     upload: '/document/upload',

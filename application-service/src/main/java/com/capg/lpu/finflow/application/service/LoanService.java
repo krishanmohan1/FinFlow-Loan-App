@@ -1,7 +1,8 @@
 package com.capg.lpu.finflow.application.service;
 
-import com.capg.lpu.finflow.application.dto.LoanStatusUpdateRequest;
 import com.capg.lpu.finflow.application.dto.LoanEventMessage;
+import com.capg.lpu.finflow.application.dto.LoanOfferResponseRequest;
+import com.capg.lpu.finflow.application.dto.LoanStatusUpdateRequest;
 import com.capg.lpu.finflow.application.entity.LoanApplication;
 import com.capg.lpu.finflow.application.exception.ResourceNotFoundException;
 import com.capg.lpu.finflow.application.producer.LoanProducer;
@@ -10,6 +11,7 @@ import com.capg.lpu.finflow.application.repository.LoanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -174,6 +176,15 @@ public class LoanService {
 
         loan.setStatus(request.getStatus());
         loan.setRemarks(request.getRemarks());
+        loan.setInterestRate(request.getInterestRate());
+        loan.setSanctionedAmount(request.getSanctionedAmount());
+        loan.setProcessingFee(request.getProcessingFee());
+        loan.setGstAmount(request.getGstAmount());
+        loan.setMonthlyEmi(request.getMonthlyEmi());
+        loan.setFirstEmiDate(request.getFirstEmiDate());
+        if (request.getBorrowerDecision() != null && !request.getBorrowerDecision().isBlank()) {
+            loan.setBorrowerDecision(request.getBorrowerDecision());
+        }
 
         LoanApplication updated = loanRepository.save(loan);
         loanProducer.sendLoanStatusUpdated(LoanEventMessage.builder()
@@ -186,6 +197,64 @@ public class LoanService {
                 .build());
 
         log.info("Loan ID: {} status updated to: {}", id, request.getStatus());
+        return updated;
+    }
+
+    /**
+     * Records the borrower's response to a sanctioned loan offer.
+     *
+     * @param id The loan identifier.
+     * @param username The authenticated borrower username.
+     * @param request The acceptance/decline response.
+     * @return The updated loan record.
+     */
+    public LoanApplication respondToOffer(Long id, String username, LoanOfferResponseRequest request) {
+        log.info("Borrower {} responding to offer for loan ID: {} with {}", username, id, request.getBorrowerDecision());
+
+        LoanApplication loan = loanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found with ID: " + id));
+
+        if (!loan.getUsername().equals(username)) {
+            throw new SecurityException("Access denied. This loan does not belong to you.");
+        }
+
+        if (!"OFFER_MADE".equals(loan.getStatus())) {
+            throw new IllegalStateException("Borrower can only respond to loans in OFFER_MADE status");
+        }
+
+        loan.setBorrowerDecision(request.getBorrowerDecision());
+        loan.setBorrowerDecisionAt(LocalDateTime.now());
+
+        if ("ACCEPTED".equals(request.getBorrowerDecision())) {
+            loan.setStatus("ACTIVE");
+            String existingRemarks = safeText(loan.getRemarks());
+            String borrowerRemark = safeText(request.getBorrowerRemarks());
+            loan.setRemarks(appendRemark(existingRemarks,
+                    borrowerRemark.isBlank()
+                            ? "Borrower accepted the sanctioned offer"
+                            : "Borrower accepted the sanctioned offer: " + borrowerRemark));
+            if (loan.getFirstEmiDate() == null) {
+                loan.setFirstEmiDate(LocalDate.now().plusMonths(1));
+            }
+        } else {
+            loan.setStatus("OFFER_DECLINED");
+            String existingRemarks = safeText(loan.getRemarks());
+            String borrowerRemark = safeText(request.getBorrowerRemarks());
+            loan.setRemarks(appendRemark(existingRemarks,
+                    borrowerRemark.isBlank()
+                            ? "Borrower declined the sanctioned offer"
+                            : "Borrower declined the sanctioned offer: " + borrowerRemark));
+        }
+
+        LoanApplication updated = loanRepository.save(loan);
+        loanProducer.sendLoanStatusUpdated(LoanEventMessage.builder()
+                .eventType("LOAN_STATUS_UPDATED")
+                .loanId(updated.getId())
+                .username(updated.getUsername())
+                .status(updated.getStatus())
+                .remarks(updated.getRemarks())
+                .occurredAt(LocalDateTime.now())
+                .build());
         return updated;
     }
 
@@ -207,5 +276,19 @@ public class LoanService {
 
         log.info("Loan ID: {} deleted successfully", id);
         return "Loan with ID " + id + " deleted successfully.";
+    }
+
+    private String safeText(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private String appendRemark(String existing, String next) {
+        if (existing.isBlank()) {
+            return next;
+        }
+        if (next.isBlank()) {
+            return existing;
+        }
+        return existing + " | " + next;
     }
 }

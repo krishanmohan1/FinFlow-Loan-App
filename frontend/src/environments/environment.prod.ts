@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://localhost:9090',
+  apiBaseUrl: '${API_BASE_URL}',
   appName: 'FinFlow'
 };

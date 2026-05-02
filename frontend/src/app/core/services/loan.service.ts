@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiRoutes } from '@core/config/api.config';
-import { LoanApplication } from '@core/models/loan.models';
+import { LoanApplication, LoanOfferResponseRequest } from '@core/models/loan.models';
 import { LoanApplicationRequest } from '@core/models/loan-form.models';
 import { HttpApiService } from './http-api.service';
 
@@ -23,5 +23,9 @@ export class LoanService {
 
   withdraw(id: number): Observable<LoanApplication> {
     return this.api.put<LoanApplication>(ApiRoutes.loans.withdraw(id), {});
+  }
+
+  respondToOffer(id: number, request: LoanOfferResponseRequest): Observable<LoanApplication> {
+    return this.api.put<LoanApplication>(ApiRoutes.loans.offerResponse(id), request);
   }
 }

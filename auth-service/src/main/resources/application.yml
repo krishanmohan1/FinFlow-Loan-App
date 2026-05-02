@@ -70,3 +70,4 @@ security:
     expiration-ms: ${JWT_EXPIRATION_MS:900000}
     refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
     refresh-cookie-name: ${JWT_REFRESH_COOKIE_NAME:finflow_refresh_token}
+    refresh-cookie-secure: ${JWT_REFRESH_COOKIE_SECURE:false}
