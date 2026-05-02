@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
  * Message consumer service for the Application microservice.
  * Orchestrates responses to asynchronous events received via RabbitMQ.
  */
+
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
